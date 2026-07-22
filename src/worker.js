@@ -1,6 +1,17 @@
 import { INDEX_HTML } from "./generated-index.js";
+import {
+  cancelSyncRun,
+  createScheduledSync,
+  createSyncRun,
+  getLatestIngestedJobs,
+  getSourceRegistry,
+  getSourceResults,
+  getSyncRun,
+  retryFailedSources,
+  runImmediateSourceSnapshot
+} from "./sync-engine.js";
 
-const SYNC_VERSION = "AIJH-HOURLY-SYNC-20260722-1740";
+const SYNC_VERSION = "AIJH-SYNC-ENGINE-20260722-1845";
 const ACTION_STORE_KEY = "actions:v1:shared-dashboard";
 const SCHEDULED_SYNC_KEY = "sync:v1:last-hourly-job-search";
 const ACTION_PREFIX = "action:v1:";
@@ -36,7 +47,7 @@ const LIVE_CRAWL_COMPANIES = new Set([
 const ROLE_KEYWORD_RE = /(sales operations?|commercial operations?|business operations?|revenue operations?|sales planning|sales analyst|business analyst|business intelligence|operations analyst|crm|tender analyst|sales support)/i;
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const noStoreHeaders = {
       "Cache-Control": "no-store, no-cache, must-revalidate",
@@ -53,7 +64,20 @@ export default {
     }
 
     if (url.pathname === "/api/sync" && request.method === "GET") {
-      const officialCandidates = await runJobSourceSync(env);
+      const persisted = await getLatestIngestedJobs(env);
+      const officialCandidates = persisted.jobs.length
+        ? {
+            checkedAt: new Date().toISOString(),
+            sourceRegistryVersion: "kv_ingested_jobs_v1",
+            sourcesChecked: 0,
+            publishableSources: 0,
+            weeklyCheckSources: 0,
+            liveCrawlSources: 0,
+            concreteJobs: persisted.jobs.filter((job) => job.jobType === "job").length,
+            jobs: persisted.jobs,
+            lastRun: persisted.lastRun
+          }
+        : await runImmediateSourceSnapshot(env);
       const scheduledSync = await readScheduledSync(env);
       return Response.json({
         checkedAt: new Date().toISOString(),
@@ -61,7 +85,8 @@ export default {
         syncWindow: "08:00-20:00 Asia/Ho_Chi_Minh",
         cron: "0 1-13 * * *",
         lastScheduledSync: scheduledSync,
-        sourceRegistryVersion: "hcm_official_career_sources_v2",
+        lastSyncRun: officialCandidates.lastRun || persisted.lastRun || null,
+        sourceRegistryVersion: officialCandidates.sourceRegistryVersion,
         sourcesChecked: officialCandidates.sourcesChecked,
         publishableSources: officialCandidates.publishableSources,
         weeklyCheckSources: officialCandidates.weeklyCheckSources,
@@ -69,6 +94,32 @@ export default {
         concreteJobs: officialCandidates.concreteJobs,
         jobs: officialCandidates.jobs
       });
+    }
+
+    if (url.pathname === "/api/sync" && request.method === "POST") {
+      return Response.json(await createSyncRun(request, env, ctx), { status: 202 });
+    }
+
+    const syncMatch = url.pathname.match(/^\/api\/sync\/([^/]+)(?:\/([^/]+))?$/);
+    if (syncMatch && request.method === "GET" && !syncMatch[2]) {
+      const run = await getSyncRun(env, syncMatch[1]);
+      return run ? Response.json(run) : Response.json({ error: "Sync run not found" }, { status: 404 });
+    }
+
+    if (syncMatch && request.method === "GET" && syncMatch[2] === "sources") {
+      return Response.json({ syncRunId: syncMatch[1], sources: await getSourceResults(env, syncMatch[1]) });
+    }
+
+    if (syncMatch && request.method === "POST" && syncMatch[2] === "cancel") {
+      return Response.json(await cancelSyncRun(env, syncMatch[1]));
+    }
+
+    if (syncMatch && request.method === "POST" && syncMatch[2] === "retry-failed") {
+      return Response.json(await retryFailedSources(env, syncMatch[1], ctx), { status: 202 });
+    }
+
+    if (url.pathname === "/api/sources" && request.method === "GET") {
+      return Response.json(await getSourceRegistry(env));
     }
 
     if (url.pathname === "/api/actions" && request.method === "GET") {
@@ -92,14 +143,13 @@ export default {
   },
 
   async scheduled(controller, env, ctx) {
-    ctx.waitUntil(recordScheduledSync(env, controller));
+    ctx.waitUntil(createScheduledSync(env, controller, ctx).then((result) => recordScheduledSync(env, controller, result)));
   }
 };
 
-async function recordScheduledSync(env, controller) {
+async function recordScheduledSync(env, controller, result = null) {
   const startedAt = new Date(controller.scheduledTime || Date.now()).toISOString();
   try {
-    const officialCandidates = await runJobSourceSync(env);
     const payload = {
       ok: true,
       startedAt,
@@ -108,12 +158,9 @@ async function recordScheduledSync(env, controller) {
       cron: controller.cron || "0 1-13 * * *",
       syncIntervalMinutes: 60,
       sourceRegistryVersion: "hcm_official_career_sources_v2",
-      sourcesChecked: officialCandidates.sourcesChecked,
-      publishableSources: officialCandidates.publishableSources,
-      weeklyCheckSources: officialCandidates.weeklyCheckSources,
-      liveCrawlSources: officialCandidates.liveCrawlSources,
-      concreteJobs: officialCandidates.concreteJobs,
-      jobs: officialCandidates.jobs
+      syncRunId: result?.syncRunId || "",
+      status: result?.status || "queued",
+      queuedSources: result?.queuedSources || 0
     };
     if (env.JOB_ACTIONS_KV) await env.JOB_ACTIONS_KV.put(SCHEDULED_SYNC_KEY, JSON.stringify(payload));
     return payload;

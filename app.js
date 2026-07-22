@@ -1,4 +1,4 @@
-const APP_VERSION = "AIJH-HOURLY-SYNC-20260722-1740";
+const APP_VERSION = "AIJH-SYNC-ENGINE-20260722-1845";
 const AI_LOCATION_DISCLAIMER = "Địa chỉ này do AI tổng hợp từ thông tin công khai và có thể không phải địa điểm làm việc chính xác. Hãy kiểm tra lại trong JD hoặc website chính thức.";
 const AI_CONTENT_DISCLAIMER = "AI có thể sai. Hãy kiểm tra JD và nguồn chính thức trước khi nộp.";
 const APPROVED_RESUMES = {
@@ -32,7 +32,9 @@ const state = {
   newJobsFound: 0,
   lastSyncAt: localStorage.getItem("lastSyncAt") || "",
   settings: readSettings(),
-  reviewJobId: ""
+  reviewJobId: "",
+  syncRun: null,
+  syncRunSources: []
 };
 
 const syncIntervalMs = 60 * 60 * 1000;
@@ -255,7 +257,7 @@ function bindEvents() {
     render();
   });
 
-  els.syncNow.addEventListener("click", syncJobs);
+  els.syncNow.addEventListener("click", startManualSync);
 
   [els.autoApplyThreshold, els.approvedResume, els.cityPreference, els.workModePreference].forEach((input) => {
     input.addEventListener("change", () => {
@@ -316,6 +318,97 @@ async function syncJobs() {
     renderSources();
     render();
   }
+}
+
+async function startManualSync() {
+  if (state.syncRun && ["queued", "running"].includes(state.syncRun.status)) return;
+  els.syncNow.disabled = true;
+  els.syncNow.textContent = "Đang chuẩn bị...";
+  state.loadState = state.jobs.length ? "refreshing" : "loading";
+  state.jobsError = "";
+  renderSyncState();
+
+  try {
+    const response = await fetch("./api/sync", {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        mode: "due_sources",
+        tiers: ["A", "B"],
+        sourceIds: [],
+        force: false
+      })
+    });
+    if (!response.ok) throw new Error(`Cannot start sync (${response.status})`);
+    const payload = await response.json();
+    state.syncRun = {
+      id: payload.syncRunId,
+      status: payload.status,
+      totalSources: payload.queuedSources || 0,
+      completedSources: 0,
+      failedSources: 0,
+      newJobs: 0,
+      updatedJobs: 0,
+      duplicateJobs: 0
+    };
+    renderSyncState();
+    await pollSyncRun(payload.syncRunId);
+  } catch (error) {
+    state.syncRun = { status: "failed", errorSummary: error?.message || "Không bắt đầu được sync" };
+    state.loadState = state.jobs.length ? "loaded" : "failed";
+    state.jobsError = error?.message || "Không bắt đầu được sync";
+    renderSyncState();
+    render();
+  } finally {
+    if (!state.syncRun || !["queued", "running"].includes(state.syncRun.status)) {
+      els.syncNow.disabled = false;
+    }
+  }
+}
+
+async function pollSyncRun(syncRunId) {
+  const terminal = new Set(["completed", "partial", "failed", "cancelled"]);
+  for (let attempt = 0; attempt < 90; attempt += 1) {
+    await sleep(attempt < 2 ? 1200 : 3000);
+    const response = await fetch(`./api/sync/${encodeURIComponent(syncRunId)}`, {
+      headers: { "Accept": "application/json" },
+      cache: "no-store"
+    });
+    if (!response.ok) throw new Error(`Cannot read sync status (${response.status})`);
+    state.syncRun = await response.json();
+    renderSyncState();
+    if (terminal.has(state.syncRun.status)) {
+      const sources = await fetchSyncRunSources(syncRunId);
+      state.syncRunSources = sources;
+      await syncJobs();
+      state.lastSyncAt = state.syncRun.completedAt || new Date().toISOString();
+      localStorage.setItem("lastSyncAt", state.lastSyncAt);
+      renderSyncState();
+      return;
+    }
+  }
+  state.syncRun = { ...state.syncRun, status: "failed", errorSummary: "Sync timeout, vui lòng thử lại." };
+}
+
+async function fetchSyncRunSources(syncRunId) {
+  try {
+    const response = await fetch(`./api/sync/${encodeURIComponent(syncRunId)}/sources`, {
+      headers: { "Accept": "application/json" },
+      cache: "no-store"
+    });
+    if (!response.ok) return [];
+    const payload = await response.json();
+    return Array.isArray(payload.sources) ? payload.sources : [];
+  } catch {
+    return [];
+  }
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function fetchRemoteJobs() {
@@ -923,7 +1016,31 @@ function renderRecommendation() {
 }
 
 function renderSyncState() {
+  if (state.syncRun && ["queued", "running"].includes(state.syncRun.status)) {
+    const total = state.syncRun.totalSources || state.syncRun.queuedSources || 0;
+    const completed = state.syncRun.completedSources || state.syncRun.progress?.completed || 0;
+    els.syncNow.textContent = state.syncRun.status === "queued" ? "Đang chuẩn bị..." : "Đang đồng bộ...";
+    els.syncNow.disabled = true;
+    els.syncStatus.textContent = state.syncRun.status === "queued"
+      ? `Đã tạo sync run · ${total} nguồn đang chờ`
+      : `Đang kiểm tra ${completed}/${total} nguồn · ${state.syncRun.newJobs || 0} job mới · ${state.syncRun.updatedJobs || 0} cập nhật · ${state.syncRun.failedSources || 0} nguồn lỗi`;
+    els.syncStatus.className = "";
+    return;
+  }
   els.syncNow.textContent = state.loadState === "loading" || state.loadState === "refreshing" ? "Đang đồng bộ..." : "Đồng bộ job";
+  els.syncNow.disabled = state.loadState === "loading" || state.loadState === "refreshing";
+  if (state.syncRun && ["completed", "partial", "failed", "cancelled"].includes(state.syncRun.status)) {
+    const pieces = [
+      state.syncRun.status === "completed" ? "Đồng bộ xong" : state.syncRun.status === "partial" ? "Hoàn tất một phần" : state.syncRun.status === "cancelled" ? "Đã hủy sync" : "Đồng bộ lỗi",
+      `${state.syncRun.newJobs || 0} job mới`,
+      `${state.syncRun.updatedJobs || 0} cập nhật`,
+      `${state.syncRun.duplicateJobs || 0} trùng`
+    ];
+    if (state.syncRun.failedSources) pieces.push(`${state.syncRun.failedSources} nguồn lỗi`);
+    els.syncStatus.textContent = pieces.join(" · ");
+    els.syncStatus.className = state.syncRun.status === "failed" ? "sync-error" : "";
+    return;
+  }
   if (state.loadState === "failed") {
     els.syncStatus.textContent = "Đồng bộ lỗi. Thử lại.";
     els.syncStatus.className = "sync-error";
