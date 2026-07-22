@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <!-- AIJH-KPI-BREADCRUMB-20260722-1535 -->
+  <!-- AIJH-SAAS-POLISH-20260722-1605 -->
   <meta charset="utf-8">
-  <meta name="app-version" content="AIJH-KPI-BREADCRUMB-20260722-1535">
+  <meta name="app-version" content="AIJH-SAAS-POLISH-20260722-1605">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Job Hunter</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./styles.css?v=AIJH-KPI-BREADCRUMB-20260722-1535">
+  <link rel="stylesheet" href="./styles.css?v=AIJH-SAAS-POLISH-20260722-1605">
 </head>
 <body>
   <header class="topbar">
@@ -50,9 +50,18 @@
     <section class="controls" aria-label="Dashboard controls">
       <nav class="primary-tabs" aria-label="Main navigation">
         <button class="tab active" type="button" data-view="inbox" aria-selected="true">Inbox</button>
-        <button class="tab" type="button" data-view="pipeline" aria-selected="false">Pipeline</button>
-        <button class="tab" type="button" data-view="archive" aria-selected="false">Archive</button>
+        <button class="tab" type="button" data-view="pipeline" aria-selected="false">Theo dõi</button>
+        <button class="tab" type="button" data-view="archive" aria-selected="false">Lưu trữ</button>
       </nav>
+
+      <div class="quick-filters" aria-label="Quick filters">
+        <button type="button" data-quick-filter="match90">⭐ Match &gt; 90%</button>
+        <button type="button" data-quick-filter="verified">📍 Địa chỉ xác thực</button>
+        <button type="button" data-quick-filter="official">🏢 Link nộp chính thức</button>
+        <button type="button" data-quick-filter="salary">💰 Có lương</button>
+        <button type="button" data-quick-filter="ai">🤖 AI gợi ý</button>
+        <button type="button" data-quick-filter="missing">⚠ Thiếu thông tin</button>
+      </div>
 
       <div class="filter-row">
         <label>
@@ -110,6 +119,13 @@
       </div>
 
       <input id="searchBox" type="search" placeholder="Tìm job, công ty, kỹ năng, nguồn...">
+    </section>
+
+    <section class="quality-strip" aria-label="Data quality summary">
+      <div><strong id="officialLinkCount">-</strong><span>Link nộp chính thức</span></div>
+      <div><strong id="verifiedLocationCount">-</strong><span>Địa chỉ xác thực</span></div>
+      <div><strong id="aiLocationCount">-</strong><span>Địa điểm AI gợi ý</span></div>
+      <div><strong id="salaryAvailableCount">-</strong><span>Có thông tin lương</span></div>
     </section>
 
     <section class="result-context" aria-live="polite">
@@ -184,6 +200,6 @@
     </form>
   </dialog>
 
-  <script src="./app.js?v=AIJH-KPI-BREADCRUMB-20260722-1535" type="module"></script>
+  <script src="./app.js?v=AIJH-SAAS-POLISH-20260722-1605" type="module"></script>
 </body>
 </html>

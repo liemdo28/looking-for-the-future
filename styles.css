@@ -1,4 +1,4 @@
-/* AIJH-KPI-BREADCRUMB-20260722-1535 */
+/* AIJH-SAAS-POLISH-20260722-1605 */
 
 :root {
   --bg: #f7f9fc;
@@ -252,6 +252,29 @@ main {
   margin-bottom: 10px;
 }
 
+.quick-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.quick-filters button {
+  min-height: 34px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.quick-filters button:hover,
+.quick-filters button.active {
+  color: var(--accent);
+  border-color: #bfdbfe;
+  background: #eff6ff;
+}
+
 label {
   display: grid;
   gap: 4px;
@@ -293,6 +316,37 @@ select {
   font-size: 13px;
 }
 
+.quality-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin: -2px 0 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--line);
+}
+
+.quality-strip div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px;
+  background: #fff;
+}
+
+.quality-strip strong {
+  color: var(--text);
+  font-size: 18px;
+}
+
+.quality-strip span {
+  color: var(--muted);
+  font-size: 12px;
+  text-align: right;
+}
+
 .result-context strong {
   color: var(--text);
   font-weight: 650;
@@ -315,16 +369,23 @@ select {
 .job-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 12px;
 }
 
 .job-card {
   position: relative;
-  min-height: 290px;
-  padding: 13px;
+  min-height: 0;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+}
+
+.job-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
 }
 
 .job-card.is-highlighted {
@@ -350,7 +411,7 @@ select {
 .score {
   display: block;
   color: var(--text);
-  font-size: 30px;
+  font-size: 27px;
   line-height: 1;
   font-weight: 700;
 }
@@ -400,8 +461,8 @@ select {
 }
 
 .job-card h3 {
-  margin: 2px 0 3px;
-  font-size: 18px;
+  margin: 1px 0 2px;
+  font-size: 17px;
   line-height: 1.35;
   letter-spacing: 0;
   font-weight: 650;
@@ -433,8 +494,8 @@ select {
   grid-template-columns: 24px minmax(0, 1fr) auto;
   gap: 8px;
   align-items: start;
-  margin: 7px 0;
-  padding: 8px;
+  margin: 5px 0;
+  padding: 7px;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: #f8fafc;
@@ -499,7 +560,7 @@ select {
 }
 
 .ai-summary {
-  padding: 8px;
+  padding: 7px 8px;
   border-radius: 12px;
   background: linear-gradient(135deg, var(--ai-soft), #ffffff 74%);
   border: 1px solid #dbeafe;
@@ -520,6 +581,10 @@ select {
   display: grid;
   gap: 3px;
   font-size: 13px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .summary-text b {
@@ -581,7 +646,7 @@ select {
 
 .actions {
   display: grid;
-  grid-template-columns: 1.2fr repeat(3, minmax(0, 0.85fr));
+  grid-template-columns: 1.25fr 0.85fr;
   gap: 7px;
   margin-top: auto;
   align-items: stretch;
@@ -643,11 +708,11 @@ select {
 
 .card-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 10px;
   align-items: flex-start;
-  border-top: 1px solid var(--line);
-  padding-top: 8px;
+  border-top: 0;
+  padding-top: 0;
 }
 
 .internal-actions {
@@ -1013,6 +1078,21 @@ li {
 
   .summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .quality-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .quick-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .quick-filters button {
+    flex: 0 0 auto;
+    min-height: 44px;
   }
 
   .result-context {
