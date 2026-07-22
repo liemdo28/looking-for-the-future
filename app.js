@@ -1,4 +1,4 @@
-const APP_VERSION = "AIJH-RUNTIME-HARDENING-20260722-2115";
+const APP_VERSION = "AIJH-PERSISTED-ACTIONS-20260722-2135";
 const AI_LOCATION_DISCLAIMER = "Địa chỉ này do AI tổng hợp từ thông tin công khai và có thể không phải địa điểm làm việc chính xác. Hãy kiểm tra lại trong JD hoặc website chính thức.";
 const AI_CONTENT_DISCLAIMER = "AI có thể sai. Hãy kiểm tra JD và nguồn chính thức trước khi nộp.";
 const APPROVED_RESUMES = {
@@ -36,6 +36,7 @@ const state = {
 
 const syncIntervalMs = 60 * 60 * 1000;
 let searchDebounceTimer = 0;
+let noteSyncTimer = 0;
 const els = {
   list: document.querySelector("#jobList"),
   kpiCards: [...document.querySelectorAll(".kpi-card")],
@@ -88,6 +89,7 @@ init();
 async function init() {
   bindEvents();
   renderSettings();
+  await loadServerState();
   render();
   await syncJobs();
   setInterval(syncJobs, syncIntervalMs);
@@ -1202,6 +1204,8 @@ function savePersonalNote(jobId, value) {
     if (value.trim()) notes[jobId] = value;
     else delete notes[jobId];
     localStorage.setItem("jobPersonalNotes", JSON.stringify(notes));
+    clearTimeout(noteSyncTimer);
+    noteSyncTimer = setTimeout(() => syncNote(jobId, value), 450);
   } catch {}
 }
 
@@ -1608,10 +1612,57 @@ function syncAction(jobId, action) {
   }).catch(() => {});
 }
 
+async function loadServerState() {
+  try {
+    const response = await fetch("./api/actions", {
+      headers: { "Accept": "application/json" },
+      cache: "no-store"
+    });
+    if (!response.ok) return;
+    const payload = await response.json();
+    const serverActions = normalizeActionMap(payload.actions || {});
+    const serverNotes = normalizeNotesMap(payload.notes || {});
+    const localNotes = readNotes();
+
+    state.actions = mergeActionMaps(state.actions, serverActions);
+    persistActions();
+
+    const mergedNotes = mergeNotes(localNotes, serverNotes);
+    persistNotes(mergedNotes);
+
+    if (payload.persisted) {
+      await seedServerStateIfNeeded(payload, state.actions, mergedNotes);
+    }
+  } catch {
+    // Local state remains authoritative while offline or before KV is available.
+  }
+}
+
+async function seedServerStateIfNeeded(payload, actions, notes) {
+  if (Object.keys(payload.actions || {}).length || Object.keys(payload.notes || {}).length) return;
+  const jobsToSeed = [
+    ...Object.entries(actions).map(([jobId, action]) => ({ jobId, ...action })),
+    ...Object.entries(notes).map(([jobId, note]) => ({ type: "note", jobId, note: note.note || note, updatedAt: note.updatedAt }))
+  ];
+  await Promise.allSettled(jobsToSeed.map((item) => fetch("./api/actions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(item)
+  })));
+}
+
+function syncNote(jobId, note) {
+  fetch("./api/actions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ type: "note", jobId, note, updatedAt: new Date().toISOString() })
+  }).catch(() => {});
+}
+
 function readActions() {
   try {
     const raw = JSON.parse(localStorage.getItem("jobActions") || "{}");
-    const normalized = Object.fromEntries(Object.entries(raw).map(([key, value]) => [key, normalizeAction(value)]));
+    const normalized = normalizeActionMap(raw);
     if (JSON.stringify(raw) !== JSON.stringify(normalized)) {
       localStorage.setItem("jobActions", JSON.stringify(normalized));
     }
@@ -1623,6 +1674,59 @@ function readActions() {
 
 function persistActions() {
   localStorage.setItem("jobActions", JSON.stringify(state.actions));
+}
+
+function normalizeActionMap(actions) {
+  return Object.fromEntries(Object.entries(actions || {}).map(([key, value]) => [key, normalizeAction(value)]));
+}
+
+function mergeActionMaps(localActions, serverActions) {
+  const merged = { ...localActions };
+  Object.entries(serverActions).forEach(([jobId, serverAction]) => {
+    const localAction = normalizeAction(merged[jobId]);
+    merged[jobId] = newerRecord(localAction, serverAction);
+  });
+  return merged;
+}
+
+function newerRecord(localRecord, serverRecord) {
+  const localTime = Date.parse(localRecord?.updatedAt || localRecord?.appliedAt || localRecord?.interestedAt || "");
+  const serverTime = Date.parse(serverRecord?.updatedAt || serverRecord?.appliedAt || serverRecord?.interestedAt || "");
+  if (!Number.isFinite(localTime)) return serverRecord;
+  if (!Number.isFinite(serverTime)) return localRecord;
+  return serverTime >= localTime ? serverRecord : localRecord;
+}
+
+function readNotes() {
+  try {
+    return normalizeNotesMap(JSON.parse(localStorage.getItem("jobPersonalNotes") || "{}"));
+  } catch {
+    return {};
+  }
+}
+
+function persistNotes(notes) {
+  const plain = Object.fromEntries(Object.entries(notes).map(([jobId, value]) => [jobId, value.note || value]));
+  localStorage.setItem("jobPersonalNotes", JSON.stringify(plain));
+}
+
+function normalizeNotesMap(notes) {
+  return Object.fromEntries(Object.entries(notes || {}).map(([jobId, value]) => {
+    if (value && typeof value === "object") {
+      return [jobId, { note: value.note || "", updatedAt: value.updatedAt || "" }];
+    }
+    return [jobId, { note: String(value || ""), updatedAt: "" }];
+  }).filter(([, value]) => value.note));
+}
+
+function mergeNotes(localNotes, serverNotes) {
+  const merged = { ...localNotes };
+  Object.entries(serverNotes).forEach(([jobId, serverNote]) => {
+    const localNote = merged[jobId];
+    if (!localNote) merged[jobId] = serverNote;
+    else merged[jobId] = newerRecord(localNote, serverNote);
+  });
+  return merged;
 }
 
 function normalizeAction(value) {

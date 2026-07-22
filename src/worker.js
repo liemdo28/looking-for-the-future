@@ -1,6 +1,7 @@
 import { INDEX_HTML } from "./generated-index.js";
 
 const SYNC_VERSION = "AIJH-OFFICIAL-SOURCE-SYNC-20260722-1910";
+const ACTION_STORE_KEY = "actions:v1:shared-dashboard";
 const TARGET_ROLE_FAMILIES = [
   "Sales Operations",
   "Commercial Operations",
@@ -64,15 +65,14 @@ export default {
       });
     }
 
+    if (url.pathname === "/api/actions" && request.method === "GET") {
+      return Response.json(await readActionStore(env));
+    }
+
     if (url.pathname === "/api/actions" && request.method === "POST") {
-      const action = await request.json().catch(() => ({}));
-      return Response.json({
-        ok: true,
-        action: {
-          ...action,
-          updatedAt: action.updatedAt || new Date().toISOString()
-        }
-      });
+      const payload = await request.json().catch(() => ({}));
+      const result = await updateActionStore(env, payload);
+      return Response.json(result);
     }
 
     const response = await env.STATIC.fetch(request);
@@ -85,6 +85,63 @@ export default {
     });
   }
 };
+
+async function readActionStore(env) {
+  const empty = {
+    ok: true,
+    persisted: Boolean(env.JOB_ACTIONS_KV),
+    actions: {},
+    notes: {},
+    updatedAt: ""
+  };
+  if (!env.JOB_ACTIONS_KV) return empty;
+  const stored = await env.JOB_ACTIONS_KV.get(ACTION_STORE_KEY, "json").catch(() => null);
+  return {
+    ...empty,
+    ...(stored && typeof stored === "object" ? stored : {}),
+    ok: true,
+    persisted: true
+  };
+}
+
+async function updateActionStore(env, payload) {
+  const now = new Date().toISOString();
+  const store = await readActionStore(env);
+  const next = {
+    ok: true,
+    persisted: Boolean(env.JOB_ACTIONS_KV),
+    actions: { ...(store.actions || {}) },
+    notes: { ...(store.notes || {}) },
+    updatedAt: now
+  };
+
+  if (payload.type === "note") {
+    if (!payload.jobId) return { ok: false, persisted: next.persisted, error: "Missing jobId" };
+    const value = String(payload.note || "").trim();
+    if (value) {
+      next.notes[payload.jobId] = {
+        note: value,
+        updatedAt: payload.updatedAt || now
+      };
+    } else {
+      delete next.notes[payload.jobId];
+    }
+  } else {
+    if (!payload.jobId) return { ok: false, persisted: next.persisted, error: "Missing jobId" };
+    const action = {
+      ...payload,
+      updatedAt: payload.updatedAt || now
+    };
+    delete action.type;
+    if (action.status === "none") delete next.actions[payload.jobId];
+    else next.actions[payload.jobId] = action;
+  }
+
+  if (env.JOB_ACTIONS_KV) {
+    await env.JOB_ACTIONS_KV.put(ACTION_STORE_KEY, JSON.stringify(next));
+  }
+  return next;
+}
 
 async function loadSources(request, env) {
   const sourceUrl = new URL("/data/sources.json", request.url);
