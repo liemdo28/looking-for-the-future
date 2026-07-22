@@ -156,8 +156,9 @@ function render() {
     card.dataset.status = status;
 
     node.querySelector(".rank").textContent = `#${job.rank || "-"}`;
-    node.querySelector(".job-title").textContent = job.title;
+    node.querySelector(".job-title").textContent = toTitleCase(job.title);
     node.querySelector(".source-badge").textContent = job.source;
+    node.querySelector(".title-location").textContent = job.location;
     node.querySelector(".company").textContent = job.company;
     node.querySelector(".score").textContent = `${job.score}%`;
     node.querySelector(".summary-text").textContent = job.summary;
@@ -298,4 +299,9 @@ function addMeta(container, text, className = "") {
   span.textContent = text;
   if (className) span.classList.add(className);
   container.appendChild(span);
+}
+
+function toTitleCase(text) {
+  if (text !== text.toUpperCase()) return text;
+  return text.toLowerCase().replace(/(^|[\s/(-])\p{L}/gu, (match) => match.toUpperCase());
 }
