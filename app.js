@@ -1,4 +1,4 @@
-const APP_VERSION = "AIJH-PERSISTED-ACTIONS-20260722-2135";
+const APP_VERSION = "AIJH-DARK-SAAS-20260722-2210";
 const AI_LOCATION_DISCLAIMER = "Địa chỉ này do AI tổng hợp từ thông tin công khai và có thể không phải địa điểm làm việc chính xác. Hãy kiểm tra lại trong JD hoặc website chính thức.";
 const AI_CONTENT_DISCLAIMER = "AI có thể sai. Hãy kiểm tra JD và nguồn chính thức trước khi nộp.";
 const APPROVED_RESUMES = {
@@ -40,10 +40,13 @@ let noteSyncTimer = 0;
 const els = {
   list: document.querySelector("#jobList"),
   kpiCards: [...document.querySelectorAll(".kpi-card")],
+  sidebarLinks: [...document.querySelectorAll("[data-sidebar-view]")],
+  sidebarSettings: document.querySelector("[data-sidebar-settings]"),
   quickFilterButtons: [...document.querySelectorAll("[data-quick-filter]")],
   activeFilterCount: document.querySelector("#activeFilterCount"),
   tabs: [...document.querySelectorAll(".primary-tabs .tab")],
   search: document.querySelector("#searchBox"),
+  globalSearch: document.querySelector("#globalSearchBox"),
   recordTypeFilter: document.querySelector("#recordTypeFilter"),
   matchFilter: document.querySelector("#matchFilter"),
   locationFilter: document.querySelector("#locationFilter"),
@@ -99,6 +102,25 @@ function bindEvents() {
   syncActiveTab();
   els.kpiCards.forEach((card) => {
     card.addEventListener("click", () => applyKpiShortcut(card.dataset.kpi));
+  });
+
+  els.sidebarLinks.forEach((button) => {
+    button.addEventListener("click", () => {
+      const view = button.dataset.sidebarView;
+      if (view === "overview") {
+        applyKpiShortcut("inbox");
+        return;
+      }
+      setView(view);
+      state.quickFilter = "all";
+      state.currentPage = 1;
+      render();
+      scrollToFirstResult();
+    });
+  });
+
+  els.sidebarSettings?.addEventListener("click", () => {
+    document.querySelector(".source-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   els.quickFilterButtons.forEach((button) => {
@@ -176,6 +198,17 @@ function bindEvents() {
     clearTimeout(searchDebounceTimer);
     searchDebounceTimer = setTimeout(() => {
       state.query = event.target.value.trim().toLowerCase();
+      if (els.globalSearch && els.globalSearch.value !== event.target.value) els.globalSearch.value = event.target.value;
+      state.currentPage = 1;
+      render();
+    }, 180);
+  });
+
+  els.globalSearch?.addEventListener("input", (event) => {
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(() => {
+      state.query = event.target.value.trim().toLowerCase();
+      if (els.search.value !== event.target.value) els.search.value = event.target.value;
       state.currentPage = 1;
       render();
     }, 180);
@@ -632,6 +665,7 @@ function setView(view) {
   state.view = ["inbox", "pipeline", "archive"].includes(view) ? view : "inbox";
   sessionStorage.setItem("jobHunterView", state.view);
   syncActiveTab();
+  syncActiveSidebar();
 }
 
 function syncActiveTab() {
@@ -642,6 +676,15 @@ function syncActiveTab() {
     tab.tabIndex = active ? 0 : -1;
   });
   els.list?.setAttribute("aria-labelledby", `tab-${state.view}`);
+}
+
+function syncActiveSidebar() {
+  const activeView = state.view || "inbox";
+  els.sidebarLinks.forEach((button) => {
+    const active = button.dataset.sidebarView === activeView;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-current", active ? "page" : "false");
+  });
 }
 
 function applyKpiShortcut(kind) {
@@ -690,6 +733,7 @@ function syncQuickFilters() {
     button.classList.toggle("active", active);
     button.setAttribute("aria-pressed", active ? "true" : "false");
   });
+  syncActiveSidebar();
 }
 
 function focusJob(job) {

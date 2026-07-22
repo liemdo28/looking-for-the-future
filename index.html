@@ -1,25 +1,64 @@
 <!doctype html>
 <html lang="vi">
 <head>
-  <!-- AIJH-PERSISTED-ACTIONS-20260722-2135 -->
+  <!-- AIJH-DARK-SAAS-20260722-2210 -->
   <meta charset="utf-8">
-  <meta name="app-version" content="AIJH-PERSISTED-ACTIONS-20260722-2135">
+  <meta name="app-version" content="AIJH-DARK-SAAS-20260722-2210">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Job Hunter</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./styles.css?v=AIJH-PERSISTED-ACTIONS-20260722-2135">
+  <link rel="stylesheet" href="./styles.css?v=AIJH-DARK-SAAS-20260722-2210">
 </head>
 <body>
-  <header class="topbar">
-    <div>
-      <h1>AI Job Hunter</h1>
-      <p>AI giúp lọc nhanh, bạn quyết định job nào đáng nộp.</p>
-    </div>
-    <div class="sync-box">
-      <button class="sync-button" id="syncNow" type="button">Đồng bộ job</button>
-      <span id="syncStatus">Đang tải dữ liệu...</span>
-    </div>
-  </header>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Điều hướng chính">
+      <div class="brand-mark">
+        <span>AI</span>
+        <strong>Job Hunter</strong>
+      </div>
+      <nav class="sidebar-nav">
+        <button type="button" data-sidebar-view="overview" class="sidebar-item" aria-label="Overview">
+          <span aria-hidden="true">⌘</span>
+          <strong>Overview</strong>
+        </button>
+        <button type="button" data-sidebar-view="inbox" class="sidebar-item active" aria-label="Inbox">
+          <span aria-hidden="true">□</span>
+          <strong>Inbox</strong>
+        </button>
+        <button type="button" data-sidebar-view="pipeline" class="sidebar-item" aria-label="Theo dõi">
+          <span aria-hidden="true">↳</span>
+          <strong>Theo dõi</strong>
+        </button>
+        <button type="button" data-sidebar-view="archive" class="sidebar-item" aria-label="Lưu trữ">
+          <span aria-hidden="true">◇</span>
+          <strong>Lưu trữ</strong>
+        </button>
+        <button type="button" data-sidebar-settings class="sidebar-item" aria-label="Settings">
+          <span aria-hidden="true">⚙</span>
+          <strong>Settings</strong>
+        </button>
+      </nav>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <div>
+          <h1>AI Job Hunter</h1>
+          <p>AI giúp lọc nhanh, bạn quyết định job nào đáng nộp.</p>
+        </div>
+        <div class="topbar-tools">
+          <label class="global-search">
+            <span>Tìm kiếm</span>
+            <input id="globalSearchBox" type="search" placeholder="Tìm nhanh job, công ty...">
+          </label>
+          <button class="icon-button" type="button" aria-label="Thông báo">•</button>
+          <div class="user-pill" aria-label="Người dùng">C</div>
+          <div class="sync-box">
+            <button class="sync-button" id="syncNow" type="button">Đồng bộ job</button>
+            <span id="syncStatus">Đang tải dữ liệu...</span>
+          </div>
+        </div>
+      </header>
 
   <main>
     <section class="summary" aria-label="Dashboard summary">
@@ -191,6 +230,8 @@
       <div id="sourceGroups" class="source-groups"></div>
     </details>
   </main>
+    </div>
+  </div>
 
   <dialog id="jobDetailDialog" class="review-dialog detail-drawer" aria-modal="true" aria-labelledby="reviewTitle" aria-describedby="drawerMeta">
     <form method="dialog">
@@ -211,6 +252,6 @@
     </form>
   </dialog>
 
-  <script src="./app.js?v=AIJH-PERSISTED-ACTIONS-20260722-2135" type="module"></script>
+  <script src="./app.js?v=AIJH-DARK-SAAS-20260722-2210" type="module"></script>
 </body>
 </html>
