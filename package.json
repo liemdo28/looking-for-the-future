@@ -1,0 +1,13 @@
+{
+  "name": "looking-for-the-future",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "npx wrangler pages dev .",
+    "deploy": "npx wrangler pages deploy . --project-name looking-for-the-future"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

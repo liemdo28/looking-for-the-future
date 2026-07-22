@@ -1,0 +1,240 @@
+[
+  {
+    "id": "adecco-sales-ops-specialist",
+    "rank": 1,
+    "score": 90,
+    "title": "Sales Operations Specialist",
+    "company": "Adecco client - leading Southeast Asian super-app",
+    "location": "Tân Phong, D7, HCMC",
+    "workMode": "On-site / Office",
+    "openStatus": "Apply visible",
+    "source": "Adecco",
+    "url": "https://www.adecco.com/en-vn/find-job/sales-operations-specialist-ho-chi-minh/jn-062026-199219",
+    "summary": "Sales/billing operations, Salesforce data integrity, SOP/knowledge base, stakeholder escalation.",
+    "match": [
+      "Trùng trực tiếp Sales Operations, billing process, CRM data quality, SOP/documentation.",
+      "Yêu cầu Salesforce, Excel/analytics, English, cross-department support đều có trong CV.",
+      "HCMC D7, full-time, salary khoảng 21M gross/month theo nguồn."
+    ],
+    "risks": [
+      "Yêu cầu SQL intermediate; CV chưa nêu SQL.",
+      "Môi trường super-app/startup có thể nhanh hơn consulting/recruitment."
+    ],
+    "applicationAngle": "Nhấn mạnh 8+ năm business support cho sales division, CRM/Dynamics data accuracy, payment follow-up, automated reporting và phối hợp Finance/Legal/Sales.",
+    "isNew": false
+  },
+  {
+    "id": "abinbev-sales-reporting-specialist",
+    "rank": 2,
+    "score": 88,
+    "title": "Sales Reporting Specialist",
+    "company": "AB InBev Southeast Asia",
+    "location": "Ho Chi Minh, Vietnam",
+    "workMode": "Full-time",
+    "openStatus": "Apply Now",
+    "source": "Monster/Foundit",
+    "url": "https://www.monster.com.vn/job/sales-reporting-specialist-ab-inbev-southeast-asia-ho-chi-minh-59324446",
+    "summary": "Commercial reporting, data automation, Power BI, Power Query, stakeholder support.",
+    "match": [
+      "Vai trò là single source of truth cho commercial reporting và business analysis.",
+      "Yêu cầu Power BI, Power Query, Microsoft Office, analytical/data skills rất gần với CV.",
+      "Stakeholder support và customer reporting demand phù hợp với kinh nghiệm management reporting."
+    ],
+    "risks": [
+      "Yêu cầu FMCG sales metrics; CV chưa có FMCG chính thức.",
+      "Power BI trong CV ở mức basic, cần chuẩn bị portfolio/dashboard sample."
+    ],
+    "applicationAngle": "Định vị là commercial reporting specialist đã tự động hóa báo cáo bằng Excel/Power Query, giảm manual work và lỗi dữ liệu.",
+    "isNew": false
+  },
+  {
+    "id": "heineken-sales-force-effectiveness",
+    "rank": 3,
+    "score": 86,
+    "title": "Sales Force Effectiveness Analyst",
+    "company": "HEINEKEN Vietnam",
+    "location": "Ho Chi Minh, Vietnam",
+    "workMode": "Full-time",
+    "openStatus": "Apply Now",
+    "source": "Monster/Foundit",
+    "url": "https://www.monster.com.vn/job/sales-force-effectiveness-analyst-heineken-vietnam-ho-chi-minh-59123211",
+    "summary": "Power BI dashboards, automated reporting, KPI metrics, sales team support, trend analysis.",
+    "match": [
+      "Trọng tâm dashboard, automated reporting, KPI, sales performance và hỗ trợ sales team.",
+      "Advanced Excel, Power Query, Power BI basic, training/support sales team đều khớp CV.",
+      "Yêu cầu 2-4 năm data/commercial analyst; ứng viên có 8+ năm operations/reporting."
+    ],
+    "risks": [
+      "Power BI advanced và SQL là yêu cầu cần bù.",
+      "FMCG/beverage market knowledge là lợi thế nhưng CV chưa có."
+    ],
+    "applicationAngle": "Tập trung vào KPI tracking, performance review facilitation, dashboard/reporting automation và training sales users đọc data insights.",
+    "isNew": false
+  },
+  {
+    "id": "datbike-sales-ops",
+    "rank": 4,
+    "score": 84,
+    "title": "Sales Operations Specialist",
+    "company": "Dat Bike",
+    "location": "Tan Phu, Ho Chi Minh City",
+    "workMode": "On-site",
+    "openStatus": "Apply now",
+    "source": "Dat Bike Careers",
+    "url": "https://jobs.dat.bike/open-positions/sales-operations-executive",
+    "summary": "Sales reports, fulfillment tracking, dealer reconciliation, cross-functional sales support.",
+    "match": [
+      "Sales operations, sales reports, payment/data reconciliation và cross-functional coordination.",
+      "Phù hợp với kinh nghiệm sales support, reporting, Finance coordination, process improvement.",
+      "Company career page có Apply now và contact recruiting team."
+    ],
+    "risks": [
+      "Có yếu tố fulfillment/dealer/material reconciliation ngoài nền tảng recruitment consulting.",
+      "Startup manufacturing/retail ops có thể yêu cầu onsite và xử lý vận hành thực địa."
+    ],
+    "applicationAngle": "Nhấn mạnh khả năng kiểm soát số liệu, payment follow-up, phối hợp Sales/Finance và xây SOP/report đúng hạn.",
+    "isNew": false
+  },
+  {
+    "id": "pmax-revops-manager",
+    "rank": 5,
+    "score": 79,
+    "title": "Revenue Operations (RevOps) Manager",
+    "company": "PMAX",
+    "location": "Ho Chi Minh",
+    "workMode": "Mon-Fri, 9am-6pm",
+    "openStatus": "Career page active",
+    "source": "PMAX Careers",
+    "url": "https://pmax.com.vn/careers/revops/",
+    "summary": "CRM hygiene, dashboards, funnel reporting, revenue operations, sales pipeline process.",
+    "match": [
+      "CRM hygiene, pipeline accuracy, workflow automation, dashboards và reporting cadences khớp mạnh.",
+      "Liên kết Marketing, Sales, Partnership, Client Success phù hợp cross-functional strengths.",
+      "HCMC, career page đang active."
+    ],
+    "risks": [
+      "Manager scope và GTM/funnel metrics có thể cao hơn vai trò hiện tại.",
+      "HubSpot/marketing automation chưa nêu trong CV."
+    ],
+    "applicationAngle": "Nộp nếu muốn bước lên RevOps; cover letter nên nối kinh nghiệm CRM/reporting/KPI sang revenue funnel và pipeline governance.",
+    "isNew": false
+  },
+  {
+    "id": "ghn-business-ops-data",
+    "rank": 6,
+    "score": 74,
+    "title": "Senior Business Operations & Data Specialist",
+    "company": "GiaoHangNhanh (GHN)",
+    "location": "Quận 10, TPHCM",
+    "workMode": "Full-time",
+    "openStatus": "Đến 16/09/2026",
+    "source": "BeBee",
+    "url": "https://bebee.com/vn/jobs/senior-business-operations-data-specialist-giaohangnhanh-ghn-ho-chi-minh-city--techmap_vn_4439820820",
+    "summary": "Business operations, dashboards, performance tracking, stakeholder coordination; yêu cầu SQL/Python cao hơn CV.",
+    "match": [
+      "Business operations, performance tracking, dashboards, stakeholder management rất phù hợp.",
+      "Deadline ứng tuyển hiển thị đến 16/09/2026, phù hợp điều kiện còn open.",
+      "Địa điểm Quận 10, TPHCM."
+    ],
+    "risks": [
+      "Yêu cầu SQL/Python và AI Agents cao hơn toolset CV.",
+      "Logistics/growth/data role có thể thiên technical hơn sales support."
+    ],
+    "applicationAngle": "Chỉ nên nộp nếu có thể bổ sung ví dụ Power Query/VBA/report automation như dạng self-built automation và đang học SQL.",
+    "isNew": false
+  },
+  {
+    "id": "heineken-commercial-analyst",
+    "rank": 7,
+    "score": 70,
+    "title": "Commercial Analyst",
+    "company": "HEINEKEN Vietnam",
+    "location": "Ho Chi Minh City",
+    "workMode": "Full-time",
+    "openStatus": "Apply visible",
+    "source": "LinkedIn",
+    "url": "https://www.linkedin.com/jobs/view/4429790651/",
+    "summary": "Commercial analytics, data operations, governance, cross-functional commercial insights; data science gap.",
+    "match": [
+      "Commercial analytics, data operations, data quality/governance, stakeholder engagement khớp một phần lớn.",
+      "Vai trò có Apply trên LinkedIn và vẫn hiển thị button apply khi kiểm tra.",
+      "FMCG commercial operations gần với sales performance/reporting trong CV."
+    ],
+    "risks": [
+      "Yêu cầu Python, SQL, ML/predictive models và data science khá cao.",
+      "Không phải lựa chọn đầu tiên nếu muốn vai trò ít technical."
+    ],
+    "applicationAngle": "Chỉ nên nộp khi CV/cover letter làm rõ phần data operations, dashboard refresh, data dictionary/SOP, và kế hoạch nâng cấp SQL/Python.",
+    "isNew": false
+  },
+  {
+    "id": "shopee-bi-operations",
+    "rank": 8,
+    "score": 64,
+    "title": "Business Intelligence Analyst (Operations)",
+    "company": "Shopee",
+    "location": "Ho Chi Minh City",
+    "workMode": "Full-time",
+    "openStatus": "Listed on careers search",
+    "source": "Shopee Careers",
+    "url": "https://careers.shopee.vn/job-detail/J01996893/1",
+    "summary": "Operations BI role; likely good for reporting/process, but technical BI depth must be checked before applying.",
+    "match": [
+      "Shopee Careers search result còn liệt kê role này tại HCMC gần ngày kiểm tra.",
+      "Operations BI thường có reporting, performance analysis, stakeholder requirements.",
+      "Phù hợp một phần với Excel/Power Query/reporting automation."
+    ],
+    "risks": [
+      "Trang job detail render bằng JavaScript nên nội dung chi tiết không trích xuất được đầy đủ trong research.",
+      "Cần kiểm tra SQL/BI tool requirements trước khi nộp."
+    ],
+    "applicationAngle": "Nếu apply, nhấn mạnh reporting automation và khả năng chuyển business requirement thành dashboard/KPI logic.",
+    "isNew": false
+  },
+  {
+    "id": "adecco-area-sales-manager",
+    "rank": 9,
+    "score": 58,
+    "title": "Area Sales Manager",
+    "company": "Adecco client - global logistics company",
+    "location": "Ho Chi Minh City",
+    "workMode": "Permanent",
+    "openStatus": "Apply visible",
+    "source": "Adecco",
+    "url": "https://www.adecco.com/en-vn/find-job/area-sales-manager-ho-chi-minh-city/jn-052026-197812",
+    "summary": "Sales strategy, pipeline forecast, sales force effectiveness; lệch về sales leadership nhiều hơn operations support.",
+    "match": [
+      "Có phần sales force effectiveness, pipeline forecast, sales strategy và project/business consulting.",
+      "HCMC, permanent, có Apply for job."
+    ],
+    "risks": [
+      "Vai trò thiên sales management/hunting hơn operations/reporting.",
+      "Yêu cầu xây và quản lý sales team; CV hiện nghiêng support/operations hơn sales leadership."
+    ],
+    "applicationAngle": "Không phải ưu tiên cao; chỉ nên nộp nếu ứng viên muốn chuyển sang sales leadership và có thêm ví dụ quản lý team/target.",
+    "isNew": false
+  },
+  {
+    "id": "sanofi-national-sales-lead",
+    "rank": 10,
+    "score": 54,
+    "title": "National Sales Lead",
+    "company": "Sanofi",
+    "location": "Ho Chi Minh City, Vietnam",
+    "workMode": "Full-time permanent",
+    "openStatus": "Apply now",
+    "source": "Sanofi Careers",
+    "url": "https://jobs.sanofi.com/en/job/ho-chi-minh-city/national-sales-lead/2649/34626848256",
+    "summary": "Sales operations and execution excellence at national level; seniority/leadership gap is significant.",
+    "match": [
+      "Có sales operations & execution excellence, planning, commercial analytics.",
+      "Official Sanofi career page hiển thị Apply now."
+    ],
+    "risks": [
+      "Seniority rất cao: national sales organization leadership.",
+      "Yêu cầu healthcare/vaccines sales leadership không có trong CV."
+    ],
+    "applicationAngle": "Đây là role tham khảo thấp trong danh sách; phù hợp hơn để hiểu thị trường sales ops leadership, không nên ưu tiên apply nếu chưa có sales leadership CV mạnh.",
+    "isNew": false
+  }
+]

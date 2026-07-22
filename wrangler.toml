@@ -1,0 +1,10 @@
+name = "looking-for-the-future"
+pages_build_output_dir = "."
+compatibility_date = "2026-07-22"
+
+# Optional production bindings:
+# JOB_SEARCH_ENDPOINT = "https://your-job-search-api.example.com/jobs"
+#
+# [[kv_namespaces]]
+# binding = "JOB_ACTIONS_KV"
+# id = "your-kv-id"

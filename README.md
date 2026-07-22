@@ -1,0 +1,51 @@
+# Looking for the Future
+
+Dashboard tối giản để theo dõi job match CV của Vân Cù (Cindy).
+
+## Tính năng
+
+- Bảng job match theo score từ 50%.
+- Button hành động cho từng job: Đã nộp, Từ chối, Ưa thích.
+- Tab tương ứng: Tất cả, Đã nộp, Từ chối, Ưa thích, Mới.
+- Lưu trạng thái trên trình duyệt bằng `localStorage`.
+- Tự sync mỗi 1 giờ và có nút Sync ngay.
+- Cloudflare Pages Functions sẵn sàng nhận job mới qua `JOB_SEARCH_ENDPOINT` và lưu action qua KV nếu cấu hình `JOB_ACTIONS_KV`.
+
+## Chạy local
+
+```bash
+npm install
+npm run start
+```
+
+## Deploy Cloudflare Pages
+
+```bash
+npm run deploy
+```
+
+Nếu muốn tự động tìm job mới bằng backend, cấu hình biến môi trường `JOB_SEARCH_ENDPOINT` trả JSON dạng:
+
+```json
+{
+  "jobs": [
+    {
+      "id": "unique-job-id",
+      "rank": 1,
+      "score": 82,
+      "title": "Sales Operations Specialist",
+      "company": "Company",
+      "location": "Ho Chi Minh City",
+      "workMode": "Hybrid",
+      "openStatus": "Apply visible",
+      "source": "Company Careers",
+      "url": "https://example.com/job",
+      "summary": "Short summary",
+      "match": ["Reason 1"],
+      "risks": ["Risk 1"],
+      "applicationAngle": "How to apply",
+      "isNew": true
+    }
+  ]
+}
+```

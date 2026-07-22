@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Looking for the Future</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Looking for the Future</h1>
+      <p>Dashboard job match cho Vân Cù (Cindy)</p>
+    </div>
+    <button class="sync-button" id="syncNow" type="button">Sync ngay</button>
+  </header>
+
+  <main>
+    <section class="summary" aria-label="Thông tin tổng quan">
+      <article>
+        <span id="totalJobs">0</span>
+        <p>Job phù hợp</p>
+      </article>
+      <article>
+        <span id="appliedCount">0</span>
+        <p>Đã nộp</p>
+      </article>
+      <article>
+        <span id="favoriteCount">0</span>
+        <p>Ưa thích</p>
+      </article>
+      <article>
+        <span id="lastSync">Chưa sync</span>
+        <p>Lần sync gần nhất</p>
+      </article>
+    </section>
+
+    <section class="profile">
+      <div>
+        <h2>Tiêu chí match</h2>
+        <p>Ưu tiên Sales Operations, Commercial Operations, RevOps, CRM, KPI/reporting, Excel, Power Query, Power BI, Salesforce/Dynamics, HCMC/Vietnam hoặc remote hợp lý. Ngưỡng hiển thị: từ 50%.</p>
+      </div>
+    </section>
+
+    <nav class="tabs" aria-label="Bộ lọc job">
+      <button class="tab active" type="button" data-tab="all">Tất cả</button>
+      <button class="tab" type="button" data-tab="applied">Đã nộp</button>
+      <button class="tab" type="button" data-tab="rejected">Từ chối</button>
+      <button class="tab" type="button" data-tab="favorite">Ưa thích</button>
+      <button class="tab" type="button" data-tab="new">Mới</button>
+    </nav>
+
+    <section class="toolbar" aria-label="Tìm kiếm và sắp xếp">
+      <input id="searchBox" type="search" placeholder="Tìm theo job, công ty, kỹ năng...">
+      <select id="sortBy" aria-label="Sắp xếp">
+        <option value="score">Score cao nhất</option>
+        <option value="company">Công ty A-Z</option>
+        <option value="status">Trạng thái</option>
+      </select>
+    </section>
+
+    <section id="jobList" class="job-list" aria-live="polite"></section>
+  </main>
+
+  <template id="jobCardTemplate">
+    <article class="job-card">
+      <div class="job-head">
+        <div>
+          <span class="rank"></span>
+          <h3></h3>
+          <p class="company"></p>
+        </div>
+        <strong class="score"></strong>
+      </div>
+      <p class="summary-text"></p>
+      <div class="meta"></div>
+      <div class="actions" aria-label="Hành động">
+        <button type="button" data-action="applied">Đã nộp</button>
+        <button type="button" data-action="rejected">Từ chối</button>
+        <button type="button" data-action="favorite">Ưa thích</button>
+        <a target="_blank" rel="noopener">Apply</a>
+      </div>
+      <details>
+        <summary>Xem chi tiết</summary>
+        <div class="details-grid">
+          <div>
+            <h4>Vì sao match</h4>
+            <ul class="match-list"></ul>
+          </div>
+          <div>
+            <h4>Gap/rủi ro</h4>
+            <ul class="risk-list"></ul>
+          </div>
+        </div>
+        <p class="application-angle"></p>
+        <p class="source-note"></p>
+      </details>
+    </article>
+  </template>
+
+  <script src="./app.js" type="module"></script>
+</body>
+</html>
