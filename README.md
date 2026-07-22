@@ -37,6 +37,16 @@ Cloudflare Pages Git settings:
 npm run deploy
 ```
 
+## Deploy Workers Static Assets
+
+Use this only if you want the `workers.dev` URL to serve the same dashboard:
+
+```bash
+npm run deploy:worker
+```
+
+Worker deploy uses `wrangler.worker.toml`; Pages deploy uses `wrangler.toml`.
+
 Nếu muốn tự động tìm job mới bằng backend, cấu hình biến môi trường `JOB_SEARCH_ENDPOINT` trả JSON dạng:
 
 ```json

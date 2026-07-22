@@ -6,7 +6,8 @@
   "scripts": {
     "build": "node scripts/build-pages.js",
     "start": "npx wrangler pages dev .",
-    "deploy": "npm run build && npx wrangler pages deploy dist --project-name looking-for-the-future"
+    "deploy": "npm run build && npx wrangler pages deploy dist --project-name looking-for-the-future",
+    "deploy:worker": "npm run build && npx wrangler deploy --config wrangler.worker.toml"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"
