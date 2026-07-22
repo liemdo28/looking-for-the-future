@@ -4,7 +4,9 @@ const state = {
   actions: readActions(),
   activeTab: "all",
   query: "",
-  sortBy: "score"
+  sortBy: "score",
+  pageSize: 20,
+  currentPage: 1
 };
 
 const syncIntervalMs = 60 * 60 * 1000;
@@ -14,6 +16,10 @@ const els = {
   tabs: [...document.querySelectorAll(".tab")],
   search: document.querySelector("#searchBox"),
   sort: document.querySelector("#sortBy"),
+  pageSize: document.querySelector("#pageSize"),
+  prevPage: document.querySelector("#prevPage"),
+  nextPage: document.querySelector("#nextPage"),
+  pageInfo: document.querySelector("#pageInfo"),
   syncNow: document.querySelector("#syncNow"),
   totalJobs: document.querySelector("#totalJobs"),
   appliedCount: document.querySelector("#appliedCount"),
@@ -35,6 +41,7 @@ function bindEvents() {
   els.tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       state.activeTab = tab.dataset.tab;
+      state.currentPage = 1;
       els.tabs.forEach((item) => item.classList.toggle("active", item === tab));
       render();
     });
@@ -42,11 +49,29 @@ function bindEvents() {
 
   els.search.addEventListener("input", (event) => {
     state.query = event.target.value.trim().toLowerCase();
+    state.currentPage = 1;
     render();
   });
 
   els.sort.addEventListener("change", (event) => {
     state.sortBy = event.target.value;
+    state.currentPage = 1;
+    render();
+  });
+
+  els.pageSize.addEventListener("change", (event) => {
+    state.pageSize = Number(event.target.value);
+    state.currentPage = 1;
+    render();
+  });
+
+  els.prevPage.addEventListener("click", () => {
+    state.currentPage = Math.max(1, state.currentPage - 1);
+    render();
+  });
+
+  els.nextPage.addEventListener("click", () => {
+    state.currentPage += 1;
     render();
   });
 
@@ -112,14 +137,19 @@ function makeId(job) {
 function render() {
   renderSummary();
   const jobs = filteredJobs();
+  const totalPages = Math.max(1, Math.ceil(jobs.length / state.pageSize));
+  state.currentPage = Math.min(state.currentPage, totalPages);
+  const start = (state.currentPage - 1) * state.pageSize;
+  const visibleJobs = jobs.slice(start, start + state.pageSize);
+  renderPagination(jobs.length, totalPages);
   els.list.innerHTML = "";
 
-  if (!jobs.length) {
+  if (!visibleJobs.length) {
     els.list.innerHTML = `<div class="empty">Không có job trong tab này.</div>`;
     return;
   }
 
-  jobs.forEach((job) => {
+  visibleJobs.forEach((job) => {
     const node = els.template.content.cloneNode(true);
     const card = node.querySelector(".job-card");
     const status = getStatus(job.id);
@@ -155,6 +185,14 @@ function render() {
 
     els.list.appendChild(node);
   });
+}
+
+function renderPagination(total, totalPages) {
+  const start = total ? (state.currentPage - 1) * state.pageSize + 1 : 0;
+  const end = Math.min(total, state.currentPage * state.pageSize);
+  els.pageInfo.textContent = `Trang ${state.currentPage}/${totalPages} · ${start}-${end}/${total}`;
+  els.prevPage.disabled = state.currentPage <= 1;
+  els.nextPage.disabled = state.currentPage >= totalPages;
 }
 
 function renderSummary() {

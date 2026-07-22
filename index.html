@@ -68,6 +68,18 @@
         <option value="company">Công ty A-Z</option>
         <option value="status">Trạng thái</option>
       </select>
+      <select id="pageSize" aria-label="Số kết quả mỗi trang">
+        <option value="10">10 / trang</option>
+        <option value="20" selected>20 / trang</option>
+        <option value="50">50 / trang</option>
+        <option value="100">100 / trang</option>
+      </select>
+    </section>
+
+    <section class="pagination" aria-label="Phân trang">
+      <button id="prevPage" type="button">Trước</button>
+      <span id="pageInfo">Trang 1/1</span>
+      <button id="nextPage" type="button">Sau</button>
     </section>
 
     <section id="jobList" class="job-list" aria-live="polite"></section>
