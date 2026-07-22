@@ -7,8 +7,7 @@ import {
   getSourceRegistry,
   getSourceResults,
   getSyncRun,
-  retryFailedSources,
-  runImmediateSourceSnapshot
+  retryFailedSources
 } from "./sync-engine.js";
 
 const SYNC_VERSION = "AIJH-SYNC-ENGINE-20260722-1845";
@@ -77,7 +76,7 @@ export default {
             jobs: persisted.jobs,
             lastRun: persisted.lastRun
           }
-        : await runImmediateSourceSnapshot(env);
+        : await runJobSourceSync(env);
       const scheduledSync = await readScheduledSync(env);
       return Response.json({
         checkedAt: new Date().toISOString(),
