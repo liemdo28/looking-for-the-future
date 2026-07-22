@@ -1,23 +1,23 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <!-- AIJH-AUTOAPPLY-20260722-0520 -->
+  <!-- AIJH-DECISION-UI-20260722-1225 -->
   <meta charset="utf-8">
-  <meta name="app-version" content="AIJH-AUTOAPPLY-20260722-0520">
+  <meta name="app-version" content="AIJH-DECISION-UI-20260722-1225">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Job Hunter</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./styles.css?v=AIJH-AUTOAPPLY-20260722-0520">
+  <link rel="stylesheet" href="./styles.css?v=AIJH-DECISION-UI-20260722-1225">
 </head>
 <body>
   <header class="topbar">
     <div>
       <h1>AI Job Hunter</h1>
-      <p>AI ranks jobs, you decide the next action.</p>
+      <p>AI giúp lọc nhanh, bạn quyết định job nào đáng nộp.</p>
     </div>
     <div class="sync-box">
-      <button class="sync-button" id="syncNow" type="button">Sync jobs</button>
-      <span id="syncStatus">Loading data...</span>
+      <button class="sync-button" id="syncNow" type="button">Đồng bộ job</button>
+      <span id="syncStatus">Đang tải dữ liệu...</span>
     </div>
   </header>
 
@@ -25,25 +25,25 @@
     <section class="summary" aria-label="Dashboard summary">
       <article>
         <span id="inboxCount">-</span>
-        <p>Inbox jobs</p>
+        <p>Inbox</p>
       </article>
       <article>
         <span id="excellentCount">-</span>
-        <p>Excellent match</p>
+        <p>Phù hợp cao</p>
       </article>
       <article>
         <span id="pipelineCount">-</span>
-        <p>In pipeline</p>
+        <p>Đang xử lý</p>
       </article>
       <article>
         <span id="newFoundCount">-</span>
-        <p>New jobs found</p>
+        <p>Mới hôm nay</p>
       </article>
     </section>
 
     <section id="recommendationPanel" class="profile is-hidden">
       <div>
-        <h2>AI recommendation</h2>
+        <h2>Gợi ý từ AI</h2>
         <p id="recommendationText"></p>
       </div>
     </section>
@@ -57,24 +57,50 @@
 
       <div class="filter-row">
         <label>
-          Match
+          Mức phù hợp
           <select id="matchFilter" aria-label="AI match filter">
-            <option value="all">All</option>
-            <option value="excellent">Excellent</option>
-            <option value="good">Good</option>
-            <option value="possible">Possible</option>
+            <option value="all">Tất cả</option>
+            <option value="excellent">Phù hợp cao</option>
+            <option value="good">Phù hợp tốt</option>
+            <option value="possible">Có thể phù hợp</option>
           </select>
         </label>
         <label>
-          Sort
+          Địa điểm
+          <select id="locationFilter" aria-label="Lọc theo địa điểm">
+            <option value="all">Tất cả</option>
+            <option value="exact">Có địa chỉ/quận rõ</option>
+            <option value="city">Chỉ biết thành phố</option>
+            <option value="multiple">Nhiều văn phòng</option>
+            <option value="ai">Gợi ý từ AI</option>
+            <option value="unknown">Chưa xác định</option>
+          </select>
+        </label>
+        <label>
+          Hình thức
+          <select id="workModeFilter" aria-label="Lọc theo hình thức làm việc">
+            <option value="all">Tất cả</option>
+            <option value="onsite">On-site / Hybrid</option>
+            <option value="remote">Remote</option>
+            <option value="contract">Contract</option>
+          </select>
+        </label>
+        <label>
+          Nguồn
+          <select id="sourceFilter" aria-label="Lọc theo nguồn">
+            <option value="all">Tất cả nguồn</option>
+          </select>
+        </label>
+        <label>
+          Sắp xếp
           <select id="sortBy" aria-label="Sort jobs">
-            <option value="score">Score high to low</option>
-            <option value="company">Company A-Z</option>
-            <option value="status">Workflow status</option>
+            <option value="score">Điểm cao trước</option>
+            <option value="company">Công ty A-Z</option>
+            <option value="status">Trạng thái</option>
           </select>
         </label>
         <label>
-          Per page
+          Mỗi trang
           <select id="pageSize" aria-label="Jobs per page">
             <option value="10">10</option>
             <option value="20" selected>20</option>
@@ -84,22 +110,22 @@
         </label>
       </div>
 
-      <input id="searchBox" type="search" placeholder="Search job, company, skill, source...">
+      <input id="searchBox" type="search" placeholder="Tìm job, công ty, kỹ năng, nguồn...">
     </section>
 
     <section class="pagination" aria-label="Pagination">
-      <button id="prevPage" type="button">Previous</button>
-      <span id="pageInfo">Page 1/1</span>
-      <button id="nextPage" type="button">Next</button>
+      <button id="prevPage" type="button">Trước</button>
+      <span id="pageInfo">Trang 1/1</span>
+      <button id="nextPage" type="button">Sau</button>
     </section>
 
     <section id="jobList" class="job-list" aria-live="polite"></section>
 
     <details class="source-panel">
-      <summary>Settings and source pool <span id="sourceCount">Loading sources</span></summary>
-      <div class="settings-grid" aria-label="Auto Apply settings">
+      <summary>Cài đặt và nguồn tìm kiếm <span id="sourceCount">Đang tải nguồn</span></summary>
+      <div class="settings-grid" aria-label="Cài đặt chuẩn bị hồ sơ">
         <label>
-          Auto Apply threshold
+          Ngưỡng chuẩn bị hồ sơ
           <select id="autoApplyThreshold">
             <option value="80">80%</option>
             <option value="85" selected>85%</option>
@@ -109,51 +135,51 @@
           </select>
         </label>
         <label>
-          Approved resume
+          CV đã duyệt
           <select id="approvedResume">
             <option value="cindy-sales-ops-resume" selected>Cindy Sales Ops Resume</option>
-            <option value="">No approved resume</option>
+            <option value="">Chưa chọn CV đã duyệt</option>
           </select>
         </label>
         <label>
-          City preference
+          Ưu tiên thành phố
           <select id="cityPreference">
             <option value="hcm" selected>HCM / Remote</option>
-            <option value="any">Any city</option>
-            <option value="remote">Remote only</option>
+            <option value="any">Mọi thành phố</option>
+            <option value="remote">Chỉ remote</option>
           </select>
         </label>
         <label>
-          Work mode preference
+          Ưu tiên hình thức
           <select id="workModePreference">
-            <option value="any" selected>Any mode</option>
+            <option value="any" selected>Mọi hình thức</option>
             <option value="onsite">On-site / Hybrid</option>
             <option value="remote">Remote</option>
           </select>
         </label>
       </div>
-      <p>Minimum match threshold: 50%. Auto Apply only appears for active jobs that pass the selected threshold, location preferences, resume readiness, link safety, and mandatory-question checks.</p>
+      <p>Ngưỡng match tối thiểu: 50%. Tính năng chuẩn bị hồ sơ chỉ hiện khi job đủ điểm, link là URL job cụ thể, job còn active, phù hợp địa điểm/hình thức, có CV đã duyệt và không có câu hỏi bắt buộc chưa xử lý.</p>
       <div id="sourceGroups" class="source-groups"></div>
     </details>
   </main>
 
-  <dialog id="autoApplyDialog" class="review-dialog">
+  <dialog id="jobDetailDialog" class="review-dialog detail-drawer">
     <form method="dialog">
       <div class="dialog-head">
         <div>
-          <p class="eyebrow">Review Auto Apply</p>
-          <h2 id="reviewTitle">Review application</h2>
+          <p class="eyebrow" id="dialogEyebrow">Chi tiết job</p>
+          <h2 id="reviewTitle">Xem hồ sơ nộp</h2>
         </div>
-        <button class="ghost-button" value="cancel" type="submit">Close</button>
+        <button class="ghost-button" value="cancel" type="submit">Đóng</button>
       </div>
       <div id="reviewContent" class="review-content"></div>
       <div class="dialog-actions">
-        <a id="reviewOpenLink" href="#" target="_blank" rel="noopener">Open application</a>
-        <button id="confirmAutoApply" type="button">Confirm and submit</button>
+        <a id="reviewOpenLink" href="#" target="_blank" rel="noopener">Mở trang ứng tuyển</a>
+        <button id="confirmAutoApply" type="button">Đánh dấu đã nộp</button>
       </div>
     </form>
   </dialog>
 
-  <script src="./app.js?v=AIJH-AUTOAPPLY-20260722-0520" type="module"></script>
+  <script src="./app.js?v=AIJH-DECISION-UI-20260722-1225" type="module"></script>
 </body>
 </html>
