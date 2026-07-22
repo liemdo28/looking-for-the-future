@@ -1,7 +1,9 @@
 import { INDEX_HTML } from "./generated-index.js";
 
-const SYNC_VERSION = "AIJH-OFFICIAL-SOURCE-SYNC-20260722-1910";
+const SYNC_VERSION = "AIJH-PERSISTED-ACTIONS-20260722-2135";
 const ACTION_STORE_KEY = "actions:v1:shared-dashboard";
+const ACTION_PREFIX = "action:v1:";
+const NOTE_PREFIX = "note:v1:";
 const TARGET_ROLE_FAMILIES = [
   "Sales Operations",
   "Commercial Operations",
@@ -96,9 +98,21 @@ async function readActionStore(env) {
   };
   if (!env.JOB_ACTIONS_KV) return empty;
   const stored = await env.JOB_ACTIONS_KV.get(ACTION_STORE_KEY, "json").catch(() => null);
+  const [actions, notes] = await Promise.all([
+    readKvPrefix(env.JOB_ACTIONS_KV, ACTION_PREFIX),
+    readKvPrefix(env.JOB_ACTIONS_KV, NOTE_PREFIX)
+  ]);
   return {
     ...empty,
     ...(stored && typeof stored === "object" ? stored : {}),
+    actions: {
+      ...((stored && typeof stored === "object" && stored.actions) || {}),
+      ...actions
+    },
+    notes: {
+      ...((stored && typeof stored === "object" && stored.notes) || {}),
+      ...notes
+    },
     ok: true,
     persisted: true
   };
@@ -106,42 +120,52 @@ async function readActionStore(env) {
 
 async function updateActionStore(env, payload) {
   const now = new Date().toISOString();
-  const store = await readActionStore(env);
-  const next = {
-    ok: true,
-    persisted: Boolean(env.JOB_ACTIONS_KV),
-    actions: { ...(store.actions || {}) },
-    notes: { ...(store.notes || {}) },
-    updatedAt: now
-  };
+  const persisted = Boolean(env.JOB_ACTIONS_KV);
 
   if (payload.type === "note") {
-    if (!payload.jobId) return { ok: false, persisted: next.persisted, error: "Missing jobId" };
+    if (!payload.jobId) return { ok: false, persisted, error: "Missing jobId" };
     const value = String(payload.note || "").trim();
+    const key = `${NOTE_PREFIX}${payload.jobId}`;
+    let notePayload = null;
     if (value) {
-      next.notes[payload.jobId] = {
+      notePayload = {
         note: value,
         updatedAt: payload.updatedAt || now
       };
-    } else {
-      delete next.notes[payload.jobId];
+      if (env.JOB_ACTIONS_KV) await env.JOB_ACTIONS_KV.put(key, JSON.stringify(notePayload));
+    } else if (env.JOB_ACTIONS_KV) {
+      await env.JOB_ACTIONS_KV.delete(key);
     }
+    return { ok: true, persisted, jobId: payload.jobId, note: notePayload, updatedAt: now };
   } else {
-    if (!payload.jobId) return { ok: false, persisted: next.persisted, error: "Missing jobId" };
+    if (!payload.jobId) return { ok: false, persisted, error: "Missing jobId" };
     const action = {
       ...payload,
       updatedAt: payload.updatedAt || now
     };
     delete action.type;
-    if (action.status === "none") delete next.actions[payload.jobId];
-    else next.actions[payload.jobId] = action;
+    const key = `${ACTION_PREFIX}${payload.jobId}`;
+    if (env.JOB_ACTIONS_KV) {
+      if (action.status === "none") await env.JOB_ACTIONS_KV.delete(key);
+      else await env.JOB_ACTIONS_KV.put(key, JSON.stringify(action));
+    }
+    return { ok: true, persisted, jobId: payload.jobId, action: action.status === "none" ? null : action, updatedAt: now };
   }
-
-  if (env.JOB_ACTIONS_KV) {
-    await env.JOB_ACTIONS_KV.put(ACTION_STORE_KEY, JSON.stringify(next));
-  }
-  return next;
 }
+
+async function readKvPrefix(kv, prefix) {
+  const rows = {};
+  let cursor;
+  do {
+    const page = await kv.list({ prefix, cursor });
+    await Promise.all(page.keys.map(async (item) => {
+      const value = await kv.get(item.name, "json").catch(() => null);
+      if (value && typeof value === "object") rows[item.name.slice(prefix.length)] = value;
+    }));
+    cursor = page.list_complete ? undefined : page.cursor;
+  } while (cursor);
+  return rows;
+  }
 
 async function loadSources(request, env) {
   const sourceUrl = new URL("/data/sources.json", request.url);
