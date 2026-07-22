@@ -9,8 +9,8 @@
 <body>
   <header class="topbar">
     <div>
-      <h1>Looking for the Future</h1>
-      <p>Dashboard job match cho Vân Cù (Cindy)</p>
+      <h1>AI Job Hunter</h1>
+      <p>AI chọn việc phù hợp, bạn chỉ cần quyết định bước tiếp theo.</p>
     </div>
     <button class="sync-button" id="syncNow" type="button">Sync ngay</button>
   </header>
@@ -19,46 +19,42 @@
     <section class="summary" aria-label="Thông tin tổng quan">
       <article>
         <span id="totalJobs">0</span>
-        <p>Job phù hợp</p>
+        <p>Today's Jobs</p>
+      </article>
+      <article>
+        <span id="excellentCount">0</span>
+        <p>Excellent</p>
       </article>
       <article>
         <span id="appliedCount">0</span>
-        <p>Đã nộp</p>
+        <p>Applied</p>
       </article>
       <article>
-        <span id="favoriteCount">0</span>
-        <p>Ưa thích</p>
-      </article>
-      <article>
-        <span id="lastSync">Chưa sync</span>
-        <p>Lần sync gần nhất</p>
+        <span id="needReviewCount">0</span>
+        <p>Need Review</p>
       </article>
     </section>
 
     <section class="profile">
       <div>
-        <h2>Tiêu chí match</h2>
-        <p>Ưu tiên Sales Operations, Commercial Operations, RevOps, CRM, KPI/reporting, Excel, Power Query, Power BI, Salesforce/Dynamics, HCMC/Vietnam hoặc remote hợp lý. Ngưỡng hiển thị: từ 50%.</p>
+        <h2>AI Recommendation</h2>
+        <p>Apply nhanh cho job Excellent/Good có Sales Ops, CRM, KPI/reporting, billing, automation, Dynamics/Salesforce và HCMC/remote. Job đã xử lý sẽ tự ẩn khỏi inbox mặc định.</p>
       </div>
-    </section>
-
-    <section class="source-panel" aria-label="Nguồn tìm kiếm">
-      <div class="section-head">
-        <div>
-          <h2>Nguồn tìm kiếm</h2>
-          <p>Source pool dùng cho sync/tìm job mới. Job nào được đưa vào dashboard vẫn phải có link apply/source và match từ 50%.</p>
-        </div>
-        <span id="sourceCount">0 nguồn</span>
-      </div>
-      <div id="sourceGroups" class="source-groups"></div>
     </section>
 
     <nav class="tabs" aria-label="Bộ lọc job">
-      <button class="tab active" type="button" data-tab="all">Tất cả</button>
-      <button class="tab" type="button" data-tab="applied">Đã nộp</button>
-      <button class="tab" type="button" data-tab="rejected">Từ chối</button>
-      <button class="tab" type="button" data-tab="favorite">Ưa thích</button>
-      <button class="tab" type="button" data-tab="new">Mới</button>
+      <button class="tab active" type="button" data-tab="inbox">New + Interested</button>
+      <button class="tab" type="button" data-tab="all">All</button>
+      <button class="tab" type="button" data-tab="excellent">Excellent</button>
+      <button class="tab" type="button" data-tab="good">Good</button>
+      <button class="tab" type="button" data-tab="possible">Possible</button>
+      <button class="tab" type="button" data-tab="interested">Interested</button>
+      <button class="tab" type="button" data-tab="applied">Applied</button>
+      <button class="tab" type="button" data-tab="interview">Interview</button>
+      <button class="tab" type="button" data-tab="offer">Offer</button>
+      <button class="tab" type="button" data-tab="later">Later</button>
+      <button class="tab" type="button" data-tab="rejected">Rejected</button>
+      <button class="tab" type="button" data-tab="archived">Archived</button>
     </nav>
 
     <section class="toolbar" aria-label="Tìm kiếm và sắp xếp">
@@ -66,7 +62,7 @@
       <select id="sortBy" aria-label="Sắp xếp">
         <option value="score">Score cao nhất</option>
         <option value="company">Công ty A-Z</option>
-        <option value="status">Trạng thái</option>
+        <option value="status">Pipeline</option>
       </select>
       <select id="pageSize" aria-label="Số kết quả mỗi trang">
         <option value="10">10 / trang</option>
@@ -83,42 +79,86 @@
     </section>
 
     <section id="jobList" class="job-list" aria-live="polite"></section>
+
+    <section class="source-panel" aria-label="Nguồn tìm kiếm">
+      <div class="section-head">
+        <div>
+          <h2>Nguồn tìm kiếm</h2>
+          <p>Source pool dùng cho sync/tìm job mới. Job nào được đưa vào dashboard vẫn phải có link apply/source và match từ 50%.</p>
+        </div>
+        <span id="sourceCount">0 nguồn</span>
+      </div>
+      <div id="sourceGroups" class="source-groups"></div>
+    </section>
   </main>
 
   <template id="jobCardTemplate">
     <article class="job-card">
-      <div class="job-head">
+      <div class="ai-row">
         <div>
-          <span class="rank"></span>
-          <h3>
-            <span class="job-title"></span>
-            <span class="source-badge"></span>
-            <span class="title-location"></span>
-          </h3>
-          <p class="company"></p>
+          <span class="ai-label"></span>
+          <strong class="score"></strong>
         </div>
-        <strong class="score"></strong>
+        <span class="pipeline-status"></span>
       </div>
-      <p class="summary-text"></p>
-      <div class="meta"></div>
-      <div class="actions" aria-label="Hành động">
-        <button type="button" data-action="applied">Đã nộp</button>
-        <button type="button" data-action="rejected">Từ chối</button>
-        <button type="button" data-action="favorite">Ưa thích</button>
-        <a target="_blank" rel="noopener">Apply</a>
+
+      <div class="job-head">
+        <span class="rank"></span>
+        <h3><span class="job-title"></span></h3>
+        <p class="company-line">
+          <span class="company"></span>
+          <span class="dot">·</span>
+          <span class="title-location"></span>
+          <span class="dot">·</span>
+          <span class="work-mode"></span>
+        </p>
+        <p class="source-line">
+          <span class="source-badge"></span>
+          <span class="dot">·</span>
+          <span class="open-status"></span>
+        </p>
       </div>
-      <details>
-        <summary>Xem chi tiết</summary>
+
+      <div class="ai-summary">
+        <strong>AI says</strong>
+        <p class="summary-text"></p>
+      </div>
+
+      <div class="focus-block">
+        <div>
+          <strong>Resume Focus</strong>
+          <div class="resume-focus"></div>
+        </div>
+        <button type="button" class="copy-prompt">Copy Prompt</button>
+      </div>
+
+      <div class="actions" aria-label="Workflow actions">
+        <a target="_blank" rel="noopener">Apply Now</a>
+        <button type="button" data-action="interested">Interested</button>
+        <button type="button" data-action="applied">Applied</button>
+        <button type="button" data-action="interview">Interview</button>
+        <button type="button" data-action="offer">Offer</button>
+        <button type="button" data-action="later">Later</button>
+        <button type="button" data-action="rejected">Reject</button>
+        <button type="button" data-action="archived">Archive</button>
+      </div>
+
+      <div class="quick-preview">
+        <strong>Quick Preview</strong>
         <div class="details-grid">
           <div>
-            <h4>Vì sao match</h4>
+            <h4>Why Match</h4>
             <ul class="match-list"></ul>
           </div>
           <div>
-            <h4>Gap/rủi ro</h4>
+            <h4>Gap</h4>
             <ul class="risk-list"></ul>
           </div>
         </div>
+      </div>
+
+      <details>
+        <summary>More detail</summary>
         <p class="application-angle"></p>
         <p class="source-note"></p>
       </details>
