@@ -1,4 +1,5 @@
-const APP_VERSION = "AIJH-DECISION-UI-20260722-1225";
+const APP_VERSION = "AIJH-INBOX-RESET-20260722-1300";
+const HISTORY_RESET_VERSION = "job-actions-reset-20260722-1300";
 const AI_LOCATION_DISCLAIMER = "Địa chỉ này do AI tổng hợp từ thông tin công khai và có thể không phải địa điểm làm việc chính xác. Hãy kiểm tra lại trong JD hoặc website chính thức.";
 const AI_CONTENT_DISCLAIMER = "AI có thể sai. Hãy kiểm tra JD và nguồn chính thức trước khi nộp.";
 const APPROVED_RESUMES = {
@@ -8,6 +9,8 @@ const BLACKLISTED_COMPANIES = [];
 const ICONS = {
   "map-pin": `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.8-8 12-8 12S4 14.8 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>`
 };
+
+resetTestHistory();
 
 const state = {
   jobs: [],
@@ -873,6 +876,12 @@ function readActions() {
 
 function persistActions() {
   localStorage.setItem("jobActions", JSON.stringify(state.actions));
+}
+
+function resetTestHistory() {
+  if (localStorage.getItem("jobHistoryResetVersion") === HISTORY_RESET_VERSION) return;
+  localStorage.removeItem("jobActions");
+  localStorage.setItem("jobHistoryResetVersion", HISTORY_RESET_VERSION);
 }
 
 function normalizeAction(value) {
