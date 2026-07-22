@@ -304,7 +304,8 @@ label {
 }
 
 input,
-select {
+select,
+textarea {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 10px;
@@ -313,6 +314,11 @@ select {
   background: #fff;
   color: var(--text);
   font-size: 14px;
+}
+
+textarea {
+  resize: vertical;
+  line-height: 1.5;
 }
 
 .pagination {
@@ -396,10 +402,10 @@ select {
 .job-card {
   position: relative;
   min-height: 0;
-  padding: 10px;
+  padding: 9px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   cursor: pointer;
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
   transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
@@ -421,6 +427,43 @@ select {
   align-items: flex-start;
   justify-content: space-between;
   gap: 10px;
+}
+
+.card-status-stack {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+}
+
+.decision-badge {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #f8fafc;
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.decision-apply {
+  color: #047857;
+  border-color: #bbf7d0;
+  background: #ecfdf5;
+}
+
+.decision-consider {
+  color: #b45309;
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
+.decision-skip {
+  color: #b91c1c;
+  border-color: #fecaca;
+  background: #fef2f2;
 }
 
 .ai-label {
@@ -537,7 +580,7 @@ select {
   gap: 8px;
   align-items: start;
   margin: 4px 0;
-  padding: 6px;
+  padding: 5px 6px;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: #f8fafc;
@@ -602,7 +645,7 @@ select {
 }
 
 .ai-summary {
-  padding: 6px 8px;
+  padding: 6px 7px;
   border-radius: 10px;
   background: #f8fbff;
   border: 1px solid #dbeafe;
@@ -627,6 +670,17 @@ select {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+
+.card-resume-focus {
+  margin-top: 5px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.card-resume-focus span {
+  background: #fff;
+  font-size: 11px;
 }
 
 .summary-text b {
@@ -737,10 +791,14 @@ select {
 
 .actions {
   display: grid;
-  grid-template-columns: 1.25fr 0.85fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 7px;
   margin-top: auto;
   align-items: stretch;
+}
+
+.actions:empty {
+  display: none;
 }
 
 .actions button,
@@ -782,10 +840,23 @@ select {
 
 .overflow-menu summary {
   list-style: none;
+  font-size: 0;
+  width: 34px;
+  min-height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .overflow-menu summary::-webkit-details-marker {
   display: none;
+}
+
+.overflow-menu summary::before {
+  content: "...";
+  font-size: 16px;
+  line-height: 1;
 }
 
 .overflow-menu[open] button {
@@ -1083,6 +1154,41 @@ li {
 .detail-section h3 {
   margin-bottom: 10px;
   font-size: 16px;
+}
+
+.decision-copy {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.pipeline-detail {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.pipeline-detail span {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  background: #f8fafc;
+  font-size: 12px;
+}
+
+.pipeline-detail span.current {
+  color: var(--accent);
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  font-weight: 700;
+}
+
+.personal-notes {
+  min-height: 96px;
+  background: #fbfdff;
 }
 
 .secondary-inline {

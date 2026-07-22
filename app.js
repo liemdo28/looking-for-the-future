@@ -377,6 +377,8 @@ function renderJob(job) {
   card.querySelector(".ai-label").textContent = match.label;
   card.querySelector(".score").textContent = `${job.score}%`;
   card.querySelector(".score").setAttribute("aria-label", `Điểm phù hợp ${job.score} phần trăm`);
+  card.querySelector(".decision-badge").textContent = decisionLabel(job.score);
+  card.querySelector(".decision-badge").className = `decision-badge decision-${decisionBucket(job.score)}`;
   card.querySelector(".pipeline-status").textContent = statusLabel(status, action);
   card.querySelector(".pipeline-status").classList.add(`status-${status}`);
   card.querySelector(".job-title").textContent = toTitleCase(job.title);
@@ -395,7 +397,8 @@ function renderJob(job) {
   card.querySelector(".link-warning").textContent = linkQualityWarning(linkQuality(job.url));
   card.querySelector(".link-quality").textContent = linkQualityBadge(linkQuality(job.url));
   card.querySelector(".summary-text").innerHTML = aiSummaryHtml(job);
-  card.querySelector(".ai-disclaimer").textContent = "✨ AI phân tích • Kiểm tra lại trước khi nộp";
+  card.querySelector(".card-resume-focus").innerHTML = resumeFocus(job).slice(0, 4).map((item) => `<span>${escapeHtml(item)}</span>`).join("");
+  card.querySelector(".ai-disclaimer").textContent = AI_CONTENT_DISCLAIMER;
   renderStageRail(card.querySelector(".stage-rail"), status);
 
   renderActions(card.querySelector(".actions"), job, status);
@@ -423,7 +426,10 @@ function createJobCard() {
         <span class="ai-label"></span>
         <strong class="score"></strong>
       </div>
-      <span class="pipeline-status"></span>
+      <div class="card-status-stack">
+        <span class="decision-badge"></span>
+        <span class="pipeline-status"></span>
+      </div>
     </div>
     <div class="job-head">
       <span class="rank"></span>
@@ -451,8 +457,9 @@ function createJobCard() {
     </div>
     <div class="stage-rail" aria-label="Pipeline stage"></div>
     <div class="ai-summary">
-      <strong>✨ Gợi ý từ AI</strong>
+      <strong>AI Summary</strong>
       <p class="summary-text"></p>
+      <div class="resume-focus card-resume-focus" aria-label="Resume focus"></div>
       <p class="ai-disclaimer"></p>
     </div>
     <div class="actions" aria-label="Job actions"></div>
@@ -468,38 +475,9 @@ function renderActions(container, job, status) {
   container.innerHTML = "";
 
   if (["none", "interested", "later"].includes(status)) {
-    addLink(container, applicationLinkLabel(job), job.url, linkQuality(job.url));
     addButton(container, "Quan tâm", "interested", job);
-    return;
+    addButton(container, "Không phù hợp", "rejected", job);
   }
-
-  addLink(container, applicationLinkLabel(job), job.url, linkQuality(job.url));
-
-  if (status === "applied") {
-    addButton(container, "Chuyển sang phỏng vấn", "interview", job);
-    addButton(container, "Đánh dấu nhận offer", "offer", job);
-    addButton(container, "Từ chối", "rejected", job);
-    return;
-  }
-
-  if (status === "interview") {
-    addButton(container, "Đánh dấu nhận offer", "offer", job);
-    addButton(container, "Từ chối", "rejected", job);
-    return;
-  }
-
-  if (status === "offer") {
-    addButton(container, "Chấp nhận", "hired", job);
-    addButton(container, "Từ chối", "rejected", job);
-    return;
-  }
-
-  if (status === "hired") {
-    addButton(container, "Lưu trữ", "archived", job);
-    return;
-  }
-
-  addButton(container, "Khôi phục", "none", job);
 }
 
 function renderStageRail(container, status) {
@@ -535,15 +513,42 @@ function renderInternalActions(container, job, status) {
     addOverflow(container, [
       [applicationLinkLabel(job), "open-link"],
       ["Để sau", "later"],
-      ["Không phù hợp", "rejected"],
       ["Đánh dấu đã nộp", "applied"],
       ["Sao chép link", "copy-link"],
       ["Lưu trữ", "archived"]
     ], job);
     return;
   }
-  if (["applied", "interview", "rejected"].includes(status)) {
-    addOverflow(container, [["Lưu trữ", "archived"]], job);
+  if (status === "applied") {
+    addOverflow(container, [
+      [applicationLinkLabel(job), "open-link"],
+      ["Chuyển sang phỏng vấn", "interview"],
+      ["Đánh dấu nhận offer", "offer"],
+      ["Không phù hợp", "rejected"],
+      ["Lưu trữ", "archived"]
+    ], job);
+    return;
+  }
+  if (status === "interview") {
+    addOverflow(container, [
+      [applicationLinkLabel(job), "open-link"],
+      ["Đánh dấu nhận offer", "offer"],
+      ["Không phù hợp", "rejected"],
+      ["Lưu trữ", "archived"]
+    ], job);
+    return;
+  }
+  if (status === "offer") {
+    addOverflow(container, [
+      [applicationLinkLabel(job), "open-link"],
+      ["Chấp nhận", "hired"],
+      ["Không phù hợp", "rejected"],
+      ["Lưu trữ", "archived"]
+    ], job);
+    return;
+  }
+  if (["rejected"].includes(status)) {
+    addOverflow(container, [["Lưu trữ", "archived"], ["Khôi phục về Inbox", "none"]], job);
     return;
   }
   if (["archived", "offer", "hired"].includes(status)) {
@@ -597,6 +602,7 @@ function addOverflow(container, actions, job) {
   details.className = "overflow-menu";
   const summary = document.createElement("summary");
   summary.textContent = "Thêm";
+  summary.setAttribute("aria-label", "Mở thêm hành động");
   details.appendChild(summary);
   actions.forEach(([label, action]) => addButton(details, label, action, job));
   container.appendChild(details);
@@ -917,6 +923,9 @@ function bindDialogActions() {
       if (job) copyPrompt(job);
     });
   });
+  els.reviewContent.querySelector("[data-personal-notes]")?.addEventListener("input", (event) => {
+    savePersonalNote(state.reviewJobId, event.target.value);
+  });
 }
 
 function confirmAutoApply() {
@@ -1006,21 +1015,15 @@ function detailHtml(job, eligibility) {
   const location = job.locationDetails;
   const quality = linkQuality(job.url);
   return `
-    <nav class="drawer-tabs" aria-label="Job detail sections">
-      <a href="#drawer-overview">Overview</a>
-      <a href="#drawer-ai">AI</a>
-      <a href="#drawer-location">Location</a>
-      <a href="#drawer-resume">Resume</a>
-      <a href="#drawer-history">History</a>
-    </nav>
+    ${drawerTabs(job)}
     <section class="detail-section" id="drawer-overview">
       <h3>Tổng quan</h3>
       <div class="location-detail-grid">
         <p><strong>Công việc</strong><span>${escapeHtml(toTitleCase(job.title))}</span></p>
         <p><strong>Công ty</strong><span>${escapeHtml(job.company)}</span></p>
         <p><strong>Mức phù hợp</strong><span>${escapeHtml(String(job.score))}%</span></p>
+        <p><strong>AI Decision</strong><span>${escapeHtml(decisionLabel(job.score))}</span></p>
         <p><strong>Trạng thái workflow</strong><span>${escapeHtml(statusLabel(getStatus(job.id), action))}</span></p>
-        <p><strong>Lương</strong><span>${escapeHtml(salaryLabel(job))}</span></p>
         <p><strong>Hình thức</strong><span>${escapeHtml(compactWorkMode(location.workMode))}</span></p>
         <p><strong>Nguồn</strong><span>${escapeHtml(sourceNameLabel(job.source))}</span></p>
         <p><strong>Ngày đăng / phát hiện</strong><span>${escapeHtml(recencyLabel(job))}</span></p>
@@ -1030,15 +1033,16 @@ function detailHtml(job, eligibility) {
       </div>
     </section>
     <section class="detail-section" id="drawer-ai">
-      <h3>AI đánh giá</h3>
+      <h3>AI Reasoning</h3>
       <div class="details-grid">
         <div>
-          <h4>Điểm mạnh</h4>
+          <h4>Match</h4>
           <ul>${shortList(job.match).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
         </div>
         <div>
-          <h4>Missing skills</h4>
-          <ul>${skillGapList(job).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+          <h4>Decision</h4>
+          <p class="decision-copy">${escapeHtml(decisionLabel(job.score))}</p>
+          <p>${escapeHtml(recommendationFor(job, skillRisk(job)))}</p>
         </div>
       </div>
       <div class="detail-triplet">
@@ -1050,16 +1054,32 @@ function detailHtml(job, eligibility) {
       </div>
       <p class="ai-warning">${escapeHtml(AI_CONTENT_DISCLAIMER)}</p>
     </section>
-    <section class="detail-section" id="drawer-location">
-      <h3>Địa điểm</h3>
-      ${locationDetailHtml(location)}
+    <section class="detail-section" id="drawer-missing">
+      <h3>Missing Skills</h3>
+      <ul>${skillGapList(job).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
     </section>
     <section class="detail-section" id="drawer-resume">
-      <h3>Hồ sơ nộp</h3>
+      <h3>Resume Suggestions</h3>
       <div class="resume-focus detail-focus">${resumeFocus(job).map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div>
       ${reviewHtml(job, eligibility)}
+    </section>
+    ${companyInfoHtml(job)}
+    <section class="detail-section" id="drawer-location">
+      <h3>Office Verification</h3>
+      ${locationDetailHtml(location)}
+    </section>
+    <section class="detail-section" id="drawer-salary">
+      <h3>Salary</h3>
+      <div class="location-detail-grid">
+        <p><strong>Lương</strong><span>${escapeHtml(salaryLabel(job))}</span></p>
+      </div>
+    </section>
+    ${benefitsHtml(job)}
+    <section class="detail-section" id="drawer-apply">
+      <h3>Apply Link</h3>
       <div class="location-detail-grid">
         <p><strong>URL chính xác</strong><span>${escapeHtml(job.url)}</span></p>
+        <p><strong>Link Quality</strong><span>${escapeHtml(linkQualityStatus(quality))}</span></p>
         <p><strong>Điều kiện chuẩn bị</strong><span>${escapeHtml(eligibility.eligible ? "Đủ điều kiện chuẩn bị hồ sơ" : eligibility.blockers.join("; "))}</span></p>
       </div>
       ${["exact_job", "company_job_page"].includes(quality) ? "" : `<p class="link-warning detail-warning">${escapeHtml(linkQualityWarning(quality))}</p>`}
@@ -1068,7 +1088,87 @@ function detailHtml(job, eligibility) {
       <h3>Lịch sử</h3>
       ${historyHtml(job, action)}
     </section>
+    <section class="detail-section" id="drawer-pipeline">
+      <h3>Pipeline</h3>
+      ${pipelineHtml(job, action)}
+    </section>
+    <section class="detail-section" id="drawer-notes">
+      <h3>Personal Notes</h3>
+      <textarea class="personal-notes" data-personal-notes rows="4" placeholder="Ghi chú riêng cho job này...">${escapeHtml(readPersonalNote(job.id))}</textarea>
+    </section>
   `;
+}
+
+function drawerTabs(job) {
+  const tabs = [
+    ["drawer-overview", "Overview"],
+    ["drawer-ai", "AI Reasoning"],
+    ["drawer-missing", "Missing Skills"],
+    ["drawer-resume", "Resume Suggestions"]
+  ];
+  if (hasCompanyInfo(job)) tabs.push(["drawer-company", "Company"]);
+  tabs.push(
+    ["drawer-location", "Office Verification"],
+    ["drawer-salary", "Salary"],
+    ["drawer-benefits", "Benefits", asArray(job.benefits).length],
+    ["drawer-apply", "Apply Link"],
+    ["drawer-history", "History"],
+    ["drawer-pipeline", "Pipeline"],
+    ["drawer-notes", "Personal Notes"]
+  );
+  return `<nav class="drawer-tabs" aria-label="Job detail sections">
+    ${tabs.filter(([, , visible = true]) => visible).map(([id, label]) => `<a href="#${id}">${escapeHtml(label)}</a>`).join("")}
+  </nav>`;
+}
+
+function companyInfoHtml(job) {
+  const rows = [
+    ["Industry", job.industry],
+    ["Company Size", job.companySize],
+    ["Ownership", job.ownership]
+  ].filter(([, value]) => value);
+  if (!rows.length) return "";
+  return `<section class="detail-section" id="drawer-company">
+    <h3>Company</h3>
+    <div class="location-detail-grid">${rows.map(([label, value]) => `<p><strong>${escapeHtml(label)}</strong><span>${escapeHtml(value)}</span></p>`).join("")}</div>
+  </section>`;
+}
+
+function hasCompanyInfo(job) {
+  return Boolean(job.industry || job.companySize || job.ownership);
+}
+
+function benefitsHtml(job) {
+  const benefits = asArray(job.benefits);
+  if (!benefits.length) return "";
+  return `<section class="detail-section" id="drawer-benefits">
+    <h3>Benefits</h3>
+    <ul>${benefits.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+  </section>`;
+}
+
+function pipelineHtml(job, action) {
+  const current = getStatus(job.id);
+  const stages = ["interested", "applied", "interview", "offer", "archived"];
+  return `<div class="pipeline-detail">${stages.map((stage) => `<span class="${stage === current ? "current" : ""}">${escapeHtml(stageShortLabel(stage))}</span>`).join("")}</div>
+    <p class="eligibility-note">Current status: ${escapeHtml(statusLabel(current, action))}</p>`;
+}
+
+function readPersonalNote(jobId) {
+  try {
+    return JSON.parse(localStorage.getItem("jobPersonalNotes") || "{}")[jobId] || "";
+  } catch {
+    return "";
+  }
+}
+
+function savePersonalNote(jobId, value) {
+  try {
+    const notes = JSON.parse(localStorage.getItem("jobPersonalNotes") || "{}");
+    if (value.trim()) notes[jobId] = value;
+    else delete notes[jobId];
+    localStorage.setItem("jobPersonalNotes", JSON.stringify(notes));
+  } catch {}
 }
 
 function generateCoverLetter(job) {
@@ -1268,31 +1368,32 @@ function applicationLinkLabel(job) {
 
 function linkQualityStatus(quality) {
   const labels = {
-    exact_job: "Link ứng tuyển trực tiếp",
-    company_job_page: "Trang tuyển dụng chính thức",
-    listing_page: "Trang listing/tham khảo",
-    search_page: "Trang tìm kiếm/tham khảo",
-    unknown: "Chưa xác minh chất lượng link",
-    invalid: "Link không hợp lệ"
+    exact_job: "Official Job",
+    company_job_page: "Official Career",
+    listing_page: "Listing",
+    search_page: "Search",
+    unknown: "Unknown",
+    invalid: "Unknown"
   };
-  return labels[quality] || "Chưa xác minh chất lượng link";
+  return labels[quality] || "Unknown";
 }
 
 function linkQualityBadge(quality) {
   const labels = {
-    exact_job: "✅ Chính thức",
-    company_job_page: "✅ Chính thức",
+    exact_job: "✅ Official Job",
+    company_job_page: "✅ Official Career",
     listing_page: "⚠ Listing",
-    search_page: "🔍 Search",
-    unknown: "❌ Không xác minh",
-    invalid: "❌ Không xác minh"
+    search_page: "⚠ Search Result",
+    unknown: "❌ Unknown",
+    invalid: "❌ Unknown"
   };
-  return labels[quality] || "❌ Không xác minh";
+  return labels[quality] || "❌ Unknown";
 }
 
 function linkQualityWarning(quality) {
-  if (["listing_page", "search_page"].includes(quality)) return "⚠ Chưa có link ứng tuyển trực tiếp";
-  if (quality === "unknown") return "⚠ Chưa xác minh chất lượng link";
+  if (quality === "search_page") return "⚠ Search Result - mở để chọn posting cụ thể";
+  if (quality === "listing_page") return "⚠ Listing - cần xác minh posting cụ thể";
+  if (quality === "unknown") return "⚠ Unknown link quality";
   if (quality === "invalid") return "Link không hợp lệ";
   return "";
 }
@@ -1503,14 +1604,52 @@ function matchLabel(score) {
   return { bucket: "possible", label: "Có thể phù hợp" };
 }
 
+function decisionBucket(score) {
+  if (score >= 85) return "apply";
+  if (score >= 70) return "consider";
+  return "skip";
+}
+
+function decisionLabel(score) {
+  if (score >= 85) return "🟢 Nên nộp";
+  if (score >= 70) return "🟡 Cân nhắc";
+  return "🔴 Không khuyến nghị";
+}
+
 function aiSummary(job) {
   return aiSummarySections(job).map(([label, value]) => `${label}: ${value}`).join(" ");
 }
 
 function aiSummaryHtml(job) {
-  return aiSummarySections(job)
-    .map(([label, value]) => `<span><b>${escapeHtml(label)}</b> ${escapeHtml(value)}</span>`)
-    .join("");
+  const matchItems = compactMatchSignals(job);
+  const riskItems = compactRiskSignals(job);
+  return `
+    <span><b>✓ Match</b> ${matchItems.map(escapeHtml).join(" · ")}</span>
+    <span><b>⚠ Risk</b> ${riskItems.map(escapeHtml).join(" · ")}</span>
+  `;
+}
+
+function compactMatchSignals(job) {
+  const text = `${job.title || ""} ${job.summary || ""} ${asArray(job.match).join(" ")}`.toLowerCase();
+  const items = [];
+  if (/crm|salesforce|dynamics/.test(text)) items.push("CRM");
+  if (/report|kpi|dashboard|analytics|business intelligence|\bbi\b/.test(text)) items.push("Reporting");
+  if (/automation|workflow|process|sop/.test(text)) items.push("Automation");
+  if (/billing|payment|invoice|contract|revenue/.test(text)) items.push("Revenue Ops");
+  if (/stakeholder|cross-functional|coordination|support/.test(text)) items.push("Stakeholder");
+  if (/planning|forecast|commercial/.test(text)) items.push("Planning");
+  return items.length ? items.slice(0, 4) : ["Operations", "Coordination"];
+}
+
+function compactRiskSignals(job) {
+  const text = `${job.title || ""} ${job.summary || ""} ${asArray(job.risks).join(" ")}`.toLowerCase();
+  const items = [];
+  if (/sql/.test(text)) items.push("SQL");
+  if (/power bi|dashboard|analytics|\bbi\b/.test(text)) items.push("Power BI Advanced");
+  if (/manager|lead|head|senior/.test(text)) items.push("Seniority");
+  if (/listing|search|source candidate|candidate|parse|career page/.test(text)) items.push("Cần xác minh JD");
+  if (/location|hcmc|địa điểm|work mode/.test(text)) items.push("Location");
+  return items.length ? items.slice(0, 3) : ["JD detail"];
 }
 
 function aiSummarySections(job) {
@@ -1676,25 +1815,25 @@ function locationVerificationStatus(raw, sourceType) {
 
 function locationStatusLabel(location) {
   const labels = {
-    "verified": "✓ Đã xác thực",
-    "from-job-description": "Theo JD",
-    "official-career": "Theo Career Page",
-    "ai-suggested": "✨ Gợi ý từ AI · Chưa xác thực",
-    "unknown": "Chưa xác định",
+    "verified": "Official Website · Đã xác thực",
+    "from-job-description": "Job Description · Đã xác thực",
+    "official-career": "Official Career · Đã xác thực",
+    "ai-suggested": "AI Suggested · Chưa xác thực",
+    "unknown": "Unknown",
     "multiple-offices": "Nhiều văn phòng"
   };
-  return labels[location.verificationStatus] || "Chưa xác định";
+  return labels[location.verificationStatus] || "Unknown";
 }
 
 function locationSourceLabel(source) {
   const labels = {
-    "job-description": "Theo JD",
-    "official-company-career-page": "Theo Career Page",
-    "official-company-website": "Theo Website chính thức",
-    "job-platform": "Theo nền tảng tuyển dụng",
-    "ai-inference": "✨ Gợi ý từ AI"
+    "job-description": "Job Description",
+    "official-company-career-page": "Official Career",
+    "official-company-website": "Official Website",
+    "job-platform": "Job Board",
+    "ai-inference": "AI Suggested"
   };
-  return labels[source] || "Theo nền tảng tuyển dụng";
+  return labels[source] || "Job Board";
 }
 
 function locationDetailHtml(location) {
