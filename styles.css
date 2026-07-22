@@ -1,4 +1,4 @@
-/* AIJH-AUDIT-FIX-20260722-1430 */
+/* AIJH-KPI-SHORTCUTS-20260722-1515 */
 
 :root {
   --bg: #f7f9fc;
@@ -142,6 +142,27 @@ main {
 
 .summary article {
   padding: 12px 14px;
+}
+
+.kpi-card {
+  cursor: pointer;
+  transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-1px);
+  border-color: #bfdbfe;
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.12);
+}
+
+.kpi-card:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 3px;
+}
+
+.kpi-card.active {
+  border-color: #bfdbfe;
+  background: #eff6ff;
 }
 
 .summary span {

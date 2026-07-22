@@ -1,4 +1,4 @@
-const APP_VERSION = "AIJH-AUDIT-FIX-20260722-1430";
+const APP_VERSION = "AIJH-KPI-SHORTCUTS-20260722-1515";
 const AI_LOCATION_DISCLAIMER = "Địa chỉ này do AI tổng hợp từ thông tin công khai và có thể không phải địa điểm làm việc chính xác. Hãy kiểm tra lại trong JD hoặc website chính thức.";
 const AI_CONTENT_DISCLAIMER = "AI có thể sai. Hãy kiểm tra JD và nguồn chính thức trước khi nộp.";
 const APPROVED_RESUMES = {
@@ -15,6 +15,7 @@ const state = {
   actions: readActions(),
   view: initialView(),
   matchFilter: "all",
+  quickFilter: "all",
   locationFilter: "all",
   workModeFilter: "all",
   sourceFilter: "all",
@@ -34,6 +35,7 @@ const state = {
 const syncIntervalMs = 60 * 60 * 1000;
 const els = {
   list: document.querySelector("#jobList"),
+  kpiCards: [...document.querySelectorAll(".kpi-card")],
   tabs: [...document.querySelectorAll(".primary-tabs .tab")],
   search: document.querySelector("#searchBox"),
   matchFilter: document.querySelector("#matchFilter"),
@@ -79,9 +81,19 @@ async function init() {
 
 function bindEvents() {
   syncActiveTab();
+  els.kpiCards.forEach((card) => {
+    card.addEventListener("click", () => applyKpiShortcut(card.dataset.kpi));
+    card.addEventListener("keydown", (event) => {
+      if (!["Enter", " "].includes(event.key)) return;
+      event.preventDefault();
+      applyKpiShortcut(card.dataset.kpi);
+    });
+  });
+
   els.tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       setView(tab.dataset.view);
+      state.quickFilter = "all";
       state.currentPage = 1;
       render();
     });
@@ -89,24 +101,28 @@ function bindEvents() {
 
   els.matchFilter.addEventListener("change", (event) => {
     state.matchFilter = event.target.value;
+    state.quickFilter = "all";
     state.currentPage = 1;
     render();
   });
 
   els.locationFilter.addEventListener("change", (event) => {
     state.locationFilter = event.target.value;
+    state.quickFilter = "all";
     state.currentPage = 1;
     render();
   });
 
   els.workModeFilter.addEventListener("change", (event) => {
     state.workModeFilter = event.target.value;
+    state.quickFilter = "all";
     state.currentPage = 1;
     render();
   });
 
   els.sourceFilter.addEventListener("change", (event) => {
     state.sourceFilter = event.target.value;
+    state.quickFilter = "all";
     state.currentPage = 1;
     render();
   });
@@ -265,6 +281,7 @@ function isValidJob(job) {
 
 function render() {
   renderSummary();
+  syncActiveKpi();
   renderRecommendation();
   renderSyncState();
 
@@ -529,6 +546,40 @@ function syncActiveTab() {
   });
 }
 
+function applyKpiShortcut(kind) {
+  state.currentPage = 1;
+  state.quickFilter = "all";
+  state.locationFilter = "all";
+  state.workModeFilter = "all";
+  state.sourceFilter = "all";
+
+  if (kind === "high-priority") {
+    setView("inbox");
+    state.matchFilter = "excellent";
+  } else if (kind === "following") {
+    setView("pipeline");
+    state.matchFilter = "all";
+  } else if (kind === "today") {
+    setView("inbox");
+    state.matchFilter = "all";
+    state.quickFilter = "today";
+  } else {
+    setView("inbox");
+    state.matchFilter = "all";
+  }
+
+  syncFilterControls();
+  render();
+  document.querySelector(".controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function syncFilterControls() {
+  els.matchFilter.value = state.matchFilter;
+  els.locationFilter.value = state.locationFilter;
+  els.workModeFilter.value = state.workModeFilter;
+  els.sourceFilter.value = state.sourceFilter;
+}
+
 function focusJob(job) {
   const status = getStatus(job.id);
   if (shouldShowInInbox(job)) setView("inbox");
@@ -561,12 +612,28 @@ function renderPagination(total, totalPages) {
 function renderSummary() {
   const inboxJobs = state.jobs.filter((job) => shouldShowInInbox(job));
   const followingJobs = state.jobs.filter((job) => ["interested", "applied", "interview", "offer"].includes(getStatus(job.id)));
-  const today = new Date().toISOString().slice(0, 10);
-  const inboxNewJobs = inboxJobs.filter((job) => (job.firstSeen || job.verifiedAt || "").slice(0, 10) === today || job.isNew).length;
+  const inboxNewJobs = inboxJobs.filter(isNewToday).length;
   els.inboxCount.textContent = state.loadState === "loading" && !state.jobs.length ? "-" : inboxJobs.length;
   els.excellentCount.textContent = state.loadState === "loading" && !state.jobs.length ? "-" : inboxJobs.filter((job) => job.score >= 85).length;
   els.pipelineCount.textContent = state.loadState === "loading" && !state.jobs.length ? "-" : followingJobs.length;
   els.newFoundCount.textContent = state.loadState === "loading" && !state.jobs.length ? "-" : inboxNewJobs;
+}
+
+function syncActiveKpi() {
+  const activeKind = state.view === "pipeline"
+    ? "following"
+    : state.quickFilter === "today"
+      ? "today"
+      : state.matchFilter === "excellent"
+        ? "high-priority"
+        : state.view === "inbox"
+          ? "inbox"
+          : "";
+  els.kpiCards.forEach((card) => {
+    const active = card.dataset.kpi === activeKind;
+    card.classList.toggle("active", active);
+    card.setAttribute("aria-pressed", active ? "true" : "false");
+  });
 }
 
 function renderRecommendation() {
@@ -1024,9 +1091,10 @@ function filteredJobs() {
       const bucket = matchLabel(job.score).bucket;
 
       if (state.view === "inbox" && !shouldShowInInbox(job)) return false;
-      if (state.view === "pipeline" && !["applied", "interview", "offer", "hired"].includes(status)) return false;
+      if (state.view === "pipeline" && !["interested", "applied", "interview", "offer"].includes(status)) return false;
       if (state.view === "archive" && !["rejected", "archived"].includes(status)) return false;
       if (state.matchFilter !== "all" && bucket !== state.matchFilter) return false;
+      if (state.quickFilter === "today" && !isNewToday(job)) return false;
       if (state.locationFilter !== "all" && locationBucket(job.locationDetails) !== state.locationFilter) return false;
       if (state.workModeFilter !== "all" && workModeBucket(job.locationDetails.workMode) !== state.workModeFilter) return false;
       if (state.sourceFilter !== "all" && job.source !== state.sourceFilter) return false;
@@ -1038,6 +1106,11 @@ function filteredJobs() {
       if (state.sortBy === "status") return getStatus(a.id).localeCompare(getStatus(b.id));
       return b.score - a.score;
     });
+}
+
+function isNewToday(job) {
+  const today = new Date().toISOString().slice(0, 10);
+  return (job.firstSeen || job.verifiedAt || "").slice(0, 10) === today || Boolean(job.isNew);
 }
 
 function shouldShowInInbox(job) {

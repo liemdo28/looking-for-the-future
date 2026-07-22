@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <!-- AIJH-AUDIT-FIX-20260722-1430 -->
+  <!-- AIJH-KPI-SHORTCUTS-20260722-1515 -->
   <meta charset="utf-8">
-  <meta name="app-version" content="AIJH-AUDIT-FIX-20260722-1430">
+  <meta name="app-version" content="AIJH-KPI-SHORTCUTS-20260722-1515">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Job Hunter</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./styles.css?v=AIJH-AUDIT-FIX-20260722-1430">
+  <link rel="stylesheet" href="./styles.css?v=AIJH-KPI-SHORTCUTS-20260722-1515">
 </head>
 <body>
   <header class="topbar">
@@ -23,19 +23,19 @@
 
   <main>
     <section class="summary" aria-label="Dashboard summary">
-      <article>
+      <article class="kpi-card" role="button" tabindex="0" data-kpi="inbox" aria-label="Mở danh sách cần xem trong Inbox">
         <span id="inboxCount">-</span>
         <p>Cần xem</p>
       </article>
-      <article>
+      <article class="kpi-card" role="button" tabindex="0" data-kpi="high-priority" aria-label="Mở Inbox và lọc job ưu tiên cao">
         <span id="excellentCount">-</span>
         <p>Ưu tiên cao</p>
       </article>
-      <article>
+      <article class="kpi-card" role="button" tabindex="0" data-kpi="following" aria-label="Mở Pipeline để xem các job đang theo dõi">
         <span id="pipelineCount">-</span>
         <p>Đang theo dõi</p>
       </article>
-      <article>
+      <article class="kpi-card" role="button" tabindex="0" data-kpi="today" aria-label="Mở Inbox và lọc job mới hôm nay">
         <span id="newFoundCount">-</span>
         <p>Mới hôm nay</p>
       </article>
@@ -179,6 +179,6 @@
     </form>
   </dialog>
 
-  <script src="./app.js?v=AIJH-AUDIT-FIX-20260722-1430" type="module"></script>
+  <script src="./app.js?v=AIJH-KPI-SHORTCUTS-20260722-1515" type="module"></script>
 </body>
 </html>
