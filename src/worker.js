@@ -2,6 +2,7 @@ import { INDEX_HTML } from "./generated-index.js";
 
 const SYNC_VERSION = "AIJH-PERSISTED-ACTIONS-20260722-2135";
 const ACTION_STORE_KEY = "actions:v1:shared-dashboard";
+const SCHEDULED_SYNC_KEY = "sync:v1:last-hourly-job-search";
 const ACTION_PREFIX = "action:v1:";
 const NOTE_PREFIX = "note:v1:";
 const TARGET_ROLE_FAMILIES = [
@@ -52,11 +53,14 @@ export default {
     }
 
     if (url.pathname === "/api/sync" && request.method === "GET") {
-      const sources = await loadSources(request, env);
-      const officialCandidates = await buildOfficialSourceCandidates(sources);
+      const officialCandidates = await runJobSourceSync(env);
+      const scheduledSync = await readScheduledSync(env);
       return Response.json({
         checkedAt: new Date().toISOString(),
         syncIntervalMinutes: 60,
+        syncWindow: "08:00-20:00 Asia/Ho_Chi_Minh",
+        cron: "0 1-13 * * *",
+        lastScheduledSync: scheduledSync,
         sourceRegistryVersion: "hcm_official_career_sources_v2",
         sourcesChecked: officialCandidates.sourcesChecked,
         publishableSources: officialCandidates.publishableSources,
@@ -85,8 +89,52 @@ export default {
       statusText: response.statusText,
       headers
     });
+  },
+
+  async scheduled(controller, env, ctx) {
+    ctx.waitUntil(recordScheduledSync(env, controller));
   }
 };
+
+async function recordScheduledSync(env, controller) {
+  const startedAt = new Date(controller.scheduledTime || Date.now()).toISOString();
+  try {
+    const officialCandidates = await runJobSourceSync(env);
+    const payload = {
+      ok: true,
+      startedAt,
+      finishedAt: new Date().toISOString(),
+      syncWindow: "08:00-20:00 Asia/Ho_Chi_Minh",
+      cron: controller.cron || "0 1-13 * * *",
+      syncIntervalMinutes: 60,
+      sourceRegistryVersion: "hcm_official_career_sources_v2",
+      sourcesChecked: officialCandidates.sourcesChecked,
+      publishableSources: officialCandidates.publishableSources,
+      weeklyCheckSources: officialCandidates.weeklyCheckSources,
+      liveCrawlSources: officialCandidates.liveCrawlSources,
+      concreteJobs: officialCandidates.concreteJobs,
+      jobs: officialCandidates.jobs
+    };
+    if (env.JOB_ACTIONS_KV) await env.JOB_ACTIONS_KV.put(SCHEDULED_SYNC_KEY, JSON.stringify(payload));
+    return payload;
+  } catch (error) {
+    const payload = {
+      ok: false,
+      startedAt,
+      finishedAt: new Date().toISOString(),
+      syncWindow: "08:00-20:00 Asia/Ho_Chi_Minh",
+      cron: controller.cron || "0 1-13 * * *",
+      error: error?.message || "Scheduled sync failed"
+    };
+    if (env.JOB_ACTIONS_KV) await env.JOB_ACTIONS_KV.put(SCHEDULED_SYNC_KEY, JSON.stringify(payload));
+    return payload;
+  }
+}
+
+async function readScheduledSync(env) {
+  if (!env.JOB_ACTIONS_KV) return null;
+  return env.JOB_ACTIONS_KV.get(SCHEDULED_SYNC_KEY, "json").catch(() => null);
+}
 
 async function readActionStore(env) {
   const empty = {
@@ -167,9 +215,13 @@ async function readKvPrefix(kv, prefix) {
   return rows;
   }
 
-async function loadSources(request, env) {
-  const sourceUrl = new URL("/data/sources.json", request.url);
-  const response = await env.STATIC.fetch(new Request(sourceUrl, { method: "GET" }));
+async function runJobSourceSync(env) {
+  const sources = await loadSources(env);
+  return buildOfficialSourceCandidates(sources);
+}
+
+async function loadSources(env) {
+  const response = await env.STATIC.fetch(new Request("https://ai-job-hunter.local/data/sources.json", { method: "GET" }));
   if (!response.ok) return [];
   const payload = await response.json().catch(() => []);
   return Array.isArray(payload) ? payload : [];

@@ -2,6 +2,10 @@ name = "looking-for-the-future"
 main = "src/worker.js"
 compatibility_date = "2026-07-22"
 
+[triggers]
+# Cloudflare cron uses UTC. 01:00-13:00 UTC = 08:00-20:00 Asia/Ho_Chi_Minh.
+crons = ["0 1-13 * * *"]
+
 [assets]
 directory = "dist"
 binding = "STATIC"
