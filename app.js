@@ -1,5 +1,6 @@
 const state = {
   jobs: [],
+  sources: [],
   actions: readActions(),
   activeTab: "all",
   query: "",
@@ -17,7 +18,9 @@ const els = {
   totalJobs: document.querySelector("#totalJobs"),
   appliedCount: document.querySelector("#appliedCount"),
   favoriteCount: document.querySelector("#favoriteCount"),
-  lastSync: document.querySelector("#lastSync")
+  lastSync: document.querySelector("#lastSync"),
+  sourceGroups: document.querySelector("#sourceGroups"),
+  sourceCount: document.querySelector("#sourceCount")
 };
 
 init();
@@ -55,15 +58,20 @@ async function syncJobs() {
   els.syncNow.textContent = "Đang sync...";
 
   try {
-    const localJobs = await fetchJson("./data/jobs.json");
+    const [localJobs, sources] = await Promise.all([
+      fetchJson("./data/jobs.json"),
+      fetchJson("./data/sources.json")
+    ]);
     const remoteJobs = await fetchRemoteJobs();
     state.jobs = mergeJobs(localJobs, remoteJobs).filter((job) => job.score >= 50);
+    state.sources = sources;
     localStorage.setItem("lastSyncAt", new Date().toISOString());
   } catch (error) {
     console.error(error);
   } finally {
     els.syncNow.disabled = false;
     els.syncNow.textContent = "Sync ngay";
+    renderSources();
     render();
   }
 }
@@ -158,6 +166,32 @@ function renderSummary() {
   els.appliedCount.textContent = applied;
   els.favoriteCount.textContent = favorite;
   els.lastSync.textContent = lastSync ? new Date(lastSync).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" }) : "Chưa sync";
+}
+
+function renderSources() {
+  const total = state.sources.reduce((sum, group) => sum + group.sources.length, 0);
+  els.sourceCount.textContent = `${total} nguồn`;
+  els.sourceGroups.innerHTML = "";
+
+  state.sources.forEach((group) => {
+    const section = document.createElement("section");
+    section.className = "source-group";
+
+    const title = document.createElement("h3");
+    title.textContent = group.group;
+    section.appendChild(title);
+
+    const list = document.createElement("div");
+    list.className = "source-chip-list";
+    group.sources.forEach((source) => {
+      const chip = document.createElement("span");
+      chip.textContent = source;
+      list.appendChild(chip);
+    });
+
+    section.appendChild(list);
+    els.sourceGroups.appendChild(section);
+  });
 }
 
 function filteredJobs() {

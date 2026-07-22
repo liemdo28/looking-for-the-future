@@ -1,0 +1,118 @@
+[
+  {
+    "group": "A. Job boards",
+    "sources": [
+      "LinkedIn",
+      "Indeed",
+      "Google Jobs",
+      "Monster / Foundit",
+      "Glassdoor",
+      "CareerBuilder",
+      "VietnamWorks",
+      "TopCV",
+      "CareerViet",
+      "CareerLink",
+      "Glints",
+      "JobsGO",
+      "TopDev",
+      "ITviec",
+      "Jooble",
+      "Jora",
+      "Talent.com",
+      "Jobrapido",
+      "Adzuna",
+      "JobisJob",
+      "SimplyHired",
+      "Getwork",
+      "ZipRecruiter",
+      "Wellfound",
+      "Otta",
+      "Dice",
+      "RemoteOK",
+      "WeWorkRemotely",
+      "Remote.co",
+      "Himalayas",
+      "FlexJobs"
+    ]
+  },
+  {
+    "group": "B. Freelance",
+    "sources": [
+      "Upwork",
+      "Fiverr",
+      "Freelancer",
+      "Toptal",
+      "Guru",
+      "Contra",
+      "PeoplePerHour"
+    ]
+  },
+  {
+    "group": "C. Headhunter",
+    "sources": [
+      "Adecco",
+      "Robert Walters",
+      "Michael Page",
+      "Hays",
+      "Randstad",
+      "Manpower",
+      "Navigos Search",
+      "Talentnet",
+      "HR2B",
+      "NIC Global",
+      "Page Executive"
+    ]
+  },
+  {
+    "group": "D. Company Career",
+    "sources": [
+      "Dat Bike",
+      "PMAX",
+      "Shopee",
+      "Sanofi",
+      "Grab",
+      "MoMo",
+      "VNG",
+      "Zalo",
+      "Tiki",
+      "Lazada",
+      "Bosch",
+      "KMS",
+      "NashTech",
+      "Axon Active",
+      "FPT",
+      "Viettel",
+      "Techcombank",
+      "VPBank",
+      "MB Bank",
+      "NAB Innovation",
+      "Google Careers",
+      "Microsoft Careers",
+      "IBM Careers",
+      "Oracle Careers",
+      "Cisco Careers",
+      "Intel Careers",
+      "Qualcomm Careers",
+      "NVIDIA Careers",
+      "Roche",
+      "Pfizer",
+      "Abbott",
+      "Bayer",
+      "AstraZeneca",
+      "Novartis",
+      "GSK",
+      "Johnson & Johnson"
+    ]
+  },
+  {
+    "group": "E. Startup",
+    "sources": [
+      "Wellfound",
+      "Y Combinator Jobs",
+      "Otta",
+      "Built In",
+      "Hired",
+      "Startup Jobs"
+    ]
+  }
+]

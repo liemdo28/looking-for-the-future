@@ -10,6 +10,7 @@ Dashboard tối giản để theo dõi job match CV của Vân Cù (Cindy).
 - Lưu trạng thái trên trình duyệt bằng `localStorage`.
 - Tự sync mỗi 1 giờ và có nút Sync ngay.
 - Cloudflare Pages Functions sẵn sàng nhận job mới qua `JOB_SEARCH_ENDPOINT` và lưu action qua KV nếu cấu hình `JOB_ACTIONS_KV`.
+- Source pool nằm trong `data/sources.json`, gồm job boards, freelance, headhunter, company careers và startup sources.
 
 ## Chạy local
 

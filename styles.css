@@ -94,6 +94,7 @@ main {
 
 .summary article,
 .profile,
+.source-panel,
 .job-card,
 .toolbar {
   background: var(--panel);
@@ -124,10 +125,71 @@ main {
   margin-bottom: 16px;
 }
 
-.profile p {
+.profile p,
+.source-panel p {
   max-width: 980px;
   margin-bottom: 0;
   line-height: 1.55;
+}
+
+.source-panel {
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.section-head span {
+  flex: 0 0 auto;
+  color: var(--accent);
+  font-weight: 700;
+  background: #eaf6f4;
+  border: 1px solid #a8d8d1;
+  border-radius: 999px;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.source-groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.source-group {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fbfcfe;
+}
+
+.source-group h3 {
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.source-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.source-chip-list span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
 }
 
 .tabs {
@@ -356,8 +418,13 @@ li {
 
   .summary,
   .toolbar,
+  .source-groups,
   .details-grid {
     grid-template-columns: 1fr;
+  }
+
+  .section-head {
+    flex-direction: column;
   }
 
   .job-head {
