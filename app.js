@@ -349,7 +349,11 @@ function syncAction(jobId, action) {
 function readActions() {
   try {
     const raw = JSON.parse(localStorage.getItem("jobActions") || "{}");
-    return Object.fromEntries(Object.entries(raw).map(([key, value]) => [key, normalizeAction(value)]));
+    const normalized = Object.fromEntries(Object.entries(raw).map(([key, value]) => [key, normalizeAction(value)]));
+    if (JSON.stringify(raw) !== JSON.stringify(normalized)) {
+      localStorage.setItem("jobActions", JSON.stringify(normalized));
+    }
+    return normalized;
   } catch {
     return {};
   }
