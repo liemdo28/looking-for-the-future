@@ -15,6 +15,7 @@ const state = {
   actions: readActions(),
   view: initialView(),
   matchFilter: "all",
+  recordTypeFilter: "real",
   quickFilter: "all",
   qualityFilters: new Set(),
   locationFilter: "all",
@@ -42,6 +43,7 @@ const els = {
   activeFilterCount: document.querySelector("#activeFilterCount"),
   tabs: [...document.querySelectorAll(".primary-tabs .tab")],
   search: document.querySelector("#searchBox"),
+  recordTypeFilter: document.querySelector("#recordTypeFilter"),
   matchFilter: document.querySelector("#matchFilter"),
   locationFilter: document.querySelector("#locationFilter"),
   workModeFilter: document.querySelector("#workModeFilter"),
@@ -118,6 +120,13 @@ function bindEvents() {
       state.currentPage = 1;
       render();
     });
+  });
+
+  els.recordTypeFilter.addEventListener("change", (event) => {
+    state.recordTypeFilter = event.target.value;
+    state.quickFilter = "all";
+    state.currentPage = 1;
+    render();
   });
 
   els.matchFilter.addEventListener("change", (event) => {
@@ -215,7 +224,8 @@ async function syncJobs() {
       const remoteJobs = await fetchRemoteJobs();
       const previousIds = new Set(state.jobs.map((job) => job.id));
       state.jobs = mergeJobs(jobsResult.value, remoteJobs).filter(isValidJob).filter((job) => job.score >= 50);
-      state.newJobsFound = state.jobs.filter((job) => job.isNew && !previousIds.has(job.id)).length || state.jobs.filter((job) => job.isNew).length;
+      const newConcreteJobs = state.jobs.filter((job) => job.isNew && !isSourceCandidate(job) && !previousIds.has(job.id));
+      state.newJobsFound = newConcreteJobs.length || state.jobs.filter((job) => job.isNew && !isSourceCandidate(job)).length;
     } else {
       state.jobsError = jobsResult.reason?.message || "Could not load data/jobs.json";
     }
@@ -286,6 +296,10 @@ function normalizeJob(job) {
     applicationConfidence: confidenceLabel(job.applicationConfidence ?? confidenceScore(job, "application")),
     dataQualityStatus: dataQualityStatus(job)
   };
+}
+
+function isSourceCandidate(job) {
+  return job.jobType === "source-candidate" || Boolean(job.sourceRegistry) || /^Official career search:/i.test(job.title || "");
 }
 
 function dataQualityStatus(job) {
@@ -374,6 +388,8 @@ function renderJob(job) {
   locationBadge.setAttribute("aria-label", `Trạng thái xác minh địa điểm: ${locationStatusLabel(job.locationDetails)}`);
   locationBadge.classList.add(`location-${job.locationDetails.verificationStatus}`);
   card.querySelector(".source-badge").textContent = job.source || "Source";
+  card.querySelector(".record-type-badge").textContent = isSourceCandidate(job) ? "Nguồn official" : "Job thật";
+  card.querySelector(".record-type-badge").classList.toggle("is-source", isSourceCandidate(job));
   card.querySelector(".open-status").textContent = recencyLabel(job);
   card.querySelector(".salary").textContent = salaryLabel(job);
   card.querySelector(".link-warning").textContent = linkQualityWarning(linkQuality(job.url));
@@ -425,6 +441,7 @@ function createJobCard() {
       </div>
       <p class="source-line">
         <span class="source-badge"></span>
+        <span class="record-type-badge"></span>
         <span class="dot">·</span>
         <span class="open-status"></span>
         <span class="dot">·</span>
@@ -607,6 +624,7 @@ function syncActiveTab() {
 function applyKpiShortcut(kind) {
   state.currentPage = 1;
   state.quickFilter = "all";
+  state.recordTypeFilter = "real";
   state.qualityFilters.clear();
   state.locationFilter = "all";
   state.workModeFilter = "all";
@@ -633,6 +651,7 @@ function applyKpiShortcut(kind) {
 }
 
 function syncFilterControls() {
+  els.recordTypeFilter.value = state.recordTypeFilter;
   els.matchFilter.value = state.matchFilter;
   els.locationFilter.value = state.locationFilter;
   els.workModeFilter.value = state.workModeFilter;
@@ -700,6 +719,7 @@ function renderResultContext(total) {
 function resultContextLabel() {
   if (state.view === "pipeline") return "Đang theo dõi";
   if (state.view === "archive") return "Lưu trữ";
+  if (state.recordTypeFilter === "source") return "Nguồn official";
   if (state.quickFilter === "today") return "Mới hôm nay";
   if (state.qualityFilters.size) return `Bộ lọc (${state.qualityFilters.size})`;
   if (state.matchFilter === "excellent") return "Ưu tiên cao";
@@ -709,6 +729,7 @@ function resultContextLabel() {
 function resultContextDetail(label) {
   const details = {
     "Đang theo dõi": "Các job đang được quan tâm hoặc đã chuyển vào pipeline.",
+    "Nguồn official": "Career page chính thức cần mở để xác minh posting cụ thể.",
     "Mới hôm nay": "Job trong Inbox được phát hiện hôm nay.",
     "Ưu tiên cao": "Job trong Inbox có mức phù hợp cao.",
     "Lưu trữ": "Job đã từ chối hoặc lưu trữ.",
@@ -731,8 +752,9 @@ function quickFilterLabel(filter) {
 }
 
 function renderSummary() {
-  const inboxJobs = state.jobs.filter((job) => shouldShowInInbox(job));
-  const followingJobs = state.jobs.filter((job) => ["interested", "applied", "interview", "offer"].includes(getStatus(job.id)));
+  const concreteJobs = state.jobs.filter((job) => !isSourceCandidate(job));
+  const inboxJobs = concreteJobs.filter((job) => shouldShowInInbox(job));
+  const followingJobs = concreteJobs.filter((job) => ["interested", "applied", "interview", "offer"].includes(getStatus(job.id)));
   const inboxNewJobs = inboxJobs.filter(isNewToday).length;
   els.inboxCount.textContent = state.loadState === "loading" && !state.jobs.length ? "-" : inboxJobs.length;
   els.excellentCount.textContent = state.loadState === "loading" && !state.jobs.length ? "-" : inboxJobs.filter((job) => job.score >= 85).length;
@@ -766,7 +788,7 @@ function syncActiveKpi() {
 }
 
 function renderRecommendation() {
-  const inboxJobs = state.jobs.filter((job) => shouldShowInInbox(job));
+  const inboxJobs = state.jobs.filter((job) => shouldShowInInbox(job) && !isSourceCandidate(job));
   if (!inboxJobs.length || state.loadState !== "loaded") {
     els.recommendationPanel.classList.add("is-hidden");
     els.recommendationText.textContent = "";
@@ -1101,6 +1123,7 @@ function noMatchState() {
 function bindEmptyStateActions() {
   els.list.querySelector("[data-clear-filters]")?.addEventListener("click", () => {
     state.matchFilter = "all";
+    state.recordTypeFilter = "real";
     state.quickFilter = "all";
     state.qualityFilters.clear();
     state.locationFilter = "all";
@@ -1115,6 +1138,7 @@ function bindEmptyStateActions() {
   els.list.querySelector("[data-go-inbox]")?.addEventListener("click", () => {
     setView("inbox");
     state.matchFilter = "all";
+    state.recordTypeFilter = "real";
     state.quickFilter = "all";
     state.qualityFilters.clear();
     state.locationFilter = "all";
@@ -1317,6 +1341,8 @@ function filteredJobs() {
       if (state.view === "inbox" && !shouldShowInInbox(job)) return false;
       if (state.view === "pipeline" && !["interested", "applied", "interview", "offer"].includes(status)) return false;
       if (state.view === "archive" && !["rejected", "archived"].includes(status)) return false;
+      if (state.recordTypeFilter === "real" && isSourceCandidate(job)) return false;
+      if (state.recordTypeFilter === "source" && !isSourceCandidate(job)) return false;
       if (state.matchFilter !== "all" && bucket !== state.matchFilter) return false;
       if (state.quickFilter === "today" && !isNewToday(job)) return false;
       if (state.qualityFilters.size && ![...state.qualityFilters].every((filter) => matchesQualityFilter(job, filter))) return false;

@@ -1,6 +1,6 @@
 import { INDEX_HTML } from "./generated-index.js";
 
-const SYNC_VERSION = "AIJH-OFFICIAL-SOURCE-SYNC-20260722-1820";
+const SYNC_VERSION = "AIJH-OFFICIAL-SOURCE-SYNC-20260722-1910";
 const TARGET_ROLE_FAMILIES = [
   "Sales Operations",
   "Commercial Operations",
@@ -12,6 +12,24 @@ const TARGET_ROLE_FAMILIES = [
   "Business Intelligence",
   "Operations Analyst"
 ];
+const LIVE_CRAWL_COMPANIES = new Set([
+  "Shopee",
+  "Grab",
+  "MoMo",
+  "Zalo",
+  "ZaloPay",
+  "VNG",
+  "Bosch Group / BGSW",
+  "KMS Technology",
+  "FPT Software",
+  "Accenture",
+  "HEINEKEN Vietnam",
+  "Sanofi Vietnam",
+  "Abbott Vietnam",
+  "DKSH",
+  "Maersk"
+]);
+const ROLE_KEYWORD_RE = /(sales operations?|commercial operations?|business operations?|revenue operations?|sales planning|sales analyst|business analyst|business intelligence|operations analyst|crm|tender analyst|sales support)/i;
 
 export default {
   async fetch(request, env) {
@@ -32,7 +50,7 @@ export default {
 
     if (url.pathname === "/api/sync" && request.method === "GET") {
       const sources = await loadSources(request, env);
-      const officialCandidates = buildOfficialSourceCandidates(sources);
+      const officialCandidates = await buildOfficialSourceCandidates(sources);
       return Response.json({
         checkedAt: new Date().toISOString(),
         syncIntervalMinutes: 60,
@@ -40,6 +58,8 @@ export default {
         sourcesChecked: officialCandidates.sourcesChecked,
         publishableSources: officialCandidates.publishableSources,
         weeklyCheckSources: officialCandidates.weeklyCheckSources,
+        liveCrawlSources: officialCandidates.liveCrawlSources,
+        concreteJobs: officialCandidates.concreteJobs,
         jobs: officialCandidates.jobs
       });
     }
@@ -74,25 +94,112 @@ async function loadSources(request, env) {
   return Array.isArray(payload) ? payload : [];
 }
 
-function buildOfficialSourceCandidates(sourceGroups) {
+async function buildOfficialSourceCandidates(sourceGroups) {
   const allSourceRows = sourceGroups
     .filter((group) => /^F[123]\. Official HCMC Career Sources v2/i.test(group.group))
     .flatMap((group) => group.sources.map((source) => parseOfficialSource(source, group.group)))
     .filter((source) => source.url);
   const publishableRows = allSourceRows.filter((source) => source.grade !== "C");
 
-  const jobs = publishableRows
+  const liveRows = publishableRows.filter((source) => LIVE_CRAWL_COMPANIES.has(source.company));
+  const liveJobs = await crawlOfficialJobs(liveRows);
+  const liveIds = new Set(liveJobs.map((job) => `${job.company}::${job.title}`.toLowerCase()));
+  const candidateJobs = publishableRows
+    .filter((source) => !liveIds.has(`${source.company}::${likelyRoleFamily(source)}`.toLowerCase()))
     .map(toCandidateJob)
     .filter((job) => job.score >= 50)
     .sort((a, b) => b.score - a.score || a.company.localeCompare(b.company))
-    .slice(0, 120)
+    .slice(0, 120);
+  const jobs = [...liveJobs, ...candidateJobs]
+    .sort((a, b) => b.score - a.score || a.company.localeCompare(b.company))
+    .slice(0, 140)
     .map((job, index) => ({ ...job, rank: index + 101 }));
 
   return {
     sourcesChecked: allSourceRows.length,
     publishableSources: publishableRows.length,
     weeklyCheckSources: allSourceRows.filter((source) => source.grade === "C").length,
+    liveCrawlSources: liveRows.length,
+    concreteJobs: liveJobs.length,
     jobs
+  };
+}
+
+async function crawlOfficialJobs(sources) {
+  const settled = await Promise.allSettled(sources.map((source) => crawlOfficialSource(source)));
+  return settled.flatMap((result) => result.status === "fulfilled" ? result.value : []);
+}
+
+async function crawlOfficialSource(source) {
+  let response;
+  try {
+    response = await fetch(source.url, {
+      headers: {
+        "User-Agent": "AIJobHunter/1.0 source validation",
+        "Accept": "text/html,application/xhtml+xml,application/json"
+      },
+      signal: AbortSignal.timeout(4500)
+    });
+  } catch {
+    return [];
+  }
+  if (!response.ok) return [];
+  const contentType = response.headers.get("content-type") || "";
+  const body = await response.text();
+  const links = contentType.includes("json") ? extractJsonJobs(body, source) : extractHtmlJobs(body, source);
+  return links.slice(0, 2).map((item, index) => toConcreteJob(source, item, index));
+}
+
+function extractJsonJobs(body, source) {
+  const matches = [];
+  for (const raw of body.matchAll(/"title"\s*:\s*"([^"]{6,120})"[\s\S]{0,400}?"(?:url|applyUrl|externalPath)"\s*:\s*"([^"]+)"/gi)) {
+    const title = decodeText(raw[1]);
+    if (!ROLE_KEYWORD_RE.test(title)) continue;
+    matches.push({ title, url: absolutizeUrl(raw[2].replaceAll("\\/", "/"), source.url) });
+  }
+  return dedupeMatches(matches);
+}
+
+function extractHtmlJobs(body, source) {
+  const matches = [];
+  for (const raw of body.matchAll(/<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]{0,260}?)<\/a>/gi)) {
+    const title = decodeText(stripTags(raw[2]));
+    if (title.length < 6 || title.length > 120 || !ROLE_KEYWORD_RE.test(title)) continue;
+    matches.push({ title, url: absolutizeUrl(raw[1], source.url) });
+  }
+  return dedupeMatches(matches);
+}
+
+function toConcreteJob(source, item, index) {
+  const role = item.title;
+  const score = Math.min(86, sourceScore(source, role) + 4 - index);
+  return {
+    id: `official-crawl-${slug(source.company)}-${slug(role)}`,
+    rank: 0,
+    score,
+    title: role,
+    company: source.company,
+    location: likelyLocation(source.relevance),
+    workMode: "Theo official career page / cần xác minh JD",
+    openStatus: "Có thể ứng tuyển",
+    source: "Official Career Crawl",
+    url: item.url,
+    summary: `Tìm thấy title phù hợp trên official career page của ${source.company}.`,
+    match: [
+      `Title trên nguồn chính thức khớp nhóm ${likelyRoleFamily(source)}.`,
+      "Cần mở JD để xác nhận địa điểm HCMC, trạng thái còn mở và scope chi tiết."
+    ],
+    risks: [
+      "Parser nhẹ chỉ xác nhận title/link trên official page, chưa đọc đầy đủ JD.",
+      "Không apply nếu JD không ghi rõ location/work mode hoặc có câu hỏi bắt buộc chưa xử lý."
+    ],
+    applicationAngle: applicationAngle(role),
+    isNew: true,
+    verifiedAt: new Date().toISOString().slice(0, 10),
+    jobType: "job",
+    sourceRegistry: "",
+    sourceGrade: source.grade,
+    sourceNote: source.note
   };
 }
 
@@ -131,6 +238,7 @@ function toCandidateJob(source) {
     isNew: true,
     verifiedAt: new Date().toISOString().slice(0, 10),
     sourceRegistry: "hcm_official_career_sources_v2",
+    jobType: "source-candidate",
     sourceGrade: source.grade,
     sourceNote: source.note
   };
@@ -180,4 +288,37 @@ function slug(value = "") {
 
 function hash(value = "") {
   return [...value].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+}
+
+function stripTags(value = "") {
+  return value.replace(/<script[\s\S]*?<\/script>/gi, " ").replace(/<style[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function decodeText(value = "") {
+  return value
+    .replace(/\\u0026/g, "&")
+    .replace(/&amp;/g, "&")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&#x2F;/g, "/")
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function absolutizeUrl(value = "", base = "") {
+  try {
+    return new URL(value, base).href;
+  } catch {
+    return base;
+  }
+}
+
+function dedupeMatches(matches) {
+  const seen = new Set();
+  return matches.filter((item) => {
+    const key = `${item.title}::${item.url}`.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
