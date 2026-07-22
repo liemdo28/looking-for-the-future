@@ -1,4 +1,4 @@
-/* AIJH-INBOX-RESET-20260722-1300 */
+/* AIJH-PRODUCTION-POLISH-20260722-1345 */
 
 :root {
   --bg: #f7f9fc;
@@ -158,7 +158,7 @@ main {
 }
 
 .profile {
-  padding: 14px 16px;
+  padding: 10px 14px;
   margin-bottom: 12px;
 }
 
@@ -166,18 +166,44 @@ main {
   display: none;
 }
 
-.profile h2,
-.source-panel h2 {
-  font-size: 17px;
-  font-weight: 650;
-  margin-bottom: 6px;
-}
-
 .profile p,
 .source-panel p {
   max-width: 960px;
   margin-bottom: 0;
   line-height: 1.5;
+}
+
+#recommendationText {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+}
+
+#recommendationText strong {
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#recommendationText b {
+  color: var(--success);
+}
+
+#recommendationText em {
+  font-style: normal;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+#recommendationText button {
+  min-height: 30px;
+  padding: 5px 10px;
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
 }
 
 .controls {
@@ -257,10 +283,10 @@ select {
 .job-card {
   position: relative;
   min-height: 290px;
-  padding: 16px;
+  padding: 13px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .ai-row {
@@ -364,8 +390,8 @@ select {
   grid-template-columns: 24px minmax(0, 1fr) auto;
   gap: 8px;
   align-items: start;
-  margin: 9px 0;
-  padding: 10px;
+  margin: 7px 0;
+  padding: 8px;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: #f8fafc;
@@ -387,6 +413,13 @@ select {
   color: var(--muted);
   font-size: 13px;
   line-height: 1.35;
+}
+
+.office-line {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.3;
 }
 
 .location-badge {
@@ -423,7 +456,7 @@ select {
 }
 
 .ai-summary {
-  padding: 11px;
+  padding: 8px;
   border-radius: 12px;
   background: linear-gradient(135deg, var(--ai-soft), #ffffff 74%);
   border: 1px solid #dbeafe;
@@ -440,20 +473,40 @@ select {
 
 .summary-text {
   margin: 0;
-  line-height: 1.45;
+  line-height: 1.35;
+  display: grid;
+  gap: 3px;
+  font-size: 13px;
+}
+
+.summary-text b {
+  color: var(--text);
+  margin-right: 3px;
 }
 
 .focus-block {
   display: flex;
   justify-content: space-between;
-  gap: 10px;
-  align-items: flex-start;
+  gap: 8px;
+  align-items: center;
+}
+
+.focus-block > div {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
 }
 
 .resume-focus {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
+}
+
+.focus-block .resume-focus {
+  flex-wrap: nowrap;
+  overflow: hidden;
 }
 
 .resume-focus span,
@@ -467,6 +520,14 @@ select {
   border: 1px solid var(--line);
   color: var(--muted);
   font-size: 12px;
+}
+
+.link-warning {
+  min-height: 0;
+  margin: -1px 0 0;
+  color: #b45309;
+  font-size: 12px;
+  line-height: 1.25;
 }
 
 .copy-prompt {
@@ -602,10 +663,25 @@ li {
 
 .location-detail-grid,
 .review-grid,
-.settings-grid {
+.settings-grid,
+.detail-triplet,
+.office-address {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+}
+
+.detail-triplet {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 12px;
+}
+
+.office-address {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #dbeafe;
+  border-radius: 10px;
+  background: #f8fafc;
 }
 
 .settings-grid {
@@ -617,13 +693,17 @@ li {
 }
 
 .location-detail-grid p,
-.review-grid p {
+.review-grid p,
+.detail-triplet p,
+.office-address p {
   margin: 0;
 }
 
 .location-detail-grid strong,
 .review-grid strong,
-.cover-letter strong {
+.cover-letter strong,
+.detail-triplet strong,
+.office-address strong {
   display: block;
   color: var(--muted);
   font-size: 12px;
@@ -633,6 +713,11 @@ li {
 .location-detail-grid span {
   display: block;
   line-height: 1.4;
+}
+
+.detail-warning {
+  max-width: none;
+  margin-top: 10px;
 }
 
 .ai-disclaimer,
@@ -884,9 +969,21 @@ li {
   .source-groups,
   .details-grid,
   .location-detail-grid,
+  .detail-triplet,
+  .office-address,
   .review-grid,
   .settings-grid {
     grid-template-columns: 1fr;
+  }
+
+  #recommendationText {
+    grid-template-columns: 1fr auto;
+  }
+
+  #recommendationText span,
+  #recommendationText strong,
+  #recommendationText em {
+    grid-column: 1 / -1;
   }
 
   .primary-tabs {

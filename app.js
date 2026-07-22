@@ -1,4 +1,4 @@
-const APP_VERSION = "AIJH-INBOX-RESET-20260722-1300";
+const APP_VERSION = "AIJH-PRODUCTION-POLISH-20260722-1345";
 const HISTORY_RESET_VERSION = "job-actions-reset-20260722-1300";
 const AI_LOCATION_DISCLAIMER = "Địa chỉ này do AI tổng hợp từ thông tin công khai và có thể không phải địa điểm làm việc chính xác. Hãy kiểm tra lại trong JD hoặc website chính thức.";
 const AI_CONTENT_DISCLAIMER = "AI có thể sai. Hãy kiểm tra JD và nguồn chính thức trước khi nộp.";
@@ -243,6 +243,10 @@ function normalizeJob(job) {
     applicationLink: job.applicationLink || job.url,
     firstSeen: job.firstSeen || job.verifiedAt || "2026-07-22",
     lastChecked: job.lastChecked || job.verifiedAt || "2026-07-22",
+    confidence: confidenceLabel(job.confidence ?? confidenceScore(job, "match")),
+    locationConfidence: confidenceLabel(job.locationConfidence ?? confidenceScore(job, "location")),
+    sourceConfidence: confidenceLabel(job.sourceConfidence ?? confidenceScore(job, "source")),
+    applicationConfidence: confidenceLabel(job.applicationConfidence ?? confidenceScore(job, "application")),
     dataQualityStatus: dataQualityStatus(job)
   };
 }
@@ -320,6 +324,7 @@ function renderJob(job) {
   card.querySelector(".company").textContent = job.company;
   card.querySelector(".location-main").textContent = displayAddress(job.locationDetails);
   card.querySelector(".location-meta").textContent = locationCardMeta(job.locationDetails);
+  card.querySelector(".office-line").textContent = `Văn phòng công ty: ${companyOfficeLabel(job.locationDetails)}`;
   const locationBadge = card.querySelector(".location-badge");
   locationBadge.textContent = locationStatusLabel(job.locationDetails);
   locationBadge.setAttribute("aria-label", `Trạng thái xác minh địa điểm: ${locationStatusLabel(job.locationDetails)}`);
@@ -327,8 +332,9 @@ function renderJob(job) {
   card.querySelector(".source-badge").textContent = job.source || "Source";
   card.querySelector(".open-status").textContent = recencyLabel(job);
   card.querySelector(".salary").textContent = salaryLabel(job);
-  card.querySelector(".summary-text").textContent = aiSummary(job);
-  card.querySelector(".ai-disclaimer").textContent = AI_CONTENT_DISCLAIMER;
+  card.querySelector(".link-warning").textContent = isValidApplicationLink(job.url) ? "" : "⚠ Chưa có link ứng tuyển trực tiếp";
+  card.querySelector(".summary-text").innerHTML = aiSummaryHtml(job);
+  card.querySelector(".ai-disclaimer").textContent = "✨ AI phân tích • Kiểm tra lại trước khi nộp";
 
   renderFocus(card.querySelector(".resume-focus"), resumeFocus(job));
   renderActions(card.querySelector(".actions"), job, status);
@@ -360,6 +366,7 @@ function createJobCard() {
         <div>
           <p class="location-main"></p>
           <p class="location-meta"></p>
+          <p class="office-line"></p>
         </div>
         <span class="location-badge"></span>
       </div>
@@ -370,6 +377,7 @@ function createJobCard() {
         <span class="dot">·</span>
         <span class="salary"></span>
       </p>
+      <p class="link-warning"></p>
     </div>
     <div class="ai-summary">
       <strong>✨ Gợi ý từ AI</strong>
@@ -399,7 +407,7 @@ function renderActions(container, job, status) {
     if (eligibility.eligible) {
       addButton(container, "Xem hồ sơ nộp", "review-application", job);
     } else {
-      addLink(container, "Mở trang ứng tuyển", job.url, !isValidApplicationLink(job.url));
+      addLink(container, applicationLinkLabel(job), job.url, !isValidApplicationLink(job.url));
     }
     addButton(container, "Quan tâm", "interested", job);
     addButton(container, "Để sau", "later", job);
@@ -407,7 +415,7 @@ function renderActions(container, job, status) {
     return;
   }
 
-  addLink(container, "Mở trang ứng tuyển", job.url, !isValidApplicationLink(job.url));
+  addLink(container, applicationLinkLabel(job), job.url, !isValidApplicationLink(job.url));
 
   if (status === "applied") {
     addButton(container, "Interview", "interview", job);
@@ -523,7 +531,14 @@ function renderRecommendation() {
 
   const best = [...inboxJobs].sort((a, b) => b.score - a.score)[0];
   els.recommendationPanel.classList.remove("is-hidden");
-  els.recommendationText.textContent = `Nên xem trước: ${toTitleCase(best.title)} tại ${best.company}. Match ${best.score}%, ${displayAddress(best.locationDetails)}, nguồn ${best.source || "chưa xác định"}. ${AI_CONTENT_DISCLAIMER}`;
+  els.recommendationText.innerHTML = `
+    <span>✨ AI ưu tiên hôm nay</span>
+    <strong>${escapeHtml(toTitleCase(best.title))}</strong>
+    <b>${escapeHtml(String(best.score))}%</b>
+    <em>${escapeHtml(displayAddress(best.locationDetails))}</em>
+    <button type="button" data-priority-job="${escapeHtml(best.id)}">Xem ngay</button>
+  `;
+  els.recommendationText.querySelector("[data-priority-job]")?.addEventListener("click", () => openJobDetail(best));
 }
 
 function renderSyncState() {
@@ -705,42 +720,63 @@ function reviewHtml(job, eligibility) {
 function detailHtml(job, eligibility) {
   const action = getAction(job.id);
   const location = job.locationDetails;
+  const linkIsDirect = isValidApplicationLink(job.url);
   return `
     <section class="detail-section">
-      <h3>Địa điểm làm việc</h3>
-      ${locationDetailHtml(location)}
+      <h3>Overview</h3>
+      <div class="location-detail-grid">
+        <p><strong>Job</strong><span>${escapeHtml(toTitleCase(job.title))}</span></p>
+        <p><strong>Company</strong><span>${escapeHtml(job.company)}</span></p>
+        <p><strong>Salary</strong><span>${escapeHtml(salaryLabel(job))}</span></p>
+        <p><strong>Work mode</strong><span>${escapeHtml(compactWorkMode(location.workMode))}</span></p>
+        <p><strong>Source</strong><span>${escapeHtml(sourceNameLabel(job.source))}</span></p>
+        <p><strong>Posted</strong><span>${escapeHtml(recencyLabel(job))}</span></p>
+      </div>
     </section>
     <section class="detail-section">
-      <h3>✨ AI đánh giá</h3>
+      <h3>AI Analysis</h3>
       <div class="details-grid">
         <div>
-          <h4>Vì sao phù hợp</h4>
+          <h4>Why Match</h4>
           <ul>${shortList(job.match).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
         </div>
         <div>
-          <h4>Điểm còn thiếu</h4>
+          <h4>Missing Skills</h4>
           <ul>${shortList(job.risks).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
         </div>
       </div>
+      <div class="detail-triplet">
+        ${aiSummarySections(job).map(([label, value]) => `<p><strong>${escapeHtml(label)}</strong><span>${escapeHtml(value)}</span></p>`).join("")}
+      </div>
+      <p><strong>AI confidence</strong><span>${escapeHtml(job.confidence)}</span></p>
       <p class="ai-warning">${escapeHtml(AI_CONTENT_DISCLAIMER)}</p>
     </section>
     <section class="detail-section">
-      <h3>Trọng tâm CV</h3>
-      <div class="resume-focus detail-focus">${resumeFocus(job).map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div>
-      <p class="application-angle">${escapeHtml(job.applicationAngle || "Nhấn mạnh Sales/Commercial Operations, CRM data quality, KPI/reporting automation và phối hợp cross-functional.")}</p>
-      <button type="button" class="secondary-inline" data-copy-detail-prompt="${escapeHtml(job.id)}">Sao chép prompt</button>
+      <h3>Location</h3>
+      ${locationDetailHtml(location)}
     </section>
     <section class="detail-section">
-      <h3>Nộp hồ sơ</h3>
+      <h3>Application</h3>
       ${reviewHtml(job, eligibility)}
+      <div class="location-detail-grid">
+        <p><strong>Application URL</strong><span>${escapeHtml(linkIsDirect ? "Link ứng tuyển trực tiếp" : "Nguồn tham khảo/search/listing")}</span></p>
+        <p><strong>Eligibility</strong><span>${escapeHtml(eligibility.eligible ? "Đủ điều kiện chuẩn bị hồ sơ" : eligibility.blockers.join("; "))}</span></p>
+      </div>
+      ${linkIsDirect ? "" : `<p class="link-warning detail-warning">⚠ Chưa có link ứng tuyển trực tiếp</p>`}
     </section>
     <section class="detail-section">
-      <h3>Lịch sử</h3>
+      <h3>History</h3>
       <div class="location-detail-grid">
         <p><strong>First seen</strong><span>${escapeHtml(job.firstSeen || job.verifiedAt || "22/07/2026")}</span></p>
         <p><strong>Last checked</strong><span>${escapeHtml(job.lastChecked || job.verifiedAt || "22/07/2026")}</span></p>
         <p><strong>Trạng thái</strong><span>${escapeHtml(statusLabel(getStatus(job.id), action))}</span></p>
         <p><strong>Nguồn</strong><span>${escapeHtml(job.source || "Chưa xác định")}</span></p>
+        <p><strong>Confidence</strong><span>${escapeHtml(job.confidence)}</span></p>
+        <p><strong>Location confidence</strong><span>${escapeHtml(job.locationConfidence)}</span></p>
+        <p><strong>Source confidence</strong><span>${escapeHtml(job.sourceConfidence)}</span></p>
+        <p><strong>Application confidence</strong><span>${escapeHtml(job.applicationConfidence)}</span></p>
+        <p><strong>Applied time</strong><span>${escapeHtml(action.status === "applied" ? dateTimeLabel(action.submittedAt || action.updatedAt) : "Chưa nộp")}</span></p>
+        <p><strong>Archived time</strong><span>${escapeHtml(action.status === "archived" ? dateTimeLabel(action.updatedAt) : "Chưa lưu trữ")}</span></p>
       </div>
     </section>
   `;
@@ -783,6 +819,27 @@ function locationCardMeta(location) {
   return parts.filter(Boolean).join(" · ");
 }
 
+function companyOfficeLabel(location) {
+  return location.companyOfficeAddress || "Chưa xác định địa chỉ văn phòng công ty";
+}
+
+function officeSourceLabel(location) {
+  if (!location.companyOfficeAddress) return "Chưa có nguồn xác thực";
+  return locationSourceLabel(location.companyOfficeSource);
+}
+
+function officeVerificationLabel(location) {
+  if (location.officeVerificationStatus === "verified") return "✓ Đã xác thực";
+  if (location.officeVerificationStatus === "ai-suggested") return "✨ Gợi ý từ AI · Chưa xác thực";
+  return "Chưa xác thực";
+}
+
+function mapsLink(location) {
+  const address = location.companyOfficeAddress || location.jobWorkAddress;
+  if (!address || location.verificationStatus === "ai-suggested") return "";
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+}
+
 function hasDetailedAddress(value = "") {
   return /quận|district|d\.?|q\.?|tân phong|tan phong|tân phú|tan phu|củ chi|cu chi|street|đường|phường/i.test(value);
 }
@@ -790,16 +847,56 @@ function hasDetailedAddress(value = "") {
 function recencyLabel(job) {
   const status = `${job.openStatus || ""}`.trim();
   if (/expired|closed|đã đóng|hết hạn/i.test(status)) return "Có thể đã hết hạn";
-  if (/hour|yesterday|today|ngày|recent|apply|ứng tuyển|crawled/i.test(status)) return normalizeOpenStatus(status);
-  return status || "Cần xác minh";
+  if (!status) return "Cần xác minh";
+  return normalizeOpenStatus(status);
 }
 
 function normalizeOpenStatus(status = "") {
-  return status
-    .replace(/Apply Now/gi, "Apply visible")
-    .replace(/Apply now/gi, "Apply visible")
-    .replace(/LinkedIn similar jobs:/gi, "LinkedIn listing:")
-    .replace(/crawled yesterday/gi, "đăng gần đây");
+  const text = status.trim();
+  if (/expired|closed|đã đóng|hết hạn/i.test(text)) return "Có thể đã hết hạn";
+  if (/hạn nộp\s+\d{1,2}\/\d{1,2}\/\d{4}/i.test(text)) return text.match(/hạn nộp\s+\d{1,2}\/\d{1,2}\/\d{4}/i)[0].replace(/^h/i, "H");
+  if (/apply visible|apply now|ứng tuyển ngay|hiển thị ứng tuyển/i.test(text)) return "Có thể ứng tuyển";
+  if (/career page active/i.test(text)) return "Đang tuyển";
+  if (/topcv đăng gần đây|recent|crawled yesterday|last week|đăng gần đây/i.test(text)) return "Đăng gần đây";
+  if (/linkedin (similar jobs|listing):?\s*(.+)/i.test(text)) return normalizeOpenStatus(text.replace(/.*linkedin (similar jobs|listing):?\s*/i, "").trim()) || "Kết quả LinkedIn";
+  if (/crawled\s+(\d+)\s+days?\s+ago/i.test(text)) return text.replace(/.*crawled\s+(\d+)\s+days?\s+ago.*/i, "$1 ngày trước");
+  if (/(\d+)\s+hours?\s+ago/i.test(text)) return text.replace(/.*?(\d+)\s+hours?\s+ago.*/i, "$1 giờ trước");
+  if (/(\d+)\s+weeks?\s+ago/i.test(text)) return text.replace(/.*?(\d+)\s+weeks?\s+ago.*/i, "$1 tuần trước");
+  if (/(\d+)\s+months?\s+ago/i.test(text)) return text.replace(/.*?(\d+)\s+months?\s+ago.*/i, "$1 tháng trước");
+  if (/yesterday/i.test(text)) return "Hôm qua";
+  return text;
+}
+
+function applicationLinkLabel(job) {
+  return isValidApplicationLink(job.url) ? "Mở trang ứng tuyển" : "Mở nguồn tham khảo";
+}
+
+function sourceNameLabel(source = "") {
+  return source
+    .replace(/Careers$/i, "Career")
+    .replace(/Monster\/Foundit/i, "Monster")
+    .trim() || "Chưa xác định";
+}
+
+function confidenceScore(job, type) {
+  if (type === "match") return Number(job.score) || 50;
+  if (type === "location") {
+    const location = normalizeLocationDetails(job);
+    if (location.verificationStatus === "from-job-description" || location.verificationStatus === "official-career") return 85;
+    if (location.verificationStatus === "multiple-offices") return 60;
+    if (location.verificationStatus === "ai-suggested") return 45;
+    return 35;
+  }
+  if (type === "application") return isValidApplicationLink(job.url) ? 85 : 45;
+  if (type === "source") return isActiveJob(job) ? 80 : 45;
+  return 50;
+}
+
+function confidenceLabel(value) {
+  const score = Math.max(0, Math.min(100, Number(value) || 0));
+  if (score >= 85) return `Cao (${score}%)`;
+  if (score >= 65) return `Trung bình (${score}%)`;
+  return `Thấp (${score}%)`;
 }
 
 function salaryLabel(job) {
@@ -823,7 +920,7 @@ function filteredJobs() {
       if (state.workModeFilter !== "all" && workModeBucket(job.locationDetails.workMode) !== state.workModeFilter) return false;
       if (state.sourceFilter !== "all" && job.source !== state.sourceFilter) return false;
       if (!state.query) return true;
-      return [job.title, job.company, job.location, job.summary, job.source, job.openStatus, displayAddress(job.locationDetails), job.locationDetails.district].join(" ").toLowerCase().includes(state.query);
+      return [job.title, job.company, job.location, job.summary, job.source, job.openStatus, displayAddress(job.locationDetails), job.locationDetails.companyOfficeAddress, job.locationDetails.district].join(" ").toLowerCase().includes(state.query);
     })
     .sort((a, b) => {
       if (state.sortBy === "company") return a.company.localeCompare(b.company);
@@ -942,14 +1039,45 @@ function matchLabel(score) {
 }
 
 function aiSummary(job) {
+  return aiSummarySections(job).map(([label, value]) => `${label}: ${value}`).join(" ");
+}
+
+function aiSummaryHtml(job) {
+  return aiSummarySections(job)
+    .map(([label, value]) => `<span><b>${escapeHtml(label)}</b> ${escapeHtml(value)}</span>`)
+    .join("");
+}
+
+function aiSummarySections(job) {
   const focus = resumeFocus(job).slice(0, 3).join(", ");
-  const gap = shortList(job.risks)[0] || "cần đọc JD để xác nhận thêm";
-  return `${focus} phù hợp cao với CV. Điểm cần kiểm tra: ${gap.replace(/\.$/, "")}.`;
+  const risk = skillRisk(job);
+  return [
+    ["Strength", `${focus} khớp với kinh nghiệm trong CV.`],
+    ["Risk", risk],
+    ["Recommendation", recommendationFor(job, risk)]
+  ];
+}
+
+function skillRisk(job) {
+  const risk = shortList(job.risks).find((item) => !/job board|source pool|trạng thái|thay đổi nhanh|kiểm tra lại/i.test(item));
+  if (risk) return risk.replace(/\.$/, ".");
+  const text = `${job.title} ${job.summary}`.toLowerCase();
+  if (/manager|lead|head/.test(text)) return "Cần kiểm tra yêu cầu quản lý đội nhóm và scope senior.";
+  if (/sql|power bi|data|analytics|bi /.test(text)) return "Cần làm rõ mức yêu cầu SQL, Power BI hoặc phân tích dữ liệu.";
+  return "Cần đọc JD chi tiết để xác nhận ngành và công cụ bắt buộc.";
+}
+
+function recommendationFor(job, risk) {
+  if (job.score >= 85) return "Nên nộp sau khi cập nhật CV theo trọng tâm role.";
+  if (/sql|power bi|data|analytics/i.test(risk)) return "Nên bổ sung ví dụ reporting automation trước khi nộp.";
+  if (/manager|senior|quản lý/i.test(risk)) return "Nên kiểm tra seniority trước khi quyết định nộp.";
+  return "Có thể lưu để so sánh với các job ưu tiên cao hơn.";
 }
 
 function normalizeLocationDetails(job) {
   const raw = job.workLocation || job.location || "";
   const sourceType = locationSourceType(job);
+  const officeSource = job.companyOfficeSource || "";
   const city = detectCity(raw);
   const district = detectDistrict(raw);
   const workMode = job.workMode || inferWorkMode(raw);
@@ -957,6 +1085,8 @@ function normalizeLocationDetails(job) {
   return {
     jobWorkAddress: raw || "",
     companyOfficeAddress: job.companyOfficeAddress || "",
+    companyOfficeSource: officeSource,
+    officeVerificationStatus: officeVerificationStatus(job.companyOfficeAddress, officeSource),
     city,
     district,
     workMode,
@@ -964,6 +1094,13 @@ function normalizeLocationDetails(job) {
     locationSourceLabel: locationSourceLabel(sourceType),
     verificationStatus
   };
+}
+
+function officeVerificationStatus(address = "", source = "") {
+  if (!address) return "unknown";
+  if (source === "ai-inference") return "ai-suggested";
+  if (source === "official-company-website" || source === "official-company-career-page") return "verified";
+  return "unknown";
 }
 
 function locationSourceType(job) {
@@ -987,10 +1124,10 @@ function locationVerificationStatus(raw, sourceType) {
 
 function locationStatusLabel(location) {
   const labels = {
-    "verified": "Đã xác thực",
+    "verified": "✓ Đã xác thực",
     "from-job-description": "Theo JD",
-    "official-career": "Theo career page chính thức",
-    "ai-suggested": "Gợi ý từ AI · Chưa xác thực",
+    "official-career": "Theo Career Page",
+    "ai-suggested": "✨ Gợi ý từ AI · Chưa xác thực",
     "unknown": "Chưa xác định",
     "multiple-offices": "Nhiều văn phòng"
   };
@@ -999,26 +1136,35 @@ function locationStatusLabel(location) {
 
 function locationSourceLabel(source) {
   const labels = {
-    "job-description": "Job description",
-    "official-company-career-page": "Career page chính thức",
-    "official-company-website": "Website công ty",
-    "job-platform": "Job platform",
-    "ai-inference": "AI inference"
+    "job-description": "Theo JD",
+    "official-company-career-page": "Theo Career Page",
+    "official-company-website": "Theo Website chính thức",
+    "job-platform": "Theo nền tảng tuyển dụng",
+    "ai-inference": "✨ Gợi ý từ AI"
   };
-  return labels[source] || "Job platform";
+  return labels[source] || "Theo nền tảng tuyển dụng";
 }
 
 function locationDetailHtml(location) {
+  const officeRows = [
+    ["Company Office", companyOfficeLabel(location)],
+    ["Office Source", officeSourceLabel(location)],
+    ["Office Verification", officeVerificationLabel(location)]
+  ];
   const rows = [
-    ["Địa chỉ làm việc theo job", location.jobWorkAddress || "Chưa xác định địa chỉ chi tiết"],
-    ["Địa chỉ văn phòng công ty", location.companyOfficeAddress || "Chưa xác định địa chỉ văn phòng công ty"],
+    ["Job Work Location", location.jobWorkAddress || "Chưa xác định địa chỉ chi tiết"],
     ["Thành phố", location.city || "Chưa xác định"],
     ["Quận/Huyện", location.district || "Chưa xác định"],
     ["Hình thức", compactWorkMode(location.workMode)],
     ["Nguồn địa điểm", location.locationSourceLabel],
     ["Xác minh", locationStatusLabel(location)]
   ];
-  return `<div class="location-detail-grid">${rows.map(([label, value]) => `<p><strong>${escapeHtml(label)}</strong><span>${escapeHtml(value)}</span></p>`).join("")}</div>${location.verificationStatus === "ai-suggested" ? `<p class="ai-warning">${escapeHtml(AI_LOCATION_DISCLAIMER)}</p>` : ""}`;
+  const mapLink = mapsLink(location);
+  return `
+    <div class="office-address">${officeRows.map(([label, value]) => `<p><strong>${escapeHtml(label)}</strong><span>${escapeHtml(value)}</span></p>`).join("")}</div>
+    <div class="location-detail-grid">${rows.map(([label, value]) => `<p><strong>${escapeHtml(label)}</strong><span>${escapeHtml(value)}</span></p>`).join("")}${mapLink ? `<p><strong>Google Maps</strong><span><a href="${escapeHtml(mapLink)}" target="_blank" rel="noopener">Mở bản đồ</a></span></p>` : ""}</div>
+    ${location.verificationStatus === "ai-suggested" || location.officeVerificationStatus === "ai-suggested" ? `<p class="ai-warning">${escapeHtml(AI_LOCATION_DISCLAIMER)}</p>` : ""}
+  `;
 }
 
 function displayAddress(location) {
