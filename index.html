@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <!-- AIJH-D77C0DC-20260722-0430 -->
+  <!-- AIJH-AUTOAPPLY-20260722-0520 -->
   <meta charset="utf-8">
-  <meta name="app-version" content="AIJH-D77C0DC-20260722-0430">
+  <meta name="app-version" content="AIJH-AUTOAPPLY-20260722-0520">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Job Hunter</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./styles.css?v=AIJH-D77C0DC-20260722-0430">
+  <link rel="stylesheet" href="./styles.css?v=AIJH-AUTOAPPLY-20260722-0520">
 </head>
 <body>
   <header class="topbar">
@@ -97,11 +97,63 @@
 
     <details class="source-panel">
       <summary>Settings and source pool <span id="sourceCount">Loading sources</span></summary>
-      <p>Minimum match threshold: 50%. Sources are used by the sync provider and manual research list.</p>
+      <div class="settings-grid" aria-label="Auto Apply settings">
+        <label>
+          Auto Apply threshold
+          <select id="autoApplyThreshold">
+            <option value="80">80%</option>
+            <option value="85" selected>85%</option>
+            <option value="90">90%</option>
+            <option value="95">95%</option>
+            <option value="disabled">Disabled</option>
+          </select>
+        </label>
+        <label>
+          Approved resume
+          <select id="approvedResume">
+            <option value="cindy-sales-ops-resume" selected>Cindy Sales Ops Resume</option>
+            <option value="">No approved resume</option>
+          </select>
+        </label>
+        <label>
+          City preference
+          <select id="cityPreference">
+            <option value="hcm" selected>HCM / Remote</option>
+            <option value="any">Any city</option>
+            <option value="remote">Remote only</option>
+          </select>
+        </label>
+        <label>
+          Work mode preference
+          <select id="workModePreference">
+            <option value="any" selected>Any mode</option>
+            <option value="onsite">On-site / Hybrid</option>
+            <option value="remote">Remote</option>
+          </select>
+        </label>
+      </div>
+      <p>Minimum match threshold: 50%. Auto Apply only appears for active jobs that pass the selected threshold, location preferences, resume readiness, link safety, and mandatory-question checks.</p>
       <div id="sourceGroups" class="source-groups"></div>
     </details>
   </main>
 
-  <script src="./app.js?v=AIJH-D77C0DC-20260722-0430" type="module"></script>
+  <dialog id="autoApplyDialog" class="review-dialog">
+    <form method="dialog">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">Review Auto Apply</p>
+          <h2 id="reviewTitle">Review application</h2>
+        </div>
+        <button class="ghost-button" value="cancel" type="submit">Close</button>
+      </div>
+      <div id="reviewContent" class="review-content"></div>
+      <div class="dialog-actions">
+        <a id="reviewOpenLink" href="#" target="_blank" rel="noopener">Open application</a>
+        <button id="confirmAutoApply" type="button">Confirm and submit</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="./app.js?v=AIJH-AUTOAPPLY-20260722-0520" type="module"></script>
 </body>
 </html>

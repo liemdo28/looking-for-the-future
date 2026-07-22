@@ -5,7 +5,7 @@ export default {
     const url = new URL(request.url);
     const noStoreHeaders = {
       "Cache-Control": "no-store, no-cache, must-revalidate",
-      "X-AIJH-Version": "AIJH-D77C0DC-20260722-0430"
+      "X-AIJH-Version": "AIJH-AUTOAPPLY-20260722-0520"
     };
 
     if ((url.pathname === "/" || url.pathname === "/index.html") && request.method === "GET") {

@@ -1,4 +1,10 @@
-const APP_VERSION = "AIJH-D77C0DC-20260722-0430";
+const APP_VERSION = "AIJH-AUTOAPPLY-20260722-0520";
+const AI_LOCATION_DISCLAIMER = "AI suggestion. This location was inferred from public information and may not be the exact workplace for this role. Verify it in the job description or official company website before applying.";
+const AI_CONTENT_DISCLAIMER = "AI-generated content. Review match reasoning, cover letter, and recommendations before using them in an application.";
+const APPROVED_RESUMES = {
+  "cindy-sales-ops-resume": "Cindy Sales Ops Resume"
+};
+const BLACKLISTED_COMPANIES = [];
 
 const state = {
   jobs: [],
@@ -14,7 +20,9 @@ const state = {
   jobsError: "",
   sourcesError: "",
   newJobsFound: 0,
-  lastSyncAt: localStorage.getItem("lastSyncAt") || ""
+  lastSyncAt: localStorage.getItem("lastSyncAt") || "",
+  settings: readSettings(),
+  reviewJobId: ""
 };
 
 const syncIntervalMs = 60 * 60 * 1000;
@@ -37,13 +45,23 @@ const els = {
   recommendationPanel: document.querySelector("#recommendationPanel"),
   recommendationText: document.querySelector("#recommendationText"),
   sourceGroups: document.querySelector("#sourceGroups"),
-  sourceCount: document.querySelector("#sourceCount")
+  sourceCount: document.querySelector("#sourceCount"),
+  autoApplyThreshold: document.querySelector("#autoApplyThreshold"),
+  approvedResume: document.querySelector("#approvedResume"),
+  cityPreference: document.querySelector("#cityPreference"),
+  workModePreference: document.querySelector("#workModePreference"),
+  reviewDialog: document.querySelector("#autoApplyDialog"),
+  reviewTitle: document.querySelector("#reviewTitle"),
+  reviewContent: document.querySelector("#reviewContent"),
+  reviewOpenLink: document.querySelector("#reviewOpenLink"),
+  confirmAutoApply: document.querySelector("#confirmAutoApply")
 };
 
 init();
 
 async function init() {
   bindEvents();
+  renderSettings();
   render();
   await syncJobs();
   setInterval(syncJobs, syncIntervalMs);
@@ -94,6 +112,21 @@ function bindEvents() {
   });
 
   els.syncNow.addEventListener("click", syncJobs);
+
+  [els.autoApplyThreshold, els.approvedResume, els.cityPreference, els.workModePreference].forEach((input) => {
+    input.addEventListener("change", () => {
+      state.settings = {
+        autoApplyThreshold: els.autoApplyThreshold.value,
+        approvedResume: els.approvedResume.value,
+        cityPreference: els.cityPreference.value,
+        workModePreference: els.workModePreference.value
+      };
+      persistSettings();
+      render();
+    });
+  });
+
+  els.confirmAutoApply.addEventListener("click", confirmAutoApply);
 }
 
 async function syncJobs() {
@@ -164,9 +197,19 @@ function mergeJobs(localJobs, remoteJobs) {
   [...asArray(localJobs), ...asArray(remoteJobs)].forEach((job) => {
     if (!job || typeof job !== "object") return;
     const id = job.id || makeId(job);
-    map.set(id, { ...job, id });
+    map.set(id, normalizeJob({ ...job, id }));
   });
   return [...map.values()];
+}
+
+function normalizeJob(job) {
+  return {
+    ...job,
+    locationDetails: normalizeLocationDetails(job),
+    mandatoryQuestions: asArray(job.mandatoryQuestions),
+    requiredDocuments: asArray(job.requiredDocuments),
+    applicationLink: job.applicationLink || job.url
+  };
 }
 
 function makeId(job) {
@@ -232,13 +275,17 @@ function renderJob(job) {
   card.querySelector(".pipeline-status").classList.add(`status-${status}`);
   card.querySelector(".job-title").textContent = toTitleCase(job.title);
   card.querySelector(".company").textContent = job.company;
-  card.querySelector(".title-location").textContent = compactLocation(job.location);
-  card.querySelector(".work-mode").textContent = compactWorkMode(job.workMode);
+  card.querySelector(".title-location").textContent = compactLocation(job.locationDetails.city || job.location);
+  card.querySelector(".work-mode").textContent = compactWorkMode(job.locationDetails.workMode);
+  card.querySelector(".location-badge").textContent = locationStatusLabel(job.locationDetails);
+  card.querySelector(".location-badge").classList.add(`location-${job.locationDetails.verificationStatus}`);
   card.querySelector(".source-badge").textContent = job.source || "Source";
   card.querySelector(".open-status").textContent = job.openStatus || "Check source";
   card.querySelector(".summary-text").textContent = aiSummary(job);
   card.querySelector(".application-angle").textContent = `Application angle: ${job.applicationAngle || "Highlight relevant operations, reporting, CRM, and stakeholder work."}`;
   card.querySelector(".source-note").textContent = `Source: ${job.source || "Unknown"} | Status: ${job.openStatus || "Check source"}`;
+  card.querySelector(".location-detail").innerHTML = locationDetailHtml(job.locationDetails);
+  card.querySelector(".ai-disclaimer").textContent = AI_CONTENT_DISCLAIMER;
 
   renderFocus(card.querySelector(".resume-focus"), resumeFocus(job));
   fillList(card.querySelector(".match-list"), shortList(job.match));
@@ -270,6 +317,7 @@ function createJobCard() {
         <span class="title-location"></span>
         <span class="dot">·</span>
         <span class="work-mode"></span>
+        <span class="location-badge"></span>
       </p>
       <p class="source-line">
         <span class="source-badge"></span>
@@ -305,6 +353,8 @@ function createJobCard() {
     <details class="detail-toggle">
       <summary>More detail</summary>
       <div class="internal-actions"></div>
+      <div class="location-detail"></div>
+      <p class="ai-disclaimer"></p>
       <p class="application-angle"></p>
       <p class="source-note"></p>
     </details>
@@ -314,14 +364,21 @@ function createJobCard() {
 
 function renderActions(container, job, status) {
   container.innerHTML = "";
-  addLink(container, "Open application", job.url);
+  const eligibility = autoApplyEligibility(job, status);
 
   if (["none", "interested", "later"].includes(status)) {
+    if (eligibility.eligible) {
+      addButton(container, "Review Auto Apply", "review-auto-apply", job);
+    } else {
+      addLink(container, "Open application", job.url);
+    }
     addButton(container, "Interested", "interested", job);
     addButton(container, "Later", "later", job);
     addButton(container, "Not fit", "rejected", job);
     return;
   }
+
+  addLink(container, "Open application", job.url);
 
   if (status === "applied") {
     addButton(container, "Interview", "interview", job);
@@ -347,10 +404,17 @@ function renderActions(container, job, status) {
 function renderInternalActions(container, job, status) {
   container.innerHTML = "";
   if (["none", "interested", "later"].includes(status)) {
+    const blockers = autoApplyEligibility(job, status).blockers;
     addOverflow(container, [
       ["Mark internally as Applied", "applied"],
       ["Archive", "archived"]
     ], job);
+    if (blockers.length) {
+      const note = document.createElement("p");
+      note.className = "eligibility-note";
+      note.textContent = `Auto Apply hidden: ${blockers.join("; ")}.`;
+      container.appendChild(note);
+    }
     return;
   }
   if (["applied", "interview", "rejected"].includes(status)) {
@@ -375,7 +439,12 @@ function addButton(container, label, action, job) {
   const button = document.createElement("button");
   button.type = "button";
   button.textContent = label;
-  button.addEventListener("click", () => setAction(job.id, action, job.source));
+  if (action === "review-auto-apply") {
+    button.className = "auto-apply-button";
+    button.addEventListener("click", () => openAutoApplyReview(job));
+  } else {
+    button.addEventListener("click", () => setAction(job.id, action, job.source));
+  }
   container.appendChild(button);
 }
 
@@ -400,10 +469,11 @@ function renderPagination(total, totalPages) {
 function renderSummary() {
   const inboxJobs = state.jobs.filter((job) => shouldShowInInbox(job));
   const pipelineJobs = state.jobs.filter((job) => ["applied", "interview", "offer"].includes(getStatus(job.id)));
+  const inboxNewJobs = inboxJobs.filter((job) => job.isNew).length;
   els.inboxCount.textContent = state.loadState === "loading" && !state.jobs.length ? "-" : inboxJobs.length;
   els.excellentCount.textContent = state.loadState === "loading" && !state.jobs.length ? "-" : inboxJobs.filter((job) => job.score >= 85).length;
   els.pipelineCount.textContent = state.loadState === "loading" && !state.jobs.length ? "-" : pipelineJobs.length;
-  els.newFoundCount.textContent = state.loadState === "loading" && !state.jobs.length ? "-" : state.newJobsFound;
+  els.newFoundCount.textContent = state.loadState === "loading" && !state.jobs.length ? "-" : inboxNewJobs;
 }
 
 function renderRecommendation() {
@@ -416,7 +486,7 @@ function renderRecommendation() {
 
   const best = [...inboxJobs].sort((a, b) => b.score - a.score)[0];
   els.recommendationPanel.classList.remove("is-hidden");
-  els.recommendationText.textContent = `Apply first: ${toTitleCase(best.title)} at ${best.company}. ${best.score}% match, ${compactLocation(best.location)}, source ${best.source || "unknown"}.`;
+  els.recommendationText.textContent = `Apply first: ${toTitleCase(best.title)} at ${best.company}. ${best.score}% match, ${compactLocation(best.locationDetails.city || best.location)}, source ${best.source || "unknown"}. ${AI_CONTENT_DISCLAIMER}`;
 }
 
 function renderSyncState() {
@@ -469,6 +539,104 @@ function renderSources() {
   });
 }
 
+function renderSettings() {
+  els.autoApplyThreshold.value = state.settings.autoApplyThreshold;
+  els.approvedResume.value = state.settings.approvedResume;
+  els.cityPreference.value = state.settings.cityPreference;
+  els.workModePreference.value = state.settings.workModePreference;
+}
+
+function openAutoApplyReview(job) {
+  const status = getStatus(job.id);
+  const eligibility = autoApplyEligibility(job, status);
+  state.reviewJobId = job.id;
+  els.reviewTitle.textContent = `${toTitleCase(job.title)} at ${job.company}`;
+  els.reviewOpenLink.href = job.url;
+  els.confirmAutoApply.disabled = !eligibility.eligible;
+  els.reviewContent.innerHTML = reviewHtml(job, eligibility);
+  els.reviewDialog.showModal();
+}
+
+function confirmAutoApply() {
+  const job = state.jobs.find((item) => item.id === state.reviewJobId);
+  if (!job) return;
+  const eligibility = autoApplyEligibility(job, getStatus(job.id));
+  if (!eligibility.eligible) {
+    els.reviewContent.innerHTML = reviewHtml(job, eligibility);
+    return;
+  }
+  setAction(job.id, "applied", job.source, {
+    resume: selectedResumeName(),
+    applicationMethod: "Auto Apply",
+    submittedAt: new Date().toISOString(),
+    locationVerificationStatus: locationStatusLabel(job.locationDetails)
+  });
+  els.reviewDialog.close();
+}
+
+function autoApplyEligibility(job, status) {
+  const blockers = [];
+  const threshold = state.settings.autoApplyThreshold;
+  const location = job.locationDetails;
+  if (threshold === "disabled") blockers.push("Auto Apply disabled");
+  if (threshold !== "disabled" && Number(job.score) < Number(threshold)) blockers.push(`match below ${threshold}%`);
+  if (!isValidApplicationLink(job.url)) blockers.push("unsafe or invalid application link");
+  if (!isActiveJob(job)) blockers.push("job is not active");
+  if (["applied", "interview", "offer"].includes(status)) blockers.push("already applied");
+  if (!locationMeetsPreferences(location)) blockers.push("location or work mode outside preferences");
+  if (!state.settings.approvedResume || !APPROVED_RESUMES[state.settings.approvedResume]) blockers.push("no approved resume selected");
+  if (hasUnresolvedMandatoryQuestions(job)) blockers.push("unresolved mandatory questions");
+  if (hasMissingRequiredDocuments(job)) blockers.push("missing required documents");
+  if (hasUnsafeQuestions(job)) blockers.push("screening question needs manual review");
+  if (BLACKLISTED_COMPANIES.includes(job.company)) blockers.push("blacklisted company");
+  return { eligible: blockers.length === 0, blockers };
+}
+
+function reviewHtml(job, eligibility) {
+  const location = job.locationDetails;
+  const questions = asArray(job.mandatoryQuestions);
+  const questionList = questions.length
+    ? `<ul>${questions.map((question) => `<li>${escapeHtml(question.label || question)}</li>`).join("")}</ul>`
+    : "<p>No unresolved mandatory questions detected.</p>";
+  const blockers = eligibility.blockers.length
+    ? `<div class="review-blockers"><strong>Cannot submit automatically</strong><ul>${eligibility.blockers.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>`
+    : "<div class=\"review-ready\"><strong>Ready for explicit confirmation</strong><p>No blocking rule was triggered. Confirm only after reviewing the generated content.</p></div>";
+  return `
+    <div class="review-grid">
+      <section>
+        <strong>Job</strong>
+        <p>${escapeHtml(toTitleCase(job.title))}</p>
+        <p>${escapeHtml(job.company)} · ${escapeHtml(job.score)}% match</p>
+      </section>
+      <section>
+        <strong>Work location</strong>
+        <p>${escapeHtml(displayAddress(location))}</p>
+        <p>${escapeHtml(locationStatusLabel(location))} · ${escapeHtml(location.locationSourceLabel)}</p>
+      </section>
+      <section>
+        <strong>Selected resume</strong>
+        <p>${escapeHtml(selectedResumeName() || "No approved resume selected")}</p>
+      </section>
+      <section>
+        <strong>Required questions</strong>
+        ${questionList}
+      </section>
+    </div>
+    ${location.verificationStatus === "ai-suggested" ? `<p class="ai-warning">${escapeHtml(AI_LOCATION_DISCLAIMER)}</p>` : ""}
+    <section class="cover-letter">
+      <strong>Generated cover letter</strong>
+      <p>${escapeHtml(generateCoverLetter(job))}</p>
+      <p class="ai-warning">${escapeHtml(AI_CONTENT_DISCLAIMER)}</p>
+    </section>
+    ${blockers}
+  `;
+}
+
+function generateCoverLetter(job) {
+  const focus = resumeFocus(job).join(", ");
+  return `I am interested in the ${toTitleCase(job.title)} role at ${job.company}. My background aligns with ${focus}, and I can contribute through Sales/Commercial Operations execution, CRM data quality, KPI reporting, contract and billing follow-up, and cross-functional coordination.`;
+}
+
 function stateMessage(title, detail, type) {
   return `<div class="state-message ${type}">
     <strong>${escapeHtml(title)}</strong>
@@ -504,13 +672,13 @@ function shouldShowInInbox(job) {
   return ["none", "interested", "later"].includes(action.status);
 }
 
-function setAction(jobId, status, source) {
+function setAction(jobId, status, source, extra = {}) {
   if (status === "none") {
     delete state.actions[jobId];
   } else {
     state.actions[jobId] = status === "later"
-      ? { status, updatedAt: new Date().toISOString(), source, snoozedUntil: addDays(3).toISOString() }
-      : { status, updatedAt: new Date().toISOString(), source };
+      ? { status, updatedAt: new Date().toISOString(), source, snoozedUntil: addDays(3).toISOString(), ...extra }
+      : { status, updatedAt: new Date().toISOString(), source, ...extra };
   }
 
   persistActions();
@@ -555,6 +723,24 @@ function normalizeAction(value) {
   return value;
 }
 
+function readSettings() {
+  const defaults = {
+    autoApplyThreshold: "85",
+    approvedResume: "cindy-sales-ops-resume",
+    cityPreference: "hcm",
+    workModePreference: "any"
+  };
+  try {
+    return { ...defaults, ...JSON.parse(localStorage.getItem("jobHunterSettings") || "{}") };
+  } catch {
+    return defaults;
+  }
+}
+
+function persistSettings() {
+  localStorage.setItem("jobHunterSettings", JSON.stringify(state.settings));
+}
+
 function getAction(jobId) {
   return normalizeAction(state.actions[jobId]);
 }
@@ -585,6 +771,148 @@ function aiSummary(job) {
   const focus = resumeFocus(job).slice(0, 3).join(", ");
   const gap = shortList(job.risks)[0] || "minor gaps to review";
   return `Strong fit: ${focus}. Gap: ${gap.replace(/\.$/, "")}.`;
+}
+
+function normalizeLocationDetails(job) {
+  const raw = job.workLocation || job.location || "";
+  const sourceType = locationSourceType(job);
+  const city = detectCity(raw);
+  const district = detectDistrict(raw);
+  const workMode = job.workMode || inferWorkMode(raw);
+  const verificationStatus = locationVerificationStatus(raw, sourceType);
+  return {
+    jobWorkAddress: raw || "",
+    companyOfficeAddress: job.companyOfficeAddress || "",
+    city,
+    district,
+    workMode,
+    locationSource: sourceType,
+    locationSourceLabel: locationSourceLabel(sourceType),
+    verificationStatus
+  };
+}
+
+function locationSourceType(job) {
+  if (job.locationSource) return job.locationSource;
+  const source = String(job.source || "").toLowerCase();
+  if (/careers|company career|grab careers|sanofi careers|pmax careers|dat bike careers/.test(source)) return "official-company-career-page";
+  if (job.location) return "job-description";
+  return "ai-inference";
+}
+
+function locationVerificationStatus(raw, sourceType) {
+  if (!raw) return "unknown";
+  if (/\/| and | hoặc |, vietnam/i.test(raw) && /vietnam|hưng yên|remote|\/|metropolitan/i.test(raw)) return "multiple-offices";
+  if (sourceType === "ai-inference") return "ai-suggested";
+  if (sourceType === "job-description") return "from-job-description";
+  if (["official-company-career-page", "official-company-website"].includes(sourceType)) return "verified";
+  return "unknown";
+}
+
+function locationStatusLabel(location) {
+  const labels = {
+    "verified": "Verified",
+    "from-job-description": "From job description",
+    "ai-suggested": "AI suggested",
+    "unknown": "Unknown",
+    "multiple-offices": "Multiple offices"
+  };
+  return labels[location.verificationStatus] || "Unknown";
+}
+
+function locationSourceLabel(source) {
+  const labels = {
+    "job-description": "Job description",
+    "official-company-career-page": "Official company career page",
+    "official-company-website": "Official company website",
+    "job-platform": "Job platform",
+    "ai-inference": "AI inference"
+  };
+  return labels[source] || "Job platform";
+}
+
+function locationDetailHtml(location) {
+  const rows = [
+    ["Job work address", location.jobWorkAddress || "Unknown"],
+    ["Company office address", location.companyOfficeAddress || "Unknown"],
+    ["City", location.city || "Unknown"],
+    ["District", location.district || "Unknown"],
+    ["Work mode", compactWorkMode(location.workMode)],
+    ["Location source", location.locationSourceLabel],
+    ["Verification", locationStatusLabel(location)]
+  ];
+  return `<div class="location-detail-grid">${rows.map(([label, value]) => `<p><strong>${escapeHtml(label)}</strong><span>${escapeHtml(value)}</span></p>`).join("")}</div>${location.verificationStatus === "ai-suggested" ? `<p class="ai-warning">${escapeHtml(AI_LOCATION_DISCLAIMER)}</p>` : ""}`;
+}
+
+function displayAddress(location) {
+  return location.jobWorkAddress || location.companyOfficeAddress || location.city || "Unknown";
+}
+
+function detectCity(value = "") {
+  if (/remote/i.test(value)) return "Remote";
+  if (/hồ chí minh|ho chi minh|hcm|tphcm/i.test(value)) return "Ho Chi Minh City";
+  if (/hà nội|ha noi|hanoi/i.test(value)) return "Ha Noi";
+  if (/hưng yên|hung yen/i.test(value)) return "Hung Yen";
+  if (/vietnam/i.test(value)) return "Vietnam";
+  return value || "Unknown";
+}
+
+function detectDistrict(value = "") {
+  const district = String(value).match(/(?:quận|district|d\.?|q\.?)\s*(\d+|[a-zà-ỹ\s]+)/i);
+  if (district) return district[0].replace(/\s+/g, " ").trim();
+  if (/tân phú|tan phu/i.test(value)) return "Tan Phu";
+  if (/tân phong|tan phong|d7|district 7|quận 7/i.test(value)) return "District 7";
+  if (/củ chi|cu chi/i.test(value)) return "Cu Chi";
+  return "";
+}
+
+function inferWorkMode(value = "") {
+  if (/remote/i.test(value)) return "Remote";
+  if (/hybrid/i.test(value)) return "Hybrid";
+  return "";
+}
+
+function isValidApplicationLink(url) {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" && !/linkedin\.com\/jobs\/search/i.test(parsed.href);
+  } catch {
+    return false;
+  }
+}
+
+function isActiveJob(job) {
+  return !/closed|expired|inactive|not available|đã đóng|hết hạn/i.test(`${job.openStatus || ""} ${job.summary || ""}`);
+}
+
+function locationMeetsPreferences(location) {
+  const cityPref = state.settings.cityPreference;
+  const modePref = state.settings.workModePreference;
+  const cityText = `${location.city} ${location.jobWorkAddress}`.toLowerCase();
+  const modeText = `${location.workMode} ${location.jobWorkAddress}`.toLowerCase();
+  const cityOk = cityPref === "any"
+    || (cityPref === "remote" && /remote/.test(cityText + modeText))
+    || (cityPref === "hcm" && (/ho chi minh|hcm|hồ chí minh|remote/.test(cityText + modeText)));
+  const modeOk = modePref === "any"
+    || (modePref === "remote" && /remote/.test(modeText))
+    || (modePref === "onsite" && !/remote only/.test(modeText));
+  return cityOk && modeOk;
+}
+
+function hasUnresolvedMandatoryQuestions(job) {
+  return asArray(job.mandatoryQuestions).some((question) => question.required && !question.answer);
+}
+
+function hasMissingRequiredDocuments(job) {
+  return asArray(job.requiredDocuments).some((doc) => doc.required && !doc.available);
+}
+
+function hasUnsafeQuestions(job) {
+  return asArray(job.mandatoryQuestions).some((question) => /free.?text|salary|visa|work authorization|authorization/i.test(`${question.type || ""} ${question.label || question}`));
+}
+
+function selectedResumeName() {
+  return APPROVED_RESUMES[state.settings.approvedResume] || "";
 }
 
 function resumeFocus(job) {
