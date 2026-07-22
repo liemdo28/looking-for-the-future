@@ -1,4 +1,4 @@
-/* AIJH-FINAL-POLISH-20260722-1705 */
+/* AIJH-RUNTIME-HARDENING-20260722-2115 */
 
 :root {
   --bg: #f7f9fc;
@@ -129,7 +129,7 @@ main {
   margin-bottom: 12px;
 }
 
-.summary article,
+.summary .kpi-card,
 .profile,
 .source-panel,
 .job-card,
@@ -140,8 +140,11 @@ main {
   box-shadow: var(--shadow);
 }
 
-.summary article {
+.summary .kpi-card {
   padding: 12px 14px;
+  display: block;
+  text-align: left;
+  appearance: none;
 }
 
 .kpi-card {
@@ -1125,6 +1128,7 @@ li {
   border-top: 1px solid var(--line);
   padding-top: 14px;
   margin-top: 16px;
+  align-items: center;
 }
 
 .dialog-actions a,
@@ -1137,6 +1141,21 @@ li {
 .dialog-actions button:disabled {
   cursor: not-allowed;
   opacity: 0.5;
+}
+
+.dialog-actions a[aria-disabled="true"] {
+  pointer-events: none;
+  opacity: 0.5;
+  background: #f8fafc;
+  border-color: var(--line);
+  color: var(--muted);
+}
+
+.dialog-link-warning {
+  margin-right: auto;
+  color: var(--warning);
+  font-size: 12px;
+  line-height: 1.35;
 }
 
 .review-content {

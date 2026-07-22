@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi">
 <head>
-  <!-- AIJH-FINAL-POLISH-20260722-1705 -->
+  <!-- AIJH-RUNTIME-HARDENING-20260722-2115 -->
   <meta charset="utf-8">
-  <meta name="app-version" content="AIJH-FINAL-POLISH-20260722-1705">
+  <meta name="app-version" content="AIJH-RUNTIME-HARDENING-20260722-2115">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Job Hunter</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./styles.css?v=AIJH-FINAL-POLISH-20260722-1705">
+  <link rel="stylesheet" href="./styles.css?v=AIJH-RUNTIME-HARDENING-20260722-2115">
 </head>
 <body>
   <header class="topbar">
@@ -23,22 +23,22 @@
 
   <main>
     <section class="summary" aria-label="Dashboard summary">
-      <article class="kpi-card" role="button" tabindex="0" data-kpi="inbox" aria-label="Mở danh sách cần xem trong Inbox">
+      <button class="kpi-card" type="button" data-kpi="inbox" aria-label="Mở danh sách cần xem trong Inbox">
         <span id="inboxCount">-</span>
         <p>Cần xem</p>
-      </article>
-      <article class="kpi-card" role="button" tabindex="0" data-kpi="high-priority" aria-label="Mở Inbox và lọc job ưu tiên cao">
+      </button>
+      <button class="kpi-card" type="button" data-kpi="high-priority" aria-label="Mở Inbox và lọc job ưu tiên cao">
         <span id="excellentCount">-</span>
         <p>Ưu tiên cao</p>
-      </article>
-      <article class="kpi-card" role="button" tabindex="0" data-kpi="following" aria-label="Mở Pipeline để xem các job đang theo dõi">
+      </button>
+      <button class="kpi-card" type="button" data-kpi="following" aria-label="Mở Theo dõi để xem các job đang theo dõi">
         <span id="pipelineCount">-</span>
         <p>Đang theo dõi</p>
-      </article>
-      <article class="kpi-card" role="button" tabindex="0" data-kpi="today" aria-label="Mở Inbox và lọc job mới hôm nay">
+      </button>
+      <button class="kpi-card" type="button" data-kpi="today" aria-label="Mở Inbox và lọc job mới hôm nay">
         <span id="newFoundCount">-</span>
         <p>Mới hôm nay</p>
-      </article>
+      </button>
     </section>
 
     <section id="recommendationPanel" class="profile is-hidden">
@@ -48,10 +48,10 @@
     </section>
 
     <section class="controls" aria-label="Dashboard controls">
-      <nav class="primary-tabs" aria-label="Main navigation">
-        <button class="tab active" type="button" data-view="inbox" aria-selected="true">Inbox</button>
-        <button class="tab" type="button" data-view="pipeline" aria-selected="false">Theo dõi</button>
-        <button class="tab" type="button" data-view="archive" aria-selected="false">Lưu trữ</button>
+      <nav class="primary-tabs" role="tablist" aria-label="Điều hướng workflow">
+        <button id="tab-inbox" class="tab active" type="button" role="tab" data-view="inbox" aria-selected="true" aria-controls="jobList">Inbox</button>
+        <button id="tab-pipeline" class="tab" type="button" role="tab" data-view="pipeline" aria-selected="false" aria-controls="jobList">Theo dõi</button>
+        <button id="tab-archive" class="tab" type="button" role="tab" data-view="archive" aria-selected="false" aria-controls="jobList">Lưu trữ</button>
       </nav>
 
       <div class="quick-filters" aria-label="Quick filters">
@@ -148,7 +148,7 @@
       <button id="nextPage" type="button">Sau</button>
     </section>
 
-    <section id="jobList" class="job-list" aria-live="polite"></section>
+    <section id="jobList" class="job-list" role="tabpanel" aria-labelledby="tab-inbox" aria-live="polite"></section>
 
     <details class="source-panel">
       <summary>Cài đặt và nguồn tìm kiếm <span id="sourceCount">Đang tải nguồn</span></summary>
@@ -192,7 +192,7 @@
     </details>
   </main>
 
-  <dialog id="jobDetailDialog" class="review-dialog detail-drawer">
+  <dialog id="jobDetailDialog" class="review-dialog detail-drawer" aria-modal="true" aria-labelledby="reviewTitle" aria-describedby="drawerMeta">
     <form method="dialog">
       <div class="dialog-head">
         <div>
@@ -204,12 +204,13 @@
       </div>
       <div id="reviewContent" class="review-content"></div>
       <div class="dialog-actions">
+        <span id="dialogLinkWarning" class="dialog-link-warning"></span>
         <a id="reviewOpenLink" href="#" target="_blank" rel="noopener">Mở trang ứng tuyển</a>
         <button id="confirmAutoApply" type="button">Đánh dấu đã nộp</button>
       </div>
     </form>
   </dialog>
 
-  <script src="./app.js?v=AIJH-FINAL-POLISH-20260722-1705" type="module"></script>
+  <script src="./app.js?v=AIJH-RUNTIME-HARDENING-20260722-2115" type="module"></script>
 </body>
 </html>
