@@ -1,4 +1,4 @@
-const APP_VERSION = "AIJH-DARK-SAAS-20260722-2210";
+const APP_VERSION = "AIJH-FLOW-POLISH-20260722-2235";
 const AI_LOCATION_DISCLAIMER = "Địa chỉ này do AI tổng hợp từ thông tin công khai và có thể không phải địa điểm làm việc chính xác. Hãy kiểm tra lại trong JD hoặc website chính thức.";
 const AI_CONTENT_DISCLAIMER = "AI có thể sai. Hãy kiểm tra JD và nguồn chính thức trước khi nộp.";
 const APPROVED_RESUMES = {
@@ -14,6 +14,7 @@ const state = {
   sources: [],
   actions: readActions(),
   view: initialView(),
+  pipelineStageFilter: "all",
   matchFilter: "all",
   recordTypeFilter: "real",
   quickFilter: "all",
@@ -41,6 +42,7 @@ const els = {
   list: document.querySelector("#jobList"),
   kpiCards: [...document.querySelectorAll(".kpi-card")],
   sidebarLinks: [...document.querySelectorAll("[data-sidebar-view]")],
+  sidebarStages: [...document.querySelectorAll("[data-sidebar-stage]")],
   sidebarSettings: document.querySelector("[data-sidebar-settings]"),
   quickFilterButtons: [...document.querySelectorAll("[data-quick-filter]")],
   activeFilterCount: document.querySelector("#activeFilterCount"),
@@ -112,6 +114,18 @@ function bindEvents() {
         return;
       }
       setView(view);
+      state.pipelineStageFilter = "all";
+      state.quickFilter = "all";
+      state.currentPage = 1;
+      render();
+      scrollToFirstResult();
+    });
+  });
+
+  els.sidebarStages.forEach((button) => {
+    button.addEventListener("click", () => {
+      setView("pipeline");
+      state.pipelineStageFilter = button.dataset.sidebarStage;
       state.quickFilter = "all";
       state.currentPage = 1;
       render();
@@ -136,6 +150,7 @@ function bindEvents() {
   els.tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       setView(tab.dataset.view);
+      state.pipelineStageFilter = "all";
       state.quickFilter = "all";
       state.currentPage = 1;
       render();
@@ -153,6 +168,7 @@ function bindEvents() {
             : (currentIndex - 1 + els.tabs.length) % els.tabs.length;
       els.tabs[nextIndex].focus();
       setView(els.tabs[nextIndex].dataset.view);
+      state.pipelineStageFilter = "all";
       state.quickFilter = "all";
       state.currentPage = 1;
       render();
@@ -504,12 +520,15 @@ function createJobCard() {
       <p class="link-warning"></p>
     </div>
     <div class="stage-rail" aria-label="Pipeline stage"></div>
-    <div class="ai-summary">
-      <strong>AI đánh giá</strong>
-      <p class="summary-text"></p>
-      <div class="resume-focus card-resume-focus" aria-label="Trọng tâm CV"></div>
-      <p class="ai-disclaimer"></p>
-    </div>
+    <details class="card-deep-dive">
+      <summary>AI details</summary>
+      <div class="ai-summary">
+        <strong>AI đánh giá</strong>
+        <p class="summary-text"></p>
+        <div class="resume-focus card-resume-focus" aria-label="Trọng tâm CV"></div>
+        <p class="ai-disclaimer"></p>
+      </div>
+    </details>
     <div class="actions" aria-label="Job actions"></div>
     <p class="link-quality"></p>
     <div class="card-footer">
@@ -523,8 +542,8 @@ function renderActions(container, job, status) {
   container.innerHTML = "";
 
   if (["none", "interested", "later"].includes(status)) {
-    addButton(container, "Quan tâm", "interested", job);
-    addButton(container, "Không phù hợp", "rejected", job);
+    addButton(container, "Xem chi tiết", "review-application", job);
+    addButton(container, status === "interested" ? "Đang theo dõi" : "Theo dõi", "interested", job, status === "interested");
   }
 }
 
@@ -559,10 +578,11 @@ function renderInternalActions(container, job, status) {
   container.innerHTML = "";
   if (["none", "interested", "later"].includes(status)) {
     addOverflow(container, [
+      ["Không phù hợp", "rejected"],
+      ["Sao chép link", "copy-link"],
       [applicationLinkLabel(job), "open-link"],
       ["Để sau", "later"],
       ["Đánh dấu đã nộp", "applied"],
-      ["Sao chép link", "copy-link"],
       ["Lưu trữ", "archived"]
     ], job);
     return;
@@ -626,10 +646,16 @@ function addLink(container, label, url, quality = linkQuality(url)) {
   container.appendChild(link);
 }
 
-function addButton(container, label, action, job) {
+function addButton(container, label, action, job, disabled = false) {
   const button = document.createElement("button");
   button.type = "button";
   button.textContent = label;
+  button.disabled = disabled;
+  if (disabled) {
+    button.setAttribute("aria-disabled", "true");
+    container.appendChild(button);
+    return;
+  }
   if (action === "review-application") {
     button.className = "prepare-button";
     button.addEventListener("click", () => openJobDetail(job));
@@ -663,6 +689,7 @@ function initialView() {
 
 function setView(view) {
   state.view = ["inbox", "pipeline", "archive"].includes(view) ? view : "inbox";
+  if (state.view !== "pipeline") state.pipelineStageFilter = "all";
   sessionStorage.setItem("jobHunterView", state.view);
   syncActiveTab();
   syncActiveSidebar();
@@ -680,8 +707,14 @@ function syncActiveTab() {
 
 function syncActiveSidebar() {
   const activeView = state.view || "inbox";
+  const hasStageFilter = activeView === "pipeline" && state.pipelineStageFilter !== "all";
   els.sidebarLinks.forEach((button) => {
-    const active = button.dataset.sidebarView === activeView;
+    const active = button.dataset.sidebarView === activeView && !(button.dataset.sidebarView === "pipeline" && hasStageFilter);
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-current", active ? "page" : "false");
+  });
+  els.sidebarStages.forEach((button) => {
+    const active = hasStageFilter && button.dataset.sidebarStage === state.pipelineStageFilter;
     button.classList.toggle("active", active);
     button.setAttribute("aria-current", active ? "page" : "false");
   });
@@ -701,6 +734,7 @@ function applyKpiShortcut(kind) {
     state.matchFilter = "excellent";
   } else if (kind === "following") {
     setView("pipeline");
+    state.pipelineStageFilter = "all";
     state.matchFilter = "all";
   } else if (kind === "today") {
     setView("inbox");
@@ -784,6 +818,7 @@ function renderResultContext(total) {
 }
 
 function resultContextLabel() {
+  if (state.view === "pipeline" && state.pipelineStageFilter !== "all") return statusLabel(state.pipelineStageFilter, { status: state.pipelineStageFilter });
   if (state.view === "pipeline") return "Đang theo dõi";
   if (state.view === "archive") return "Lưu trữ";
   if (state.recordTypeFilter === "source") return "Nguồn official";
@@ -863,11 +898,23 @@ function renderRecommendation() {
   }
 
   const best = [...inboxJobs].sort((a, b) => b.score - a.score)[0];
+  const summary = aiSummarySections(best).slice(0, 3);
   els.recommendationPanel.classList.remove("is-hidden");
   els.recommendationText.innerHTML = `
-    <span>✨ AI ưu tiên hôm nay</span>
-    <strong>${escapeHtml(toTitleCase(best.title))} · ${escapeHtml(best.company)} · ${escapeHtml(String(best.score))}% · ${escapeHtml(displayAddress(best.locationDetails))}</strong>
-    <button type="button" data-priority-job="${escapeHtml(best.id)}">Xem ngay</button>
+    <div class="recommendation-head">
+      <span>AI Recommendation</span>
+      <strong>${escapeHtml(decisionLabel(best.score))}</strong>
+    </div>
+    <div class="recommendation-score">
+      <b>${escapeHtml(String(best.score))}%</b>
+      <span aria-label="AI confidence rating">★★★★☆</span>
+    </div>
+    <div class="recommendation-copy">
+      <strong>${escapeHtml(toTitleCase(best.title))} · ${escapeHtml(best.company)}</strong>
+      <p>${escapeHtml(displayAddress(best.locationDetails))}</p>
+      <ul>${summary.map(([label, value]) => `<li><b>${escapeHtml(label)}</b> ${escapeHtml(value)}</li>`).join("")}</ul>
+    </div>
+    <button type="button" data-priority-job="${escapeHtml(best.id)}">Review Job</button>
   `;
   els.recommendationText.querySelector("[data-priority-job]")?.addEventListener("click", () => focusJob(best));
 }
@@ -1096,24 +1143,8 @@ function detailHtml(job, eligibility) {
   const quality = linkQuality(job.url);
   return `
     ${drawerTabs(job)}
-    <section class="detail-section" id="drawer-overview">
-      <h3>Tổng quan</h3>
-      <div class="location-detail-grid">
-        <p><strong>Công việc</strong><span>${escapeHtml(toTitleCase(job.title))}</span></p>
-        <p><strong>Công ty</strong><span>${escapeHtml(job.company)}</span></p>
-        <p><strong>Mức phù hợp</strong><span>${escapeHtml(String(job.score))}%</span></p>
-        <p><strong>Quyết định AI</strong><span>${escapeHtml(decisionLabel(job.score))}</span></p>
-        <p><strong>Trạng thái workflow</strong><span>${escapeHtml(statusLabel(getStatus(job.id), action))}</span></p>
-        <p><strong>Hình thức</strong><span>${escapeHtml(compactWorkMode(location.workMode))}</span></p>
-        <p><strong>Nguồn</strong><span>${escapeHtml(sourceNameLabel(job.source))}</span></p>
-        <p><strong>Ngày đăng / phát hiện</strong><span>${escapeHtml(recencyLabel(job))}</span></p>
-        <p><strong>Kiểm tra lần cuối</strong><span>${escapeHtml(job.lastChecked || "Chưa có")}</span></p>
-        <p><strong>Độ mới job</strong><span>${escapeHtml(freshnessStatus(job))}</span></p>
-        <p><strong>Chất lượng link</strong><span>${escapeHtml(linkQualityStatus(quality))}</span></p>
-      </div>
-    </section>
     <section class="detail-section" id="drawer-ai">
-      <h3>AI đánh giá</h3>
+      <h3>AI Analysis</h3>
       <div class="details-grid">
         <div>
           <h4>Điểm mạnh</h4>
@@ -1134,18 +1165,34 @@ function detailHtml(job, eligibility) {
       </div>
       <p class="ai-warning">${escapeHtml(AI_CONTENT_DISCLAIMER)}</p>
     </section>
+    <section class="detail-section" id="drawer-overview">
+      <h3>Overview</h3>
+      <div class="location-detail-grid">
+        <p><strong>Công việc</strong><span>${escapeHtml(toTitleCase(job.title))}</span></p>
+        <p><strong>Công ty</strong><span>${escapeHtml(job.company)}</span></p>
+        <p><strong>Mức phù hợp</strong><span>${escapeHtml(String(job.score))}%</span></p>
+        <p><strong>Quyết định AI</strong><span>${escapeHtml(decisionLabel(job.score))}</span></p>
+        <p><strong>Trạng thái workflow</strong><span>${escapeHtml(statusLabel(getStatus(job.id), action))}</span></p>
+        <p><strong>Hình thức</strong><span>${escapeHtml(compactWorkMode(location.workMode))}</span></p>
+        <p><strong>Nguồn</strong><span>${escapeHtml(sourceNameLabel(job.source))}</span></p>
+        <p><strong>Ngày đăng / phát hiện</strong><span>${escapeHtml(recencyLabel(job))}</span></p>
+        <p><strong>Kiểm tra lần cuối</strong><span>${escapeHtml(job.lastChecked || "Chưa có")}</span></p>
+        <p><strong>Độ mới job</strong><span>${escapeHtml(freshnessStatus(job))}</span></p>
+        <p><strong>Chất lượng link</strong><span>${escapeHtml(linkQualityStatus(quality))}</span></p>
+      </div>
+    </section>
     <section class="detail-section" id="drawer-missing">
       <h3>Kỹ năng còn thiếu</h3>
       <ul>${skillGapList(job).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
     </section>
     <section class="detail-section" id="drawer-resume">
-      <h3>Gợi ý chỉnh CV</h3>
+      <h3>Resume</h3>
       <div class="resume-focus detail-focus">${resumeFocus(job).map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div>
       ${reviewHtml(job, eligibility)}
     </section>
     ${companyInfoHtml(job)}
     <section class="detail-section" id="drawer-location">
-      <h3>Xác minh địa điểm</h3>
+      <h3>Location</h3>
       ${locationDetailHtml(location)}
     </section>
     <section class="detail-section" id="drawer-salary">
@@ -1165,11 +1212,11 @@ function detailHtml(job, eligibility) {
       ${["exact_job", "company_job_page"].includes(quality) ? "" : `<p class="link-warning detail-warning">${escapeHtml(linkQualityWarning(quality))}</p>`}
     </section>
     <section class="detail-section" id="drawer-history">
-      <h3>Lịch sử</h3>
+      <h3>History</h3>
       ${historyHtml(job, action)}
     </section>
     <section class="detail-section" id="drawer-pipeline">
-      <h3>Theo dõi</h3>
+      <h3>Timeline</h3>
       ${pipelineHtml(job, action)}
     </section>
     <section class="detail-section" id="drawer-notes">
@@ -1181,19 +1228,19 @@ function detailHtml(job, eligibility) {
 
 function drawerTabs(job) {
   const tabs = [
-    ["drawer-overview", "Tổng quan"],
-    ["drawer-ai", "AI đánh giá"],
-    ["drawer-missing", "Kỹ năng thiếu"],
-    ["drawer-resume", "Gợi ý CV"]
+    ["drawer-ai", "AI Analysis"],
+    ["drawer-overview", "Overview"],
+    ["drawer-location", "Location"],
+    ["drawer-resume", "Resume"],
+    ["drawer-pipeline", "Timeline"],
+    ["drawer-history", "History"]
   ];
   if (hasCompanyInfo(job)) tabs.push(["drawer-company", "Công ty"]);
   tabs.push(
-    ["drawer-location", "Địa điểm"],
+    ["drawer-missing", "Kỹ năng thiếu"],
     ["drawer-salary", "Lương"],
     ["drawer-benefits", "Phúc lợi", asArray(job.benefits).length],
     ["drawer-apply", "Link ứng tuyển"],
-    ["drawer-history", "Lịch sử"],
-    ["drawer-pipeline", "Theo dõi"],
     ["drawer-notes", "Ghi chú"]
   );
   return `<nav class="drawer-tabs" aria-label="Các phần chi tiết job">
@@ -1567,6 +1614,7 @@ function filteredJobs() {
 
       if (state.view === "inbox" && !shouldShowInInbox(job)) return false;
       if (state.view === "pipeline" && !["interested", "applied", "interview", "offer"].includes(status)) return false;
+      if (state.view === "pipeline" && state.pipelineStageFilter !== "all" && status !== state.pipelineStageFilter) return false;
       if (state.view === "archive" && !["rejected", "archived"].includes(status)) return false;
       if (state.recordTypeFilter === "real" && isSourceCandidate(job)) return false;
       if (state.recordTypeFilter === "source" && !isSourceCandidate(job)) return false;
@@ -1837,8 +1885,8 @@ function decisionBucket(score) {
 }
 
 function decisionLabel(score) {
-  if (score >= 85) return "🟢 Nên nộp";
-  if (score >= 70) return "🟡 Cân nhắc";
+  if (score >= 85) return "🟢 Nộp ngay";
+  if (score >= 70) return "🟡 Nên cân nhắc";
   return "🔴 Không khuyến nghị";
 }
 

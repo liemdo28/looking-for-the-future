@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="vi">
 <head>
-  <!-- AIJH-DARK-SAAS-20260722-2210 -->
+  <!-- AIJH-FLOW-POLISH-20260722-2235 -->
   <meta charset="utf-8">
-  <meta name="app-version" content="AIJH-DARK-SAAS-20260722-2210">
+  <meta name="app-version" content="AIJH-FLOW-POLISH-20260722-2235">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Job Hunter</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./styles.css?v=AIJH-DARK-SAAS-20260722-2210">
+  <link rel="stylesheet" href="./styles.css?v=AIJH-FLOW-POLISH-20260722-2235">
 </head>
 <body>
   <div class="app-shell">
@@ -28,6 +28,14 @@
         <button type="button" data-sidebar-view="pipeline" class="sidebar-item" aria-label="Theo dõi">
           <span aria-hidden="true">↳</span>
           <strong>Theo dõi</strong>
+        </button>
+        <button type="button" data-sidebar-stage="interview" class="sidebar-item" aria-label="Phỏng vấn">
+          <span aria-hidden="true">◌</span>
+          <strong>Phỏng vấn</strong>
+        </button>
+        <button type="button" data-sidebar-stage="offer" class="sidebar-item" aria-label="Offer">
+          <span aria-hidden="true">✓</span>
+          <strong>Offer</strong>
         </button>
         <button type="button" data-sidebar-view="archive" class="sidebar-item" aria-label="Lưu trữ">
           <span aria-hidden="true">◇</span>
@@ -93,6 +101,8 @@
         <button id="tab-archive" class="tab" type="button" role="tab" data-view="archive" aria-selected="false" aria-controls="jobList">Lưu trữ</button>
       </nav>
 
+      <input id="searchBox" type="search" placeholder="Tìm job, công ty, kỹ năng, nguồn...">
+
       <div class="quick-filters" aria-label="Quick filters">
         <span id="activeFilterCount" class="filter-count">Bộ lọc (0)</span>
         <button type="button" data-quick-filter="match90">⭐ Match &gt; 90%</button>
@@ -142,12 +152,6 @@
           </select>
         </label>
         <label>
-          Nguồn
-          <select id="sourceFilter" aria-label="Lọc theo nguồn">
-            <option value="all">Tất cả nguồn</option>
-          </select>
-        </label>
-        <label>
           Sắp xếp
           <select id="sortBy" aria-label="Sort jobs">
             <option value="score">Điểm cao trước</option>
@@ -165,8 +169,15 @@
           </select>
         </label>
       </div>
-
-      <input id="searchBox" type="search" placeholder="Tìm job, công ty, kỹ năng, nguồn...">
+      <details class="advanced-filters">
+        <summary>Advanced filters</summary>
+        <label>
+          Nguồn
+          <select id="sourceFilter" aria-label="Lọc theo nguồn">
+            <option value="all">Tất cả nguồn</option>
+          </select>
+        </label>
+      </details>
     </section>
 
     <section class="quality-strip" aria-label="Data quality summary">
@@ -252,6 +263,6 @@
     </form>
   </dialog>
 
-  <script src="./app.js?v=AIJH-DARK-SAAS-20260722-2210" type="module"></script>
+  <script src="./app.js?v=AIJH-FLOW-POLISH-20260722-2235" type="module"></script>
 </body>
 </html>

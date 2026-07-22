@@ -1,4 +1,4 @@
-/* AIJH-DARK-SAAS-20260722-2210 */
+/* AIJH-FLOW-POLISH-20260722-2235 */
 
 :root {
   --bg: #f7f9fc;
@@ -2349,6 +2349,206 @@ summary:focus-visible,
   .sync-box,
   .sync-button {
     width: 100%;
+  }
+
+  #recommendationText {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Final flow polish cascade. */
+.sidebar-item[data-sidebar-stage] {
+  margin-left: 10px;
+  width: calc(100% - 10px);
+  opacity: 0.86;
+}
+
+.sidebar-item.active {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.advanced-filters {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(17, 24, 39, 0.58);
+}
+
+.advanced-filters > summary {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  color: var(--muted-strong);
+  cursor: pointer;
+  list-style: none;
+}
+
+.advanced-filters > summary::-webkit-details-marker {
+  display: none;
+}
+
+.advanced-filters > summary::after {
+  content: "+";
+  margin-left: auto;
+  color: var(--accent);
+}
+
+.advanced-filters[open] > summary::after {
+  content: "-";
+}
+
+.advanced-filters label {
+  display: grid;
+  gap: 8px;
+  padding: 0 14px 14px;
+}
+
+#recommendationText {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.7fr) minmax(0, 2fr) auto;
+  align-items: center;
+  gap: 18px;
+}
+
+.recommendation-head,
+.recommendation-score {
+  display: grid;
+  gap: 6px;
+}
+
+.recommendation-head span {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.recommendation-score b {
+  color: var(--text);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.recommendation-score span {
+  color: var(--warning);
+  letter-spacing: 0.06em;
+}
+
+.recommendation-copy p,
+.recommendation-copy ul {
+  margin: 4px 0 0;
+  color: var(--muted-strong);
+}
+
+.recommendation-copy ul {
+  display: grid;
+  gap: 3px;
+  padding-left: 18px;
+  font-size: 13px;
+}
+
+.job-card {
+  padding: 18px;
+  gap: 10px;
+}
+
+.job-head {
+  display: grid;
+  gap: 6px;
+}
+
+.card-deep-dive {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(17, 24, 39, 0.44);
+  overflow: hidden;
+}
+
+.card-deep-dive > summary {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  color: var(--muted-strong);
+  cursor: pointer;
+  list-style: none;
+}
+
+.card-deep-dive > summary::-webkit-details-marker {
+  display: none;
+}
+
+.card-deep-dive > summary::after {
+  content: "Mở";
+  margin-left: auto;
+  color: var(--accent);
+  font-size: 12px;
+}
+
+.card-deep-dive[open] > summary::after {
+  content: "Ẩn";
+}
+
+.card-deep-dive .ai-summary {
+  margin: 0;
+  border-width: 1px 0 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.actions button:disabled {
+  cursor: default;
+  opacity: 0.72;
+}
+
+.actions button:nth-child(2):disabled {
+  color: var(--success);
+  border-color: rgba(52, 211, 153, 0.24);
+  background: rgba(52, 211, 153, 0.1);
+}
+
+.drawer-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  backdrop-filter: blur(14px);
+}
+
+@media (max-width: 920px) {
+  .sidebar-item[data-sidebar-stage] {
+    margin-left: 0;
+    width: auto;
+  }
+}
+
+@media (max-width: 760px) {
+  main {
+    width: min(100% - 28px, 1440px);
+    margin-top: 18px;
+  }
+
+  .summary {
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    padding-bottom: 6px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .summary .kpi-card {
+    min-width: 214px;
+    min-height: 112px;
+    scroll-snap-align: start;
+  }
+
+  .quick-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   #recommendationText {
