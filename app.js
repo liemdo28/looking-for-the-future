@@ -118,7 +118,8 @@ function render() {
     card.dataset.status = status;
 
     node.querySelector(".rank").textContent = `#${job.rank || "-"}`;
-    node.querySelector("h3").textContent = job.title;
+    node.querySelector(".job-title").textContent = job.title;
+    node.querySelector(".source-badge").textContent = job.source;
     node.querySelector(".company").textContent = job.company;
     node.querySelector(".score").textContent = `${job.score}%`;
     node.querySelector(".summary-text").textContent = job.summary;
