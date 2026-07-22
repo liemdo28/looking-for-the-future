@@ -1,6 +1,6 @@
 import { INDEX_HTML } from "./generated-index.js";
 
-const SYNC_VERSION = "AIJH-PERSISTED-ACTIONS-20260722-2135";
+const SYNC_VERSION = "AIJH-HOURLY-SYNC-20260722-1740";
 const ACTION_STORE_KEY = "actions:v1:shared-dashboard";
 const SCHEDULED_SYNC_KEY = "sync:v1:last-hourly-job-search";
 const ACTION_PREFIX = "action:v1:";

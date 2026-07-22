@@ -1,4 +1,4 @@
-const APP_VERSION = "AIJH-FLOW-POLISH-20260722-2235";
+const APP_VERSION = "AIJH-HOURLY-SYNC-20260722-1740";
 const AI_LOCATION_DISCLAIMER = "Địa chỉ này do AI tổng hợp từ thông tin công khai và có thể không phải địa điểm làm việc chính xác. Hãy kiểm tra lại trong JD hoặc website chính thức.";
 const AI_CONTENT_DISCLAIMER = "AI có thể sai. Hãy kiểm tra JD và nguồn chính thức trước khi nộp.";
 const APPROVED_RESUMES = {
@@ -97,7 +97,10 @@ async function init() {
   await loadServerState();
   render();
   await syncJobs();
-  setInterval(syncJobs, syncIntervalMs);
+  setInterval(() => {
+    if (isInDailySyncWindow()) syncJobs();
+    else renderSyncState();
+  }, syncIntervalMs);
 }
 
 function bindEvents() {
@@ -932,7 +935,8 @@ function renderSyncState() {
   } else if (state.loadState === "refreshing") {
     els.syncStatus.textContent = "Đang làm mới dữ liệu...";
   } else {
-    els.syncStatus.textContent = `Đồng bộ lần cuối ${state.lastSyncAt ? dateTimeLabel(state.lastSyncAt) : "chưa có"} · ${state.newJobsFound} job mới`;
+    const windowLabel = isInDailySyncWindow() ? "Auto sync đang bật" : "Auto sync tạm nghỉ đến 08:00";
+    els.syncStatus.textContent = `${windowLabel} · 08:00-20:00 hằng ngày · Lần cuối ${state.lastSyncAt ? dateTimeLabel(state.lastSyncAt) : "chưa có"} · ${state.newJobsFound} job mới`;
   }
 }
 
@@ -2298,6 +2302,16 @@ function dateLabel(value) {
 
 function dateTimeLabel(value) {
   return new Date(value).toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+}
+
+function isInDailySyncWindow(date = new Date()) {
+  const hourText = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Ho_Chi_Minh",
+    hour: "2-digit",
+    hour12: false
+  }).format(date);
+  const hour = Number(hourText);
+  return hour >= 8 && hour <= 20;
 }
 
 function addDays(days) {
