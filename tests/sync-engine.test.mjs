@@ -47,9 +47,29 @@ const duplicate = { ...appJob, id: "another-id", score: appJob.score - 5 };
 assert.equal(engine.dedupeJobs([duplicate, appJob]).length, 1);
 assert.equal(engine.dedupeJobs([duplicate, appJob])[0].id, appJob.id);
 
+const dedupeIndex = engine.buildDedupeIndex([{ ...appJob, raw }]);
+assert.equal(engine.findDuplicate({ ...appJob, id: "url-dupe" }, { jobUrl: appJob.url }, dedupeIndex).reason, "same_canonical_url");
+assert.equal(engine.findDuplicate({ ...appJob, id: "apply-dupe", url: "https://example.com/listing/1", applicationLink: appJob.applicationLink }, { applyUrl: appJob.applicationLink }, dedupeIndex).reason, "same_apply_url");
+assert.equal(engine.findDuplicate({ ...appJob, id: "source-dupe" }, { sourceId: raw.sourceId, sourceJobId: raw.sourceJobId }, dedupeIndex).reason, "same_source_job_id");
+
 const merged = engine.mergeLifecycle({ ...appJob, firstSeenAt: "2026-07-20T00:00:00.000Z", score: 90 }, appJob);
 assert.equal(merged.firstSeenAt, "2026-07-20T00:00:00.000Z");
 assert.equal(merged.missingCheckCount, 0);
+assert.equal(merged.matchEvaluation.cacheStatus, "hit");
+assert.equal(merged.matchEvaluation.evaluationCount, 1);
+
+const changedJob = { ...appJob, contentHash: "changed", matchEvaluation: { ...appJob.matchEvaluation, score: appJob.score - 1 } };
+const changedMerged = engine.mergeLifecycle({ ...appJob, matchEvaluation: { ...appJob.matchEvaluation, evaluationCount: 1 } }, changedJob);
+assert.equal(changedMerged.matchEvaluation.cacheStatus, "miss");
+assert.equal(changedMerged.matchEvaluation.evaluationCount, 2);
+
+const missingOnce = engine.nextLifecycleForMissing(appJob);
+assert.equal(missingOnce.availabilityStatus, "possibly_active");
+assert.equal(missingOnce.missingCheckCount, 1);
+const removedByCount = engine.nextLifecycleForMissing({ ...appJob, missingCheckCount: 2 });
+assert.equal(removedByCount.availabilityStatus, "removed");
+const removedByUrl = engine.nextLifecycleForMissing(appJob, "url_removed");
+assert.equal(removedByUrl.availabilityStatus, "removed");
 
 assert.equal(engine.evaluateLinkQuality("https://example.com/jobs/search?q=sales", raw, ""), "search_page");
 assert.equal(engine.evaluateLinkQuality("not a url", raw, ""), "invalid");
@@ -71,5 +91,14 @@ assert.equal(engine.genericHtmlRecords(htmlFixture, { id: "html", name: "Acme", 
 
 assert.equal(engine.classifyError(new Error("rate_limited:429")), "rate_limited");
 assert.equal(engine.classifyError(new Error("auth_required:403")), "auth_required");
+assert.equal(engine.classifyError(new Error("captcha challenge")), "captcha");
+assert.equal(engine.retryPolicyForError("timeout").retry, true);
+assert.equal(engine.retryPolicyForError("rate_limited").backoff, "exponential");
+assert.equal(engine.retryPolicyForError("captcha").health, "blocked");
+
+assert.throws(() => engine.validateCrawlUrl("http://127.0.0.1/jobs", { baseUrl: "https://example.com/careers" }), /blocked_private_host/);
+assert.throws(() => engine.validateCrawlUrl("file:///etc/passwd", { baseUrl: "https://example.com/careers" }), /invalid_url_protocol/);
+assert.throws(() => engine.validateCrawlUrl("https://evil.example.net/jobs", { baseUrl: "https://example.com/careers" }), /blocked_unregistered_host/);
+assert.equal(engine.validateCrawlUrl("https://example.com/jobs/1", { baseUrl: "https://example.com/careers" }), "https://example.com/jobs/1");
 
 console.log("sync-engine tests passed");

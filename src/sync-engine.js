@@ -129,7 +129,19 @@ export async function retryFailedSources(env, syncRunId, ctx) {
 }
 
 export async function getSourceRegistry(env) {
-  return loadSourceRegistry(env);
+  const registry = await loadSourceRegistry(env);
+  const healthRows = await readKvPrefix(env, SOURCE_STATE_PREFIX);
+  return {
+    ...registry,
+    sources: registry.sources.map((source) => ({
+      ...source,
+      health: healthRows[source.id]?.health || (source.enabled ? "unknown" : "disabled"),
+      lastSyncAt: healthRows[source.id]?.lastSyncAt || source.lastSyncAt,
+      failureCount: healthRows[source.id]?.failureCount ?? source.failureCount,
+      lastError: healthRows[source.id]?.lastError || source.lastError,
+      jobsFound: healthRows[source.id]?.jobsFound || 0
+    }))
+  };
 }
 
 export async function getLatestIngestedJobs(env) {
@@ -179,12 +191,14 @@ async function processSyncRun(env, syncRunId, sources) {
   await persistRun(env, run);
 
   const existingJobs = await readKvPrefix(env, INGESTED_JOB_PREFIX);
-  const seenCanonicalKeys = new Map(Object.values(existingJobs).map((job) => [job.dedupeKey || canonicalJobKey(job), job.id]));
+  const seenCanonicalKeys = buildDedupeIndex(Object.values(existingJobs));
+  const seenJobIds = new Set();
 
   for (const source of sources) {
     run = await readJson(env, `${SYNC_RUN_PREFIX}${syncRunId}`);
     if (!run || run.status === "cancelled") break;
     const result = await syncOneSource(env, run.id, source, seenCanonicalKeys);
+    result.seenJobIds?.forEach((jobId) => seenJobIds.add(jobId));
     run.completedSources += 1;
     run.discoveredJobs += result.jobsFetched;
     run.newJobs += result.newJobs;
@@ -196,6 +210,7 @@ async function processSyncRun(env, syncRunId, sources) {
 
   run = await readJson(env, `${SYNC_RUN_PREFIX}${syncRunId}`);
   if (!run || run.status === "cancelled") return;
+  run.removedJobs += await markMissingJobs(env, sources, seenJobIds);
   run.completedAt = new Date().toISOString();
   run.status = run.failedSources && run.completedSources ? "partial" : run.failedSources ? "failed" : "completed";
   if (run.failedSources) run.errorSummary = `${run.failedSources} nguồn lỗi`;
@@ -235,20 +250,22 @@ async function syncOneSource(env, syncRunId, source, seenCanonicalKeys) {
     let newJobs = 0;
     let updatedJobs = 0;
     let duplicates = 0;
+    const seenJobIds = new Set();
     for (const raw of rawRecords) {
       const normalized = normalizeRawJob(raw);
       const appJob = toAppJob(normalized, source);
       if (!appJob) continue;
-      const dedupeKey = canonicalJobKey(appJob);
-      const duplicateOf = seenCanonicalKeys.get(dedupeKey);
+      const duplicate = findDuplicate(appJob, raw, seenCanonicalKeys);
+      const duplicateOf = duplicate?.jobId;
       if (duplicateOf && duplicateOf !== appJob.id) {
         duplicates += 1;
-        appJob.duplicateMatch = { duplicateOfJobId: duplicateOf, confidence: 92, reason: "same_title_company_location" };
+        appJob.duplicateMatch = { duplicateOfJobId: duplicateOf, confidence: duplicate.confidence, reason: duplicate.reason };
       } else {
-        seenCanonicalKeys.set(dedupeKey, appJob.id);
+        addDedupeKeys(seenCanonicalKeys, appJob, raw);
       }
       const existing = await readJson(env, `${INGESTED_JOB_PREFIX}${appJob.id}`);
       const merged = mergeLifecycle(existing, appJob);
+      seenJobIds.add(merged.id);
       await writeJson(env, `${INGESTED_JOB_PREFIX}${merged.id}`, merged, { expirationTtl: 60 * 60 * 24 * 90 });
       await writeJson(env, `${MATCH_EVAL_PREFIX}${merged.id}`, merged.matchEvaluation, { expirationTtl: 60 * 60 * 24 * 90 });
       await writeJson(env, `${RAW_RECORD_PREFIX}${source.id}:${merged.id}`, truncateRawRecord(raw), { expirationTtl: 60 * 60 * 24 * 14 });
@@ -262,6 +279,7 @@ async function syncOneSource(env, syncRunId, source, seenCanonicalKeys) {
       newJobs,
       updatedJobs,
       duplicates,
+      seenJobIds: [...seenJobIds],
       completedAt: new Date().toISOString(),
       durationMs: Date.now() - started
     };
@@ -564,6 +582,12 @@ function toAppJob(normalized, source) {
 function mergeLifecycle(existing, incoming) {
   if (!existing) return incoming;
   const unchanged = existing.contentHash === incoming.contentHash && existing.matchEvaluation;
+  const evaluationCount = unchanged
+    ? Number(existing.matchEvaluation?.evaluationCount || 1)
+    : Number(existing.matchEvaluation?.evaluationCount || 0) + 1;
+  const matchEvaluation = unchanged
+    ? { ...existing.matchEvaluation, cacheStatus: "hit", evaluationCount }
+    : { ...incoming.matchEvaluation, cacheStatus: "miss", evaluationCount };
   return {
     ...existing,
     ...incoming,
@@ -573,7 +597,7 @@ function mergeLifecycle(existing, incoming) {
     missingCheckCount: 0,
     availabilityStatus: incoming.availabilityStatus || "active",
     score: unchanged ? existing.score : incoming.score,
-    matchEvaluation: unchanged ? existing.matchEvaluation : incoming.matchEvaluation,
+    matchEvaluation,
     isNew: false
   };
 }
@@ -605,6 +629,9 @@ function evaluateMatch(normalized) {
     recommendation: decision === "apply" ? "Nộp ngay nếu JD xác nhận location/work mode phù hợp." : decision === "consider" ? "Nên cân nhắc sau khi kiểm tra JD chi tiết." : "Chỉ theo dõi nếu role có scope operations rõ hơn.",
     resumeFocus: ["Sales/Commercial Operations", "CRM data quality", "KPI/reporting", "Stakeholder coordination"].filter((item) => text.includes(item.split("/")[0].toLowerCase()) || item !== "CRM data quality").slice(0, 4),
     modelVersion: MATCH_MODEL_VERSION,
+    scoringType: "rule_based",
+    cacheStatus: "miss",
+    evaluationCount: 1,
     evaluatedAt: new Date().toISOString()
   };
 }
@@ -777,6 +804,66 @@ function dedupeJobs(jobs) {
   return [...map.values()];
 }
 
+function buildDedupeIndex(jobs) {
+  const index = new Map();
+  jobs.filter(Boolean).forEach((job) => addDedupeKeys(index, job, job.raw || {}));
+  return index;
+}
+
+function addDedupeKeys(index, job, raw = {}) {
+  dedupeKeys(job, raw).forEach((entry) => {
+    if (!index.has(entry.key)) index.set(entry.key, { jobId: job.id, reason: entry.reason, confidence: entry.confidence });
+  });
+}
+
+function findDuplicate(job, raw, index) {
+  for (const entry of dedupeKeys(job, raw)) {
+    const match = index.get(entry.key);
+    if (match) return { ...match, reason: entry.reason, confidence: entry.confidence };
+  }
+  return null;
+}
+
+function dedupeKeys(job, raw = {}) {
+  const keys = [];
+  if (raw.sourceId && raw.sourceJobId) keys.push({ key: `source:${raw.sourceId}:${raw.sourceJobId}`.toLowerCase(), reason: "same_source_job_id", confidence: 99 });
+  const url = canonicalUrl(job.url || raw.jobUrl || "");
+  if (url) keys.push({ key: `url:${url}`.toLowerCase(), reason: "same_canonical_url", confidence: 98 });
+  const applyUrl = canonicalUrl(job.applicationLink || raw.applyUrl || "");
+  if (applyUrl) keys.push({ key: `apply:${applyUrl}`.toLowerCase(), reason: "same_apply_url", confidence: 97 });
+  keys.push({ key: `strong:${canonicalJobKey(job)}`, reason: "same_title_company_location", confidence: 92 });
+  return keys;
+}
+
+async function markMissingJobs(env, sources, seenJobIds) {
+  const sourceIds = new Set(sources.map((source) => source.id));
+  const existingJobs = Object.values(await readKvPrefix(env, INGESTED_JOB_PREFIX));
+  let affected = 0;
+  for (const job of existingJobs) {
+    if (!job?.id || !sourceIds.has(job.sourceRegistry) || seenJobIds.has(job.id)) continue;
+    const updated = nextLifecycleForMissing(job, "missing_from_source");
+    await writeJson(env, `${INGESTED_JOB_PREFIX}${updated.id}`, updated, { expirationTtl: 60 * 60 * 24 * 90 });
+    affected += 1;
+  }
+  return affected;
+}
+
+function nextLifecycleForMissing(job, reason = "missing_from_source") {
+  const missingCheckCount = Number(job.missingCheckCount || 0) + 1;
+  const availabilityStatus = reason === "url_removed"
+    ? "removed"
+    : missingCheckCount >= 3
+      ? "removed"
+      : "possibly_active";
+  return {
+    ...job,
+    lastCheckedAt: new Date().toISOString(),
+    missingCheckCount,
+    availabilityStatus,
+    lifecycleReason: reason
+  };
+}
+
 function dedupeRawRecords(records) {
   const seen = new Set();
   return records.filter((record) => {
@@ -790,7 +877,8 @@ function dedupeRawRecords(records) {
 async function updateSourceState(env, source, result) {
   const previous = await readJson(env, `${SOURCE_STATE_PREFIX}${source.id}`) || {};
   const failureCount = result.status === "success" ? 0 : Number(previous.failureCount || 0) + 1;
-  const health = !source.enabled ? "disabled" : result.status === "success" ? "healthy" : result.status === "rate_limited" ? "degraded" : failureCount >= 3 ? "failing" : "degraded";
+  const policy = retryPolicyForError(result.errorType || (result.status === "rate_limited" ? "rate_limited" : "unknown"));
+  const health = !source.enabled ? "disabled" : result.status === "success" ? "healthy" : failureCount >= 3 ? "failing" : policy.health;
   await writeJson(env, `${SOURCE_STATE_PREFIX}${source.id}`, {
     sourceId: source.id,
     health,
@@ -906,12 +994,32 @@ function tierWeight(tier) {
 function classifyError(error) {
   const message = String(error?.message || error || "");
   if (/timeout|aborted/i.test(message)) return "timeout";
+  if (/dns|ENOTFOUND|getaddrinfo/i.test(message)) return "dns";
   if (/429|rate_limited/i.test(message)) return "rate_limited";
+  if (/captcha/i.test(message)) return "captcha";
   if (/403|401|auth_required/i.test(message)) return "auth_required";
   if (/404|410|removed/i.test(message)) return "404";
   if (/private|unregistered|invalid_url/i.test(message)) return "invalid_url";
+  if (/invalid_html/i.test(message)) return "invalid_html";
   if (/json|parse|schema/i.test(message)) return "parser_failed";
   return "network";
+}
+
+function retryPolicyForError(errorType) {
+  const policies = {
+    timeout: { retry: true, backoff: "linear", maxAttempts: 3, health: "degraded" },
+    dns: { retry: true, backoff: "linear", maxAttempts: 2, health: "degraded" },
+    rate_limited: { retry: true, backoff: "exponential", maxAttempts: 3, health: "degraded" },
+    auth_required: { retry: false, backoff: "none", maxAttempts: 1, health: "blocked" },
+    captcha: { retry: false, backoff: "none", maxAttempts: 1, health: "blocked" },
+    parser_failed: { retry: false, backoff: "none", maxAttempts: 1, health: "degraded" },
+    invalid_html: { retry: false, backoff: "none", maxAttempts: 1, health: "degraded" },
+    "404": { retry: false, backoff: "none", maxAttempts: 1, health: "failing" },
+    invalid_url: { retry: false, backoff: "none", maxAttempts: 1, health: "failing" },
+    network: { retry: true, backoff: "linear", maxAttempts: 2, health: "degraded" },
+    unknown: { retry: false, backoff: "none", maxAttempts: 1, health: "unknown" }
+  };
+  return policies[errorType] || policies.unknown;
 }
 
 function truncateRawRecord(raw) {
@@ -1043,11 +1151,16 @@ export const __syncEngineTest = {
   toAppJob,
   evaluateLinkQuality,
   verifyLocation,
+  validateCrawlUrl,
   canonicalJobKey,
+  buildDedupeIndex,
+  findDuplicate,
   dedupeJobs,
   mergeLifecycle,
+  nextLifecycleForMissing,
   evaluateMatch,
   extractJsonLdJobs,
   genericHtmlRecords,
-  classifyError
+  classifyError,
+  retryPolicyForError
 };
