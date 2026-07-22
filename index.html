@@ -1,11 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <!-- AIJH-D77C0DC-20260722-0430 -->
   <meta charset="utf-8">
+  <meta name="app-version" content="AIJH-D77C0DC-20260722-0430">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Job Hunter</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles.css?v=AIJH-D77C0DC-20260722-0430">
 </head>
 <body>
   <header class="topbar">
@@ -94,77 +96,12 @@
     <section id="jobList" class="job-list" aria-live="polite"></section>
 
     <details class="source-panel">
-      <summary>Settings and source pool <span id="sourceCount">0 sources</span></summary>
+      <summary>Settings and source pool <span id="sourceCount">Loading sources</span></summary>
       <p>Minimum match threshold: 50%. Sources are used by the sync provider and manual research list.</p>
       <div id="sourceGroups" class="source-groups"></div>
     </details>
   </main>
 
-  <template id="jobCardTemplate">
-    <article class="job-card">
-      <div class="ai-row">
-        <div>
-          <span class="ai-label"></span>
-          <strong class="score"></strong>
-        </div>
-        <span class="pipeline-status"></span>
-      </div>
-
-      <div class="job-head">
-        <span class="rank"></span>
-        <h3><span class="job-title"></span></h3>
-        <p class="company-line">
-          <span class="company"></span>
-          <span class="dot">·</span>
-          <span class="title-location"></span>
-          <span class="dot">·</span>
-          <span class="work-mode"></span>
-        </p>
-        <p class="source-line">
-          <span class="source-badge"></span>
-          <span class="dot">·</span>
-          <span class="open-status"></span>
-        </p>
-      </div>
-
-      <div class="ai-summary">
-        <strong>AI says</strong>
-        <p class="summary-text"></p>
-      </div>
-
-      <div class="focus-block">
-        <div>
-          <strong>Resume focus</strong>
-          <div class="resume-focus"></div>
-        </div>
-        <button type="button" class="copy-prompt">Copy prompt</button>
-      </div>
-
-      <div class="actions" aria-label="Job actions"></div>
-
-      <div class="quick-preview">
-        <strong>Quick preview</strong>
-        <div class="details-grid">
-          <div>
-            <h4>Why match</h4>
-            <ul class="match-list"></ul>
-          </div>
-          <div>
-            <h4>Gap</h4>
-            <ul class="risk-list"></ul>
-          </div>
-        </div>
-      </div>
-
-      <details class="detail-toggle">
-        <summary>More detail</summary>
-        <div class="internal-actions"></div>
-        <p class="application-angle"></p>
-        <p class="source-note"></p>
-      </details>
-    </article>
-  </template>
-
-  <script src="./app.js" type="module"></script>
+  <script src="./app.js?v=AIJH-D77C0DC-20260722-0430" type="module"></script>
 </body>
 </html>

@@ -1,3 +1,5 @@
+const APP_VERSION = "AIJH-D77C0DC-20260722-0430";
+
 const state = {
   jobs: [],
   sources: [],
@@ -18,7 +20,6 @@ const state = {
 const syncIntervalMs = 60 * 60 * 1000;
 const els = {
   list: document.querySelector("#jobList"),
-  template: document.querySelector("#jobCardTemplate"),
   tabs: [...document.querySelectorAll(".primary-tabs .tab")],
   search: document.querySelector("#searchBox"),
   matchFilter: document.querySelector("#matchFilter"),
@@ -218,36 +219,97 @@ function render() {
 function renderJob(job) {
   if (!isValidJob(job)) return;
 
-  const node = els.template.content.cloneNode(true);
-  const card = node.querySelector(".job-card");
+  const card = createJobCard();
   const action = getAction(job.id);
   const status = getStatus(job.id);
   const match = matchLabel(job.score);
 
   card.dataset.status = status;
-  node.querySelector(".rank").textContent = `#${job.rank || "-"}`;
-  node.querySelector(".ai-label").textContent = `${match.label} match`;
-  node.querySelector(".score").textContent = `${job.score}%`;
-  node.querySelector(".pipeline-status").textContent = statusLabel(status, action);
-  node.querySelector(".pipeline-status").classList.add(`status-${status}`);
-  node.querySelector(".job-title").textContent = toTitleCase(job.title);
-  node.querySelector(".company").textContent = job.company;
-  node.querySelector(".title-location").textContent = compactLocation(job.location);
-  node.querySelector(".work-mode").textContent = compactWorkMode(job.workMode);
-  node.querySelector(".source-badge").textContent = job.source || "Source";
-  node.querySelector(".open-status").textContent = job.openStatus || "Check source";
-  node.querySelector(".summary-text").textContent = aiSummary(job);
-  node.querySelector(".application-angle").textContent = `Application angle: ${job.applicationAngle || "Highlight relevant operations, reporting, CRM, and stakeholder work."}`;
-  node.querySelector(".source-note").textContent = `Source: ${job.source || "Unknown"} | Status: ${job.openStatus || "Check source"}`;
+  card.querySelector(".rank").textContent = `#${job.rank || "-"}`;
+  card.querySelector(".ai-label").textContent = `${match.label} match`;
+  card.querySelector(".score").textContent = `${job.score}%`;
+  card.querySelector(".pipeline-status").textContent = statusLabel(status, action);
+  card.querySelector(".pipeline-status").classList.add(`status-${status}`);
+  card.querySelector(".job-title").textContent = toTitleCase(job.title);
+  card.querySelector(".company").textContent = job.company;
+  card.querySelector(".title-location").textContent = compactLocation(job.location);
+  card.querySelector(".work-mode").textContent = compactWorkMode(job.workMode);
+  card.querySelector(".source-badge").textContent = job.source || "Source";
+  card.querySelector(".open-status").textContent = job.openStatus || "Check source";
+  card.querySelector(".summary-text").textContent = aiSummary(job);
+  card.querySelector(".application-angle").textContent = `Application angle: ${job.applicationAngle || "Highlight relevant operations, reporting, CRM, and stakeholder work."}`;
+  card.querySelector(".source-note").textContent = `Source: ${job.source || "Unknown"} | Status: ${job.openStatus || "Check source"}`;
 
-  renderFocus(node.querySelector(".resume-focus"), resumeFocus(job));
-  fillList(node.querySelector(".match-list"), shortList(job.match));
-  fillList(node.querySelector(".risk-list"), shortList(job.risks));
-  node.querySelector(".copy-prompt").addEventListener("click", () => copyPrompt(job));
-  renderActions(node.querySelector(".actions"), job, status);
-  renderInternalActions(node.querySelector(".internal-actions"), job, status);
+  renderFocus(card.querySelector(".resume-focus"), resumeFocus(job));
+  fillList(card.querySelector(".match-list"), shortList(job.match));
+  fillList(card.querySelector(".risk-list"), shortList(job.risks));
+  card.querySelector(".copy-prompt").addEventListener("click", () => copyPrompt(job));
+  renderActions(card.querySelector(".actions"), job, status);
+  renderInternalActions(card.querySelector(".internal-actions"), job, status);
 
-  els.list.appendChild(node);
+  els.list.appendChild(card);
+}
+
+function createJobCard() {
+  const card = document.createElement("article");
+  card.className = "job-card";
+  card.innerHTML = `
+    <div class="ai-row">
+      <div>
+        <span class="ai-label"></span>
+        <strong class="score"></strong>
+      </div>
+      <span class="pipeline-status"></span>
+    </div>
+    <div class="job-head">
+      <span class="rank"></span>
+      <h3><span class="job-title"></span></h3>
+      <p class="company-line">
+        <span class="company"></span>
+        <span class="dot">·</span>
+        <span class="title-location"></span>
+        <span class="dot">·</span>
+        <span class="work-mode"></span>
+      </p>
+      <p class="source-line">
+        <span class="source-badge"></span>
+        <span class="dot">·</span>
+        <span class="open-status"></span>
+      </p>
+    </div>
+    <div class="ai-summary">
+      <strong>AI says</strong>
+      <p class="summary-text"></p>
+    </div>
+    <div class="focus-block">
+      <div>
+        <strong>Resume focus</strong>
+        <div class="resume-focus"></div>
+      </div>
+      <button type="button" class="copy-prompt">Copy prompt</button>
+    </div>
+    <div class="actions" aria-label="Job actions"></div>
+    <div class="quick-preview">
+      <strong>Quick preview</strong>
+      <div class="details-grid">
+        <div>
+          <h4>Why match</h4>
+          <ul class="match-list"></ul>
+        </div>
+        <div>
+          <h4>Gap</h4>
+          <ul class="risk-list"></ul>
+        </div>
+      </div>
+    </div>
+    <details class="detail-toggle">
+      <summary>More detail</summary>
+      <div class="internal-actions"></div>
+      <p class="application-angle"></p>
+      <p class="source-note"></p>
+    </details>
+  `;
+  return card;
 }
 
 function renderActions(container, job, status) {
