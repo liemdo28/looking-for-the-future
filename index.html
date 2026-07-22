@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <!-- AIJH-PRODUCTION-POLISH-20260722-1345 -->
+  <!-- AIJH-AUDIT-FIX-20260722-1430 -->
   <meta charset="utf-8">
-  <meta name="app-version" content="AIJH-PRODUCTION-POLISH-20260722-1345">
+  <meta name="app-version" content="AIJH-AUDIT-FIX-20260722-1430">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Job Hunter</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./styles.css?v=AIJH-PRODUCTION-POLISH-20260722-1345">
+  <link rel="stylesheet" href="./styles.css?v=AIJH-AUDIT-FIX-20260722-1430">
 </head>
 <body>
   <header class="topbar">
@@ -49,9 +49,9 @@
 
     <section class="controls" aria-label="Dashboard controls">
       <nav class="primary-tabs" aria-label="Main navigation">
-        <button class="tab active" type="button" data-view="inbox">Inbox</button>
-        <button class="tab" type="button" data-view="pipeline">Pipeline</button>
-        <button class="tab" type="button" data-view="archive">Archive</button>
+        <button class="tab active" type="button" data-view="inbox" aria-selected="true">Inbox</button>
+        <button class="tab" type="button" data-view="pipeline" aria-selected="false">Pipeline</button>
+        <button class="tab" type="button" data-view="archive" aria-selected="false">Archive</button>
       </nav>
 
       <div class="filter-row">
@@ -130,7 +130,7 @@
             <option value="85" selected>85%</option>
             <option value="90">90%</option>
             <option value="95">95%</option>
-            <option value="disabled">Disabled</option>
+            <option value="disabled">Tắt</option>
           </select>
         </label>
         <label>
@@ -179,6 +179,6 @@
     </form>
   </dialog>
 
-  <script src="./app.js?v=AIJH-PRODUCTION-POLISH-20260722-1345" type="module"></script>
+  <script src="./app.js?v=AIJH-AUDIT-FIX-20260722-1430" type="module"></script>
 </body>
 </html>

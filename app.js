@@ -1,5 +1,4 @@
-const APP_VERSION = "AIJH-PRODUCTION-POLISH-20260722-1345";
-const HISTORY_RESET_VERSION = "job-actions-reset-20260722-1300";
+const APP_VERSION = "AIJH-AUDIT-FIX-20260722-1430";
 const AI_LOCATION_DISCLAIMER = "Địa chỉ này do AI tổng hợp từ thông tin công khai và có thể không phải địa điểm làm việc chính xác. Hãy kiểm tra lại trong JD hoặc website chính thức.";
 const AI_CONTENT_DISCLAIMER = "AI có thể sai. Hãy kiểm tra JD và nguồn chính thức trước khi nộp.";
 const APPROVED_RESUMES = {
@@ -10,13 +9,11 @@ const ICONS = {
   "map-pin": `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.8-8 12-8 12S4 14.8 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>`
 };
 
-resetTestHistory();
-
 const state = {
   jobs: [],
   sources: [],
   actions: readActions(),
-  view: "inbox",
+  view: initialView(),
   matchFilter: "all",
   locationFilter: "all",
   workModeFilter: "all",
@@ -81,11 +78,11 @@ async function init() {
 }
 
 function bindEvents() {
+  syncActiveTab();
   els.tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
-      state.view = tab.dataset.view;
+      setView(tab.dataset.view);
       state.currentPage = 1;
-      els.tabs.forEach((item) => item.classList.toggle("active", item === tab));
       render();
     });
   });
@@ -313,6 +310,7 @@ function renderJob(job) {
   const status = getStatus(job.id);
   const match = matchLabel(job.score);
 
+  card.dataset.jobId = job.id;
   card.dataset.status = status;
   card.querySelector(".rank").textContent = `#${job.rank || "-"}`;
   card.querySelector(".ai-label").textContent = match.label;
@@ -332,7 +330,7 @@ function renderJob(job) {
   card.querySelector(".source-badge").textContent = job.source || "Source";
   card.querySelector(".open-status").textContent = recencyLabel(job);
   card.querySelector(".salary").textContent = salaryLabel(job);
-  card.querySelector(".link-warning").textContent = isValidApplicationLink(job.url) ? "" : "⚠ Chưa có link ứng tuyển trực tiếp";
+  card.querySelector(".link-warning").textContent = linkQualityWarning(linkQuality(job.url));
   card.querySelector(".summary-text").innerHTML = aiSummaryHtml(job);
   card.querySelector(".ai-disclaimer").textContent = "✨ AI phân tích • Kiểm tra lại trước khi nộp";
 
@@ -407,7 +405,7 @@ function renderActions(container, job, status) {
     if (eligibility.eligible) {
       addButton(container, "Xem hồ sơ nộp", "review-application", job);
     } else {
-      addLink(container, applicationLinkLabel(job), job.url, !isValidApplicationLink(job.url));
+      addLink(container, applicationLinkLabel(job), job.url, linkQuality(job.url));
     }
     addButton(container, "Quan tâm", "interested", job);
     addButton(container, "Để sau", "later", job);
@@ -415,24 +413,24 @@ function renderActions(container, job, status) {
     return;
   }
 
-  addLink(container, applicationLinkLabel(job), job.url, !isValidApplicationLink(job.url));
+  addLink(container, applicationLinkLabel(job), job.url, linkQuality(job.url));
 
   if (status === "applied") {
-    addButton(container, "Interview", "interview", job);
-    addButton(container, "Offer", "offer", job);
+    addButton(container, "Chuyển sang phỏng vấn", "interview", job);
+    addButton(container, "Đánh dấu nhận offer", "offer", job);
     addButton(container, "Từ chối", "rejected", job);
     return;
   }
 
   if (status === "interview") {
-    addButton(container, "Offer", "offer", job);
+    addButton(container, "Đánh dấu nhận offer", "offer", job);
     addButton(container, "Từ chối", "rejected", job);
     return;
   }
 
   if (status === "offer") {
-    addButton(container, "Hired", "hired", job);
-    addButton(container, "Lưu trữ", "archived", job);
+    addButton(container, "Chấp nhận", "hired", job);
+    addButton(container, "Từ chối", "rejected", job);
     return;
   }
 
@@ -463,15 +461,24 @@ function renderInternalActions(container, job, status) {
   }
 }
 
-function addLink(container, label, url, unsafe = false) {
+function addLink(container, label, url, quality = linkQuality(url)) {
+  if (quality === "invalid") {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = "Link không hợp lệ";
+    button.disabled = true;
+    button.className = "unsafe-link";
+    container.appendChild(button);
+    return;
+  }
   const link = document.createElement("a");
   link.href = url;
   link.target = "_blank";
   link.rel = "noopener";
   link.textContent = label;
-  if (unsafe) {
+  if (["listing_page", "search_page", "unknown"].includes(quality)) {
     link.classList.add("unsafe-link");
-    link.title = "Link này có thể là trang search/listing, chưa phải URL job cụ thể.";
+    link.title = quality === "unknown" ? "Chưa xác minh chất lượng link." : "Link này là trang search/listing, chưa phải URL job cụ thể.";
   }
   container.appendChild(link);
 }
@@ -503,6 +510,46 @@ function addOverflow(container, actions, job) {
   container.appendChild(details);
 }
 
+function initialView() {
+  const requested = sessionStorage.getItem("jobHunterView");
+  return ["inbox", "pipeline", "archive"].includes(requested) ? requested : "inbox";
+}
+
+function setView(view) {
+  state.view = ["inbox", "pipeline", "archive"].includes(view) ? view : "inbox";
+  sessionStorage.setItem("jobHunterView", state.view);
+  syncActiveTab();
+}
+
+function syncActiveTab() {
+  els.tabs.forEach((tab) => {
+    const active = tab.dataset.view === state.view;
+    tab.classList.toggle("active", active);
+    tab.setAttribute("aria-selected", active ? "true" : "false");
+  });
+}
+
+function focusJob(job) {
+  const status = getStatus(job.id);
+  if (shouldShowInInbox(job)) setView("inbox");
+  else if (["applied", "interview", "offer", "hired"].includes(status)) setView("pipeline");
+  else setView("archive");
+  state.currentPage = Math.max(1, Math.ceil((filteredJobs().findIndex((item) => item.id === job.id) + 1) / state.pageSize));
+  render();
+  requestAnimationFrame(() => {
+    const card = document.querySelector(`[data-job-id="${CSS.escape(job.id)}"]`);
+    if (!card) return;
+    card.scrollIntoView({ behavior: "smooth", block: "center" });
+    card.classList.add("is-highlighted");
+    setTimeout(() => card.classList.remove("is-highlighted"), 1600);
+  });
+}
+
+function viewLabel(view) {
+  const labels = { inbox: "Inbox", pipeline: "Pipeline", archive: "Archive" };
+  return labels[view] || "Inbox";
+}
+
 function renderPagination(total, totalPages) {
   const start = total ? (state.currentPage - 1) * state.pageSize + 1 : 0;
   const end = Math.min(total, state.currentPage * state.pageSize);
@@ -513,11 +560,12 @@ function renderPagination(total, totalPages) {
 
 function renderSummary() {
   const inboxJobs = state.jobs.filter((job) => shouldShowInInbox(job));
-  const pipelineJobs = state.jobs.filter((job) => ["applied", "interview", "offer", "hired"].includes(getStatus(job.id)));
-  const inboxNewJobs = inboxJobs.filter((job) => job.isNew).length;
+  const followingJobs = state.jobs.filter((job) => ["interested", "applied", "interview", "offer"].includes(getStatus(job.id)));
+  const today = new Date().toISOString().slice(0, 10);
+  const inboxNewJobs = inboxJobs.filter((job) => (job.firstSeen || job.verifiedAt || "").slice(0, 10) === today || job.isNew).length;
   els.inboxCount.textContent = state.loadState === "loading" && !state.jobs.length ? "-" : inboxJobs.length;
   els.excellentCount.textContent = state.loadState === "loading" && !state.jobs.length ? "-" : inboxJobs.filter((job) => job.score >= 85).length;
-  els.pipelineCount.textContent = state.loadState === "loading" && !state.jobs.length ? "-" : pipelineJobs.length;
+  els.pipelineCount.textContent = state.loadState === "loading" && !state.jobs.length ? "-" : followingJobs.length;
   els.newFoundCount.textContent = state.loadState === "loading" && !state.jobs.length ? "-" : inboxNewJobs;
 }
 
@@ -533,12 +581,10 @@ function renderRecommendation() {
   els.recommendationPanel.classList.remove("is-hidden");
   els.recommendationText.innerHTML = `
     <span>✨ AI ưu tiên hôm nay</span>
-    <strong>${escapeHtml(toTitleCase(best.title))}</strong>
-    <b>${escapeHtml(String(best.score))}%</b>
-    <em>${escapeHtml(displayAddress(best.locationDetails))}</em>
+    <strong>${escapeHtml(toTitleCase(best.title))} · ${escapeHtml(best.company)} · ${escapeHtml(String(best.score))}% · ${escapeHtml(displayAddress(best.locationDetails))}</strong>
     <button type="button" data-priority-job="${escapeHtml(best.id)}">Xem ngay</button>
   `;
-  els.recommendationText.querySelector("[data-priority-job]")?.addEventListener("click", () => openJobDetail(best));
+  els.recommendationText.querySelector("[data-priority-job]")?.addEventListener("click", () => focusJob(best));
 }
 
 function renderSyncState() {
@@ -612,7 +658,7 @@ function openApplicationReview(job) {
   const eligibility = autoApplyEligibility(job, status);
   state.reviewJobId = job.id;
   els.dialogEyebrow.textContent = "Xem hồ sơ nộp";
-  els.reviewTitle.textContent = `${toTitleCase(job.title)} at ${job.company}`;
+  els.reviewTitle.textContent = `${toTitleCase(job.title)} tại ${job.company}`;
   els.reviewOpenLink.href = job.url;
   els.confirmAutoApply.disabled = !eligibility.eligible;
   els.reviewContent.innerHTML = reviewHtml(job, eligibility);
@@ -625,7 +671,7 @@ function openJobDetail(job) {
   const eligibility = autoApplyEligibility(job, status);
   state.reviewJobId = job.id;
   els.dialogEyebrow.textContent = "Phân tích chi tiết";
-  els.reviewTitle.textContent = `${toTitleCase(job.title)} at ${job.company}`;
+  els.reviewTitle.textContent = `${toTitleCase(job.title)} tại ${job.company}`;
   els.reviewOpenLink.href = job.url;
   els.confirmAutoApply.disabled = !eligibility.eligible;
   els.reviewContent.innerHTML = detailHtml(job, eligibility);
@@ -663,9 +709,10 @@ function autoApplyEligibility(job, status) {
   const blockers = [];
   const threshold = state.settings.autoApplyThreshold;
   const location = job.locationDetails;
+  const quality = linkQuality(job.url);
   if (threshold === "disabled") blockers.push("Tính năng chuẩn bị hồ sơ đang tắt");
   if (threshold !== "disabled" && Number(job.score) < Number(threshold)) blockers.push(`Match dưới ${threshold}%`);
-  if (!isValidApplicationLink(job.url)) blockers.push("Link không phải URL job cụ thể");
+  if (!["exact_job", "company_job_page"].includes(quality)) blockers.push(linkQualityStatus(quality));
   if (!isActiveJob(job)) blockers.push("Job có thể đã hết hạn");
   if (["applied", "interview", "offer"].includes(status)) blockers.push("Job đã được đánh dấu đã nộp");
   if (!locationMeetsPreferences(location)) blockers.push("Địa điểm hoặc hình thức chưa khớp ưu tiên");
@@ -679,6 +726,7 @@ function autoApplyEligibility(job, status) {
 
 function reviewHtml(job, eligibility) {
   const location = job.locationDetails;
+  const quality = linkQuality(job.url);
   const questions = asArray(job.mandatoryQuestions);
   const questionList = questions.length
     ? `<ul>${questions.map((question) => `<li>${escapeHtml(question.label || question)}</li>`).join("")}</ul>`
@@ -689,9 +737,9 @@ function reviewHtml(job, eligibility) {
   return `
     <div class="review-grid">
       <section>
-        <strong>Job</strong>
+        <strong>Công việc</strong>
         <p>${escapeHtml(toTitleCase(job.title))}</p>
-        <p>${escapeHtml(job.company)} · ${escapeHtml(job.score)}% match</p>
+        <p>${escapeHtml(job.company)} · ${escapeHtml(job.score)}% mức phù hợp</p>
       </section>
       <section>
         <strong>Địa điểm làm việc</strong>
@@ -713,6 +761,11 @@ function reviewHtml(job, eligibility) {
       <p>${escapeHtml(generateCoverLetter(job))}</p>
       <p class="ai-warning">${escapeHtml(AI_CONTENT_DISCLAIMER)}</p>
     </section>
+    <div class="location-detail-grid">
+      <p><strong>URL ứng tuyển</strong><span>${escapeHtml(job.url)}</span></p>
+      <p><strong>Chất lượng link</strong><span>${escapeHtml(linkQualityStatus(quality))}</span></p>
+    </div>
+    <p class="eligibility-note">Hệ thống hỗ trợ chuẩn bị hồ sơ và theo dõi nội bộ, không tự nộp ra website bên ngoài.</p>
     ${blockers}
   `;
 }
@@ -720,64 +773,61 @@ function reviewHtml(job, eligibility) {
 function detailHtml(job, eligibility) {
   const action = getAction(job.id);
   const location = job.locationDetails;
-  const linkIsDirect = isValidApplicationLink(job.url);
+  const quality = linkQuality(job.url);
   return `
     <section class="detail-section">
-      <h3>Overview</h3>
+      <h3>Tổng quan</h3>
       <div class="location-detail-grid">
-        <p><strong>Job</strong><span>${escapeHtml(toTitleCase(job.title))}</span></p>
-        <p><strong>Company</strong><span>${escapeHtml(job.company)}</span></p>
-        <p><strong>Salary</strong><span>${escapeHtml(salaryLabel(job))}</span></p>
-        <p><strong>Work mode</strong><span>${escapeHtml(compactWorkMode(location.workMode))}</span></p>
-        <p><strong>Source</strong><span>${escapeHtml(sourceNameLabel(job.source))}</span></p>
-        <p><strong>Posted</strong><span>${escapeHtml(recencyLabel(job))}</span></p>
+        <p><strong>Công việc</strong><span>${escapeHtml(toTitleCase(job.title))}</span></p>
+        <p><strong>Công ty</strong><span>${escapeHtml(job.company)}</span></p>
+        <p><strong>Mức phù hợp</strong><span>${escapeHtml(String(job.score))}%</span></p>
+        <p><strong>Trạng thái workflow</strong><span>${escapeHtml(statusLabel(getStatus(job.id), action))}</span></p>
+        <p><strong>Lương</strong><span>${escapeHtml(salaryLabel(job))}</span></p>
+        <p><strong>Hình thức</strong><span>${escapeHtml(compactWorkMode(location.workMode))}</span></p>
+        <p><strong>Nguồn</strong><span>${escapeHtml(sourceNameLabel(job.source))}</span></p>
+        <p><strong>Ngày đăng / phát hiện</strong><span>${escapeHtml(recencyLabel(job))}</span></p>
+        <p><strong>Kiểm tra lần cuối</strong><span>${escapeHtml(job.lastChecked || "Chưa có")}</span></p>
+        <p><strong>Độ mới job</strong><span>${escapeHtml(freshnessStatus(job))}</span></p>
+        <p><strong>Chất lượng link</strong><span>${escapeHtml(linkQualityStatus(quality))}</span></p>
       </div>
     </section>
     <section class="detail-section">
-      <h3>AI Analysis</h3>
+      <h3>AI đánh giá</h3>
       <div class="details-grid">
         <div>
-          <h4>Why Match</h4>
+          <h4>Điểm mạnh</h4>
           <ul>${shortList(job.match).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
         </div>
         <div>
-          <h4>Missing Skills</h4>
-          <ul>${shortList(job.risks).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+          <h4>Missing skills</h4>
+          <ul>${skillGapList(job).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
         </div>
       </div>
       <div class="detail-triplet">
         ${aiSummarySections(job).map(([label, value]) => `<p><strong>${escapeHtml(label)}</strong><span>${escapeHtml(value)}</span></p>`).join("")}
       </div>
-      <p><strong>AI confidence</strong><span>${escapeHtml(job.confidence)}</span></p>
+      <div class="location-detail-grid">
+        <p><strong>Match confidence</strong><span>${escapeHtml(job.confidence)}</span></p>
+        <p><strong>Giả định quan trọng</strong><span>${escapeHtml(importantAssumption(job))}</span></p>
+      </div>
       <p class="ai-warning">${escapeHtml(AI_CONTENT_DISCLAIMER)}</p>
     </section>
     <section class="detail-section">
-      <h3>Location</h3>
+      <h3>Địa điểm</h3>
       ${locationDetailHtml(location)}
     </section>
     <section class="detail-section">
-      <h3>Application</h3>
+      <h3>Hồ sơ nộp</h3>
       ${reviewHtml(job, eligibility)}
       <div class="location-detail-grid">
-        <p><strong>Application URL</strong><span>${escapeHtml(linkIsDirect ? "Link ứng tuyển trực tiếp" : "Nguồn tham khảo/search/listing")}</span></p>
-        <p><strong>Eligibility</strong><span>${escapeHtml(eligibility.eligible ? "Đủ điều kiện chuẩn bị hồ sơ" : eligibility.blockers.join("; "))}</span></p>
+        <p><strong>URL chính xác</strong><span>${escapeHtml(job.url)}</span></p>
+        <p><strong>Điều kiện chuẩn bị</strong><span>${escapeHtml(eligibility.eligible ? "Đủ điều kiện chuẩn bị hồ sơ" : eligibility.blockers.join("; "))}</span></p>
       </div>
-      ${linkIsDirect ? "" : `<p class="link-warning detail-warning">⚠ Chưa có link ứng tuyển trực tiếp</p>`}
+      ${["exact_job", "company_job_page"].includes(quality) ? "" : `<p class="link-warning detail-warning">${escapeHtml(linkQualityWarning(quality))}</p>`}
     </section>
     <section class="detail-section">
-      <h3>History</h3>
-      <div class="location-detail-grid">
-        <p><strong>First seen</strong><span>${escapeHtml(job.firstSeen || job.verifiedAt || "22/07/2026")}</span></p>
-        <p><strong>Last checked</strong><span>${escapeHtml(job.lastChecked || job.verifiedAt || "22/07/2026")}</span></p>
-        <p><strong>Trạng thái</strong><span>${escapeHtml(statusLabel(getStatus(job.id), action))}</span></p>
-        <p><strong>Nguồn</strong><span>${escapeHtml(job.source || "Chưa xác định")}</span></p>
-        <p><strong>Confidence</strong><span>${escapeHtml(job.confidence)}</span></p>
-        <p><strong>Location confidence</strong><span>${escapeHtml(job.locationConfidence)}</span></p>
-        <p><strong>Source confidence</strong><span>${escapeHtml(job.sourceConfidence)}</span></p>
-        <p><strong>Application confidence</strong><span>${escapeHtml(job.applicationConfidence)}</span></p>
-        <p><strong>Applied time</strong><span>${escapeHtml(action.status === "applied" ? dateTimeLabel(action.submittedAt || action.updatedAt) : "Chưa nộp")}</span></p>
-        <p><strong>Archived time</strong><span>${escapeHtml(action.status === "archived" ? dateTimeLabel(action.updatedAt) : "Chưa lưu trữ")}</span></p>
-      </div>
+      <h3>Lịch sử</h3>
+      ${historyHtml(job, action)}
     </section>
   `;
 }
@@ -785,6 +835,32 @@ function detailHtml(job, eligibility) {
 function generateCoverLetter(job) {
   const focus = resumeFocus(job).join(", ");
   return `Tôi quan tâm đến vị trí ${toTitleCase(job.title)} tại ${job.company}. Kinh nghiệm của tôi phù hợp với ${focus}, đặc biệt ở Sales/Commercial Operations, CRM data quality, KPI reporting, theo dõi contract/billing/payment và phối hợp cross-functional.`;
+}
+
+function historyHtml(job, action) {
+  const rows = [
+    ["First seen", job.firstSeen || job.verifiedAt || "22/07/2026"],
+    ["Last checked", job.lastChecked || job.verifiedAt || "22/07/2026"],
+    ["Trạng thái hiện tại", statusLabel(getStatus(job.id), action)],
+    ["Interested timestamp", action.interestedAt || ""],
+    ["Applied timestamp", action.appliedAt || action.submittedAt || ""],
+    ["Interview timestamp", action.interviewAt || ""],
+    ["Offer timestamp", action.offerAt || ""],
+    ["Rejected timestamp", action.rejectedAt || ""],
+    ["Archived timestamp", action.archivedAt || ""],
+    ["Source changes", asArray(action.sourceChanges).join(" · ")]
+  ];
+  const visibleRows = rows.map(([label, value]) => [label, value || "Chưa có"]);
+  const history = asArray(action.statusHistory);
+  return `
+    <div class="location-detail-grid">${visibleRows.map(([label, value]) => `<p><strong>${escapeHtml(label)}</strong><span>${escapeHtml(formatHistoryValue(value))}</span></p>`).join("")}</div>
+    ${history.length ? `<ul class="status-history">${history.map((item) => `<li>${escapeHtml(statusLabel(item.from, item))} → ${escapeHtml(statusLabel(item.to, item))} · ${escapeHtml(dateTimeLabel(item.at))}</li>`).join("")}</ul>` : `<p class="empty-history">Chưa có lịch sử thay đổi.</p>`}
+  `;
+}
+
+function formatHistoryValue(value) {
+  if (!value || value === "Chưa có") return "Chưa có";
+  return /^\d{4}-\d{2}-\d{2}T/.test(value) ? dateTimeLabel(value) : value;
 }
 
 function stateMessage(title, detail, type) {
@@ -824,14 +900,14 @@ function companyOfficeLabel(location) {
 }
 
 function officeSourceLabel(location) {
-  if (!location.companyOfficeAddress) return "Chưa có nguồn xác thực";
+  if (!location.companyOfficeAddress) return "Chưa có nguồn chính thức";
   return locationSourceLabel(location.companyOfficeSource);
 }
 
 function officeVerificationLabel(location) {
   if (location.officeVerificationStatus === "verified") return "✓ Đã xác thực";
   if (location.officeVerificationStatus === "ai-suggested") return "✨ Gợi ý từ AI · Chưa xác thực";
-  return "Chưa xác thực";
+  return "Chưa xác minh";
 }
 
 function mapsLink(location) {
@@ -851,6 +927,18 @@ function recencyLabel(job) {
   return normalizeOpenStatus(status);
 }
 
+function freshnessStatus(job) {
+  const text = `${job.openStatus || ""} ${job.summary || ""}`;
+  if (/expired|closed|đã đóng|hết hạn/i.test(text)) return "Đã hết hạn";
+  const seen = Date.parse(job.firstSeen || job.verifiedAt || "");
+  if (!Number.isFinite(seen)) return "Không rõ trạng thái";
+  const ageDays = Math.max(0, Math.floor((Date.now() - seen) / 86400000));
+  if (ageDays <= 7) return "Mới";
+  if (ageDays <= 21) return "Cần kiểm tra";
+  if (ageDays <= 45) return "Có thể đã cũ";
+  return "Có thể đã hết hạn";
+}
+
 function normalizeOpenStatus(status = "") {
   const text = status.trim();
   if (/expired|closed|đã đóng|hết hạn/i.test(text)) return "Có thể đã hết hạn";
@@ -868,7 +956,30 @@ function normalizeOpenStatus(status = "") {
 }
 
 function applicationLinkLabel(job) {
-  return isValidApplicationLink(job.url) ? "Mở trang ứng tuyển" : "Mở nguồn tham khảo";
+  const quality = linkQuality(job.url);
+  if (["exact_job", "company_job_page"].includes(quality)) return "Mở trang ứng tuyển";
+  if (["listing_page", "search_page"].includes(quality)) return "Mở nguồn tham khảo";
+  if (quality === "invalid") return "Link không hợp lệ";
+  return "Kiểm tra nguồn";
+}
+
+function linkQualityStatus(quality) {
+  const labels = {
+    exact_job: "Link ứng tuyển trực tiếp",
+    company_job_page: "Trang tuyển dụng chính thức",
+    listing_page: "Trang listing/tham khảo",
+    search_page: "Trang tìm kiếm/tham khảo",
+    unknown: "Chưa xác minh chất lượng link",
+    invalid: "Link không hợp lệ"
+  };
+  return labels[quality] || "Chưa xác minh chất lượng link";
+}
+
+function linkQualityWarning(quality) {
+  if (["listing_page", "search_page"].includes(quality)) return "⚠ Chưa có link ứng tuyển trực tiếp";
+  if (quality === "unknown") return "⚠ Chưa xác minh chất lượng link";
+  if (quality === "invalid") return "Link không hợp lệ";
+  return "";
 }
 
 function sourceNameLabel(source = "") {
@@ -937,17 +1048,41 @@ function shouldShowInInbox(job) {
 }
 
 function setAction(jobId, status, source, extra = {}) {
+  const previous = getAction(jobId);
+  if (requiresConfirmation(previous.status, status) && !window.confirm(`Xác nhận chuyển trạng thái sang "${statusLabel(status, { status })}"?`)) return;
+  const timestamp = new Date().toISOString();
   if (status === "none") {
     delete state.actions[jobId];
   } else {
+    const history = [...asArray(previous.statusHistory), { from: previous.status || "none", to: status, at: timestamp, source }];
+    const timestampField = statusTimestampField(status);
     state.actions[jobId] = status === "later"
-      ? { status, updatedAt: new Date().toISOString(), source, snoozedUntil: addDays(3).toISOString(), ...extra }
-      : { status, updatedAt: new Date().toISOString(), source, ...extra };
+      ? { ...previous, status, updatedAt: timestamp, source, snoozedUntil: addDays(3).toISOString(), statusHistory: history, [timestampField]: timestamp, ...extra }
+      : { ...previous, status, updatedAt: timestamp, source, statusHistory: history, [timestampField]: timestamp, ...extra };
   }
 
   persistActions();
   syncAction(jobId, state.actions[jobId] || { status: "none" });
   render();
+}
+
+function requiresConfirmation(fromStatus, toStatus) {
+  if (["rejected", "archived"].includes(toStatus)) return true;
+  return ["applied", "interview", "offer"].includes(fromStatus) && toStatus === "none";
+}
+
+function statusTimestampField(status) {
+  const fields = {
+    interested: "interestedAt",
+    applied: "appliedAt",
+    interview: "interviewAt",
+    offer: "offerAt",
+    hired: "hiredAt",
+    rejected: "rejectedAt",
+    archived: "archivedAt",
+    later: "snoozedAt"
+  };
+  return fields[status] || "updatedAt";
 }
 
 function syncAction(jobId, action) {
@@ -973,12 +1108,6 @@ function readActions() {
 
 function persistActions() {
   localStorage.setItem("jobActions", JSON.stringify(state.actions));
-}
-
-function resetTestHistory() {
-  if (localStorage.getItem("jobHistoryResetVersion") === HISTORY_RESET_VERSION) return;
-  localStorage.removeItem("jobActions");
-  localStorage.setItem("jobHistoryResetVersion", HISTORY_RESET_VERSION);
 }
 
 function normalizeAction(value) {
@@ -1023,9 +1152,9 @@ function statusLabel(status, action) {
   if (status === "none") return "Mới";
   if (status === "interested") return "Quan tâm";
   if (status === "applied") return `Đã nộp · ${dateLabel(action.updatedAt)} · ${action.source || "nguồn"}`;
-  if (status === "interview") return "Interview";
-  if (status === "offer") return "Offer";
-  if (status === "hired") return "Hired";
+  if (status === "interview") return "Phỏng vấn";
+  if (status === "offer") return "Đã nhận offer";
+  if (status === "hired") return "Đã chấp nhận";
   if (status === "later") return `Để sau · ${dateLabel(action.snoozedUntil)}`;
   if (status === "rejected") return "Không phù hợp";
   if (status === "archived") return "Đã lưu trữ";
@@ -1049,12 +1178,19 @@ function aiSummaryHtml(job) {
 }
 
 function aiSummarySections(job) {
+  if (!job.summary && !asArray(job.match).length && !asArray(job.risks).length) {
+    return [
+      ["Mạnh", "Chưa đủ dữ liệu để đánh giá chính xác."],
+      ["Rủi ro", "Chưa đủ dữ liệu để đánh giá chính xác."],
+      ["Khuyến nghị", "Mở nguồn gốc để đọc JD trước khi quyết định."]
+    ];
+  }
   const focus = resumeFocus(job).slice(0, 3).join(", ");
   const risk = skillRisk(job);
   return [
-    ["Strength", `${focus} khớp với kinh nghiệm trong CV.`],
-    ["Risk", risk],
-    ["Recommendation", recommendationFor(job, risk)]
+    ["Mạnh", `${focus} khớp với kinh nghiệm trong CV.`],
+    ["Rủi ro", risk],
+    ["Khuyến nghị", recommendationFor(job, risk)]
   ];
 }
 
@@ -1074,6 +1210,17 @@ function recommendationFor(job, risk) {
   return "Có thể lưu để so sánh với các job ưu tiên cao hơn.";
 }
 
+function skillGapList(job) {
+  const gap = skillRisk(job);
+  return gap === "Chưa đủ dữ liệu để đánh giá chính xác." ? [gap] : [gap];
+}
+
+function importantAssumption(job) {
+  if (isGenericListingUrl(job.url)) return "Nguồn hiện là trang search/listing, cần mở nguồn để xác minh JD cụ thể.";
+  if (job.locationDetails.verificationStatus === "ai-suggested") return "Địa điểm do AI gợi ý, chưa được xác thực từ nguồn chính thức.";
+  return "Phân tích dựa trên title, summary, match notes và thông tin có trong dataset.";
+}
+
 function normalizeLocationDetails(job) {
   const raw = job.workLocation || job.location || "";
   const sourceType = locationSourceType(job);
@@ -1084,16 +1231,31 @@ function normalizeLocationDetails(job) {
   const verificationStatus = locationVerificationStatus(raw, sourceType);
   return {
     jobWorkAddress: raw || "",
+    job_work_address: raw || "",
     companyOfficeAddress: job.companyOfficeAddress || "",
+    company_office_address: job.companyOfficeAddress || "",
+    company_office_city: job.companyOfficeCity || detectCity(job.companyOfficeAddress || ""),
+    company_office_district: job.companyOfficeDistrict || detectDistrict(job.companyOfficeAddress || ""),
     companyOfficeSource: officeSource,
+    company_office_source: officeSource,
     officeVerificationStatus: officeVerificationStatus(job.companyOfficeAddress, officeSource),
+    company_office_verification: officeVerificationStatus(job.companyOfficeAddress, officeSource),
+    company_office_confidence: confidenceLabel(job.companyOfficeConfidence ?? (job.companyOfficeAddress ? 70 : 20)),
     city,
     district,
     workMode,
     locationSource: sourceType,
     locationSourceLabel: locationSourceLabel(sourceType),
-    verificationStatus
+    verificationStatus,
+    locationConfidence: confidenceLabel(job.locationConfidence ?? locationConfidenceScore(verificationStatus))
   };
+}
+
+function locationConfidenceScore(status) {
+  if (status === "from-job-description" || status === "official-career" || status === "verified") return 85;
+  if (status === "multiple-offices") return 60;
+  if (status === "ai-suggested") return 45;
+  return 35;
 }
 
 function officeVerificationStatus(address = "", source = "") {
@@ -1147,17 +1309,21 @@ function locationSourceLabel(source) {
 
 function locationDetailHtml(location) {
   const officeRows = [
-    ["Company Office", companyOfficeLabel(location)],
-    ["Office Source", officeSourceLabel(location)],
-    ["Office Verification", officeVerificationLabel(location)]
+    ["Văn phòng công ty", companyOfficeLabel(location)],
+    ["Thành phố văn phòng", location.company_office_city || "Chưa xác định"],
+    ["Quận/Huyện văn phòng", location.company_office_district || "Chưa xác định"],
+    ["Nguồn", officeSourceLabel(location)],
+    ["Trạng thái", officeVerificationLabel(location)],
+    ["Độ tin cậy", location.company_office_confidence]
   ];
   const rows = [
-    ["Job Work Location", location.jobWorkAddress || "Chưa xác định địa chỉ chi tiết"],
+    ["Địa điểm làm việc", location.jobWorkAddress || "Chưa xác định địa chỉ chi tiết"],
     ["Thành phố", location.city || "Chưa xác định"],
     ["Quận/Huyện", location.district || "Chưa xác định"],
     ["Hình thức", compactWorkMode(location.workMode)],
     ["Nguồn địa điểm", location.locationSourceLabel],
-    ["Xác minh", locationStatusLabel(location)]
+    ["Xác minh", locationStatusLabel(location)],
+    ["Độ tin cậy", location.locationConfidence || "Chưa có"]
   ];
   const mapLink = mapsLink(location);
   return `
@@ -1196,16 +1362,27 @@ function inferWorkMode(value = "") {
 }
 
 function isValidApplicationLink(url) {
-  try {
-    const parsed = new URL(url);
-    return parsed.protocol === "https:" && !isGenericListingUrl(parsed.href);
-  } catch {
-    return false;
-  }
+  return ["exact_job", "company_job_page"].includes(linkQuality(url));
 }
 
 function isGenericListingUrl(url = "") {
   return /linkedin\.com\/jobs\/search|\/search\/?|keywords=|google\.[^/]+\/search|jobs\/search/i.test(url);
+}
+
+function linkQuality(url = "") {
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return url ? "unknown" : "invalid";
+  }
+  if (!["https:", "http:"].includes(parsed.protocol)) return "invalid";
+  const href = parsed.href.toLowerCase();
+  if (/linkedin\.com\/jobs\/search|google\.[^/]+\/search|\/search\/?|keywords=|q=|results/.test(href)) return "search_page";
+  if (/\/jobs\/view\/|\/viec-lam\/.+\.html|\/find-job\/.+\/jn-|talent\.com\/view\?id=|itviec\.com\/.+jobs|topcv\.vn\/viec-lam\//i.test(href)) return "exact_job";
+  if (/\/careers?\/|greenhouse\.io|lever\.co|workdayjobs|smartrecruiters|ashbyhq|jobs\.ashbyhq/i.test(href)) return "company_job_page";
+  if (/\/jobs?\/?|\/viec-lam|\/tuyen-dung|\/job\//i.test(href)) return "listing_page";
+  return "unknown";
 }
 
 function isActiveJob(job) {
