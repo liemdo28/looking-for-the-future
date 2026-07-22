@@ -238,7 +238,7 @@ function normalizeJob(job) {
     mandatoryQuestions: asArray(job.mandatoryQuestions),
     requiredDocuments: asArray(job.requiredDocuments),
     applicationLink: job.applicationLink || job.url,
-    firstSeen: job.firstSeen || job.verifiedAt || "2026-07-22",
+    firstSeen: job.firstSeen || job.verifiedAt || "",
     lastChecked: job.lastChecked || job.verifiedAt || "2026-07-22",
     confidence: confidenceLabel(job.confidence ?? confidenceScore(job, "match")),
     locationConfidence: confidenceLabel(job.locationConfidence ?? confidenceScore(job, "location")),
