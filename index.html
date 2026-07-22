@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <!-- AIJH-KPI-SHORTCUTS-20260722-1515 -->
+  <!-- AIJH-KPI-BREADCRUMB-20260722-1535 -->
   <meta charset="utf-8">
-  <meta name="app-version" content="AIJH-KPI-SHORTCUTS-20260722-1515">
+  <meta name="app-version" content="AIJH-KPI-BREADCRUMB-20260722-1535">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Job Hunter</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./styles.css?v=AIJH-KPI-SHORTCUTS-20260722-1515">
+  <link rel="stylesheet" href="./styles.css?v=AIJH-KPI-BREADCRUMB-20260722-1535">
 </head>
 <body>
   <header class="topbar">
@@ -112,6 +112,11 @@
       <input id="searchBox" type="search" placeholder="Tìm job, công ty, kỹ năng, nguồn...">
     </section>
 
+    <section class="result-context" aria-live="polite">
+      <strong id="resultBreadcrumb">Inbox › Cần xem</strong>
+      <span id="resultContextDetail">Danh sách job đang chờ bạn xem.</span>
+    </section>
+
     <section class="pagination" aria-label="Pagination">
       <button id="prevPage" type="button">Trước</button>
       <span id="pageInfo">Trang 1/1</span>
@@ -179,6 +184,6 @@
     </form>
   </dialog>
 
-  <script src="./app.js?v=AIJH-KPI-SHORTCUTS-20260722-1515" type="module"></script>
+  <script src="./app.js?v=AIJH-KPI-BREADCRUMB-20260722-1535" type="module"></script>
 </body>
 </html>

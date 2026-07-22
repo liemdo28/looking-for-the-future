@@ -1,4 +1,4 @@
-const APP_VERSION = "AIJH-KPI-SHORTCUTS-20260722-1515";
+const APP_VERSION = "AIJH-KPI-BREADCRUMB-20260722-1535";
 const AI_LOCATION_DISCLAIMER = "Địa chỉ này do AI tổng hợp từ thông tin công khai và có thể không phải địa điểm làm việc chính xác. Hãy kiểm tra lại trong JD hoặc website chính thức.";
 const AI_CONTENT_DISCLAIMER = "AI có thể sai. Hãy kiểm tra JD và nguồn chính thức trước khi nộp.";
 const APPROVED_RESUMES = {
@@ -47,6 +47,8 @@ const els = {
   prevPage: document.querySelector("#prevPage"),
   nextPage: document.querySelector("#nextPage"),
   pageInfo: document.querySelector("#pageInfo"),
+  resultBreadcrumb: document.querySelector("#resultBreadcrumb"),
+  resultContextDetail: document.querySelector("#resultContextDetail"),
   syncNow: document.querySelector("#syncNow"),
   syncStatus: document.querySelector("#syncStatus"),
   inboxCount: document.querySelector("#inboxCount"),
@@ -309,6 +311,7 @@ function render() {
   const start = (state.currentPage - 1) * state.pageSize;
   const visibleJobs = jobs.slice(start, start + state.pageSize);
   renderPagination(jobs.length, totalPages);
+  renderResultContext(jobs.length);
   els.list.innerHTML = "";
 
   if (!visibleJobs.length) {
@@ -570,7 +573,7 @@ function applyKpiShortcut(kind) {
 
   syncFilterControls();
   render();
-  document.querySelector(".controls")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  scrollToFirstResult();
 }
 
 function syncFilterControls() {
@@ -596,6 +599,18 @@ function focusJob(job) {
   });
 }
 
+function scrollToFirstResult() {
+  requestAnimationFrame(() => {
+    const card = document.querySelector(".job-card");
+    const target = card || document.querySelector(".state-message") || document.querySelector(".result-context");
+    if (!target) return;
+    target.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (!card) return;
+    card.classList.add("is-highlighted");
+    setTimeout(() => card.classList.remove("is-highlighted"), 1600);
+  });
+}
+
 function viewLabel(view) {
   const labels = { inbox: "Inbox", pipeline: "Pipeline", archive: "Archive" };
   return labels[view] || "Inbox";
@@ -607,6 +622,31 @@ function renderPagination(total, totalPages) {
   els.pageInfo.textContent = `Trang ${state.currentPage}/${totalPages} · ${start}-${end}/${total}`;
   els.prevPage.disabled = state.currentPage <= 1;
   els.nextPage.disabled = state.currentPage >= totalPages;
+}
+
+function renderResultContext(total) {
+  const label = resultContextLabel(total);
+  els.resultBreadcrumb.textContent = `${viewLabel(state.view)} › ${label} (${total})`;
+  els.resultContextDetail.textContent = resultContextDetail(label);
+}
+
+function resultContextLabel() {
+  if (state.view === "pipeline") return "Đang theo dõi";
+  if (state.view === "archive") return "Archive";
+  if (state.quickFilter === "today") return "Mới hôm nay";
+  if (state.matchFilter === "excellent") return "Ưu tiên cao";
+  return "Cần xem";
+}
+
+function resultContextDetail(label) {
+  const details = {
+    "Đang theo dõi": "Các job đang được quan tâm hoặc đã chuyển vào pipeline.",
+    "Mới hôm nay": "Job trong Inbox được phát hiện hôm nay.",
+    "Ưu tiên cao": "Job trong Inbox có mức phù hợp cao.",
+    "Archive": "Job đã từ chối hoặc lưu trữ.",
+    "Cần xem": "Danh sách job trong Inbox đang chờ bạn xem."
+  };
+  return details[label] || "Danh sách job theo filter hiện tại.";
 }
 
 function renderSummary() {
