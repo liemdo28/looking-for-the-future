@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <!-- AIJH-SAAS-POLISH-20260722-1605 -->
+  <!-- AIJH-FINAL-POLISH-20260722-1705 -->
   <meta charset="utf-8">
-  <meta name="app-version" content="AIJH-SAAS-POLISH-20260722-1605">
+  <meta name="app-version" content="AIJH-FINAL-POLISH-20260722-1705">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Job Hunter</title>
   <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="./styles.css?v=AIJH-SAAS-POLISH-20260722-1605">
+  <link rel="stylesheet" href="./styles.css?v=AIJH-FINAL-POLISH-20260722-1705">
 </head>
 <body>
   <header class="topbar">
@@ -55,6 +55,7 @@
       </nav>
 
       <div class="quick-filters" aria-label="Quick filters">
+        <span id="activeFilterCount" class="filter-count">Bộ lọc (0)</span>
         <button type="button" data-quick-filter="match90">⭐ Match &gt; 90%</button>
         <button type="button" data-quick-filter="verified">📍 Địa chỉ xác thực</button>
         <button type="button" data-quick-filter="official">🏢 Link nộp chính thức</button>
@@ -189,6 +190,7 @@
         <div>
           <p class="eyebrow" id="dialogEyebrow">Chi tiết job</p>
           <h2 id="reviewTitle">Xem hồ sơ nộp</h2>
+          <div id="drawerMeta" class="drawer-meta"></div>
         </div>
         <button class="ghost-button" value="cancel" type="submit">Đóng</button>
       </div>
@@ -200,6 +202,6 @@
     </form>
   </dialog>
 
-  <script src="./app.js?v=AIJH-SAAS-POLISH-20260722-1605" type="module"></script>
+  <script src="./app.js?v=AIJH-FINAL-POLISH-20260722-1705" type="module"></script>
 </body>
 </html>
