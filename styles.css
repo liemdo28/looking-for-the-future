@@ -448,14 +448,49 @@ li {
   border: 1px solid var(--line);
 }
 
+.state-message,
 .empty {
   grid-column: 1 / -1;
   padding: 28px;
-  text-align: center;
-  color: var(--muted);
-  border: 1px dashed var(--line);
+  color: var(--text);
+  border: 1px solid var(--line);
   border-radius: 8px;
   background: #fff;
+}
+
+.state-message strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
+.state-message p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.state-message.loading {
+  border-style: dashed;
+  background: #f8fafc;
+}
+
+.state-message.error {
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.state-message.error strong {
+  color: #b91c1c;
+}
+
+.state-message.no-match {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+}
+
+.state-message.empty-db {
+  border-color: #fde68a;
+  background: #fffbeb;
 }
 
 .source-panel {

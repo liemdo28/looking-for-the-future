@@ -6,7 +6,10 @@ const state = {
   query: "",
   sortBy: "score",
   pageSize: 20,
-  currentPage: 1
+  currentPage: 1,
+  loadState: "loading",
+  jobsError: "",
+  sourcesError: ""
 };
 
 const syncIntervalMs = 60 * 60 * 1000;
@@ -81,17 +84,35 @@ function bindEvents() {
 async function syncJobs() {
   els.syncNow.disabled = true;
   els.syncNow.textContent = "Đang sync...";
+  state.loadState = state.jobs.length ? "refreshing" : "loading";
+  state.jobsError = "";
+  state.sourcesError = "";
+  render();
 
   try {
-    const [localJobs, sources] = await Promise.all([
+    const [jobsResult, sourcesResult] = await Promise.allSettled([
       fetchJson("./data/jobs.json"),
       fetchJson("./data/sources.json")
     ]);
-    const remoteJobs = await fetchRemoteJobs();
-    state.jobs = mergeJobs(localJobs, remoteJobs).filter((job) => job.score >= 50);
-    state.sources = sources;
+
+    if (jobsResult.status === "fulfilled") {
+      const remoteJobs = await fetchRemoteJobs();
+      state.jobs = mergeJobs(jobsResult.value, remoteJobs).filter((job) => job.score >= 50);
+    } else {
+      state.jobsError = jobsResult.reason?.message || "Không tải được data/jobs.json";
+    }
+
+    if (sourcesResult.status === "fulfilled") {
+      state.sources = sourcesResult.value;
+    } else {
+      state.sourcesError = sourcesResult.reason?.message || "Không tải được data/sources.json";
+    }
+
+    state.loadState = state.jobsError ? "failed" : "loaded";
     localStorage.setItem("lastSyncAt", new Date().toISOString());
   } catch (error) {
+    state.loadState = "failed";
+    state.jobsError = error?.message || "Không tải được dữ liệu production";
     console.error(error);
   } finally {
     els.syncNow.disabled = false;
@@ -136,6 +157,20 @@ function makeId(job) {
 
 function render() {
   renderSummary();
+  if (["loading", "refreshing", "failed"].includes(state.loadState) && !state.jobs.length) {
+    renderPagination(0, 1);
+    els.list.innerHTML = state.loadState === "failed"
+      ? stateMessage("Data load failed", state.jobsError || "Không tải được job data từ production.", "error")
+      : stateMessage("Loading", "Đang tải jobs và source pool từ production...", "loading");
+    return;
+  }
+
+  if (state.loadState === "loaded" && !state.jobs.length) {
+    renderPagination(0, 1);
+    els.list.innerHTML = stateMessage("Truly empty database", "Không có job nào trong data/jobs.json hoặc API sync.", "empty-db");
+    return;
+  }
+
   const jobs = filteredJobs();
   const totalPages = Math.max(1, Math.ceil(jobs.length / state.pageSize));
   state.currentPage = Math.min(state.currentPage, totalPages);
@@ -145,7 +180,7 @@ function render() {
   els.list.innerHTML = "";
 
   if (!visibleJobs.length) {
-    els.list.innerHTML = `<div class="empty">Không có job trong filter này.</div>`;
+    els.list.innerHTML = stateMessage("No matching jobs", "Không có job phù hợp với filter hiện tại. Chọn All hoặc đổi bộ lọc để xem lại.", "no-match");
     return;
   }
 
@@ -211,6 +246,16 @@ function renderSources() {
   els.sourceCount.textContent = `${total} nguồn`;
   els.sourceGroups.innerHTML = "";
 
+  if (state.sourcesError) {
+    els.sourceGroups.innerHTML = stateMessage("Source load failed", state.sourcesError, "error");
+    return;
+  }
+
+  if (!state.sources.length) {
+    els.sourceGroups.innerHTML = stateMessage("No source pool", "Không có nguồn nào trong data/sources.json.", "empty-db");
+    return;
+  }
+
   state.sources.forEach((group) => {
     const section = document.createElement("section");
     section.className = "source-group";
@@ -230,6 +275,22 @@ function renderSources() {
     section.appendChild(list);
     els.sourceGroups.appendChild(section);
   });
+}
+
+function stateMessage(title, detail, type) {
+  return `<div class="state-message ${type}">
+    <strong>${escapeHtml(title)}</strong>
+    <p>${escapeHtml(detail)}</p>
+  </div>`;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 function filteredJobs() {
