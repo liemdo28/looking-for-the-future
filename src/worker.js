@@ -85,7 +85,7 @@ export default {
         cron: "0 1-13 * * *",
         lastScheduledSync: scheduledSync,
         lastSyncRun: officialCandidates.lastRun || persisted.lastRun || null,
-        sourceRegistryVersion: officialCandidates.sourceRegistryVersion,
+        sourceRegistryVersion: officialCandidates.sourceRegistryVersion || "hcm_official_career_sources_v2",
         sourcesChecked: officialCandidates.sourcesChecked,
         publishableSources: officialCandidates.publishableSources,
         weeklyCheckSources: officialCandidates.weeklyCheckSources,
