@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "node scripts/build-pages.js",
     "start": "npx wrangler pages dev .",
-    "deploy": "npx wrangler pages deploy . --project-name looking-for-the-future"
+    "deploy": "npm run build && npx wrangler pages deploy dist --project-name looking-for-the-future"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"

@@ -19,6 +19,18 @@ npm install
 npm run start
 ```
 
+## Build Cloudflare Pages
+
+```bash
+npm run build
+```
+
+Cloudflare Pages Git settings:
+
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Deploy command: leave empty, or use `npm run deploy` only for manual CLI deploys.
+
 ## Deploy Cloudflare Pages
 
 ```bash
