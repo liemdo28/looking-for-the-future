@@ -1973,7 +1973,16 @@ function persistSettings() {
 }
 
 function getAction(jobId) {
-  return normalizeAction(state.actions[jobId]);
+  if (state.actions[jobId]) return normalizeAction(state.actions[jobId]);
+  const job = state.jobs.find((item) => item.id === jobId);
+  if (!job?.workflowStatus) return normalizeAction();
+  return normalizeAction({
+    status: job.workflowStatus,
+    source: job.applicationSource || job.source,
+    updatedAt: job.appliedAt || job.updatedAt || job.refreshedAt,
+    appliedAt: job.appliedAt,
+    applicationMethod: job.applicationMethod
+  });
 }
 
 function getStatus(jobId) {

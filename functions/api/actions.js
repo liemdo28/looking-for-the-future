@@ -55,9 +55,19 @@ async function updateActionStore(env, payload) {
         note: value,
         updatedAt: payload.updatedAt || now
       };
-      if (env.JOB_ACTIONS_KV) await env.JOB_ACTIONS_KV.put(key, JSON.stringify(notePayload));
+      if (env.JOB_ACTIONS_KV) {
+        try {
+          await env.JOB_ACTIONS_KV.put(key, JSON.stringify(notePayload));
+        } catch (error) {
+          return { ok: false, persisted: false, jobId: payload.jobId, note: notePayload, updatedAt: now, error: error?.message || "KV write failed" };
+        }
+      }
     } else if (env.JOB_ACTIONS_KV) {
-      await env.JOB_ACTIONS_KV.delete(key);
+      try {
+        await env.JOB_ACTIONS_KV.delete(key);
+      } catch (error) {
+        return { ok: false, persisted: false, jobId: payload.jobId, note: null, updatedAt: now, error: error?.message || "KV delete failed" };
+      }
     }
     return { ok: true, persisted, jobId: payload.jobId, note: notePayload, updatedAt: now };
   } else {
@@ -69,8 +79,12 @@ async function updateActionStore(env, payload) {
     delete action.type;
     const key = `${ACTION_PREFIX}${payload.jobId}`;
     if (env.JOB_ACTIONS_KV) {
-      if (action.status === "none") await env.JOB_ACTIONS_KV.delete(key);
-      else await env.JOB_ACTIONS_KV.put(key, JSON.stringify(action));
+      try {
+        if (action.status === "none") await env.JOB_ACTIONS_KV.delete(key);
+        else await env.JOB_ACTIONS_KV.put(key, JSON.stringify(action));
+      } catch (error) {
+        return { ok: false, persisted: false, jobId: payload.jobId, action: action.status === "none" ? null : action, updatedAt: now, error: error?.message || "KV write failed" };
+      }
     }
     return { ok: true, persisted, jobId: payload.jobId, action: action.status === "none" ? null : action, updatedAt: now };
   }
