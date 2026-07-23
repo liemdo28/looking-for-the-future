@@ -9,6 +9,7 @@ const ACTIVE_SYNC_KEY = "sync:v1:active-run";
 const LAST_SYNC_KEY = "sync:v1:last-completed-run";
 const MAX_SOURCES_PER_RUN = 42;
 const RESPONSE_SIZE_LIMIT = 800_000;
+const SOURCE_TIMEOUT_BUFFER_MS = 3_000;
 const USER_AGENT = "AIJobHunter/1.0 (+https://looking-for-the-future.liem-dt0208.workers.dev)";
 const ROLE_KEYWORD_RE = /(sales operations?|commercial operations?|business operations?|revenue operations?|sales planning|sales analyst|business analyst|business intelligence|operations analyst|crm|tender analyst|sales support|sales coordinator|operation executive)/i;
 const MATCH_MODEL_VERSION = "heuristic-cv-sales-ops-v1";
@@ -246,7 +247,7 @@ async function syncOneSource(env, syncRunId, source, seenCanonicalKeys) {
       await updateSourceState(env, source, skipped);
       return skipped;
     }
-    const rawRecords = await fetchRawJobs(source);
+    const rawRecords = await withSourceTimeout(source, () => fetchRawJobs(source));
     let newJobs = 0;
     let updatedJobs = 0;
     let duplicates = 0;
@@ -305,6 +306,19 @@ async function fetchRawJobs(source) {
   const adapter = selectAdapter(source);
   if (!adapter) return [];
   return adapter.fetchJobs(source);
+}
+
+async function withSourceTimeout(source, task) {
+  const timeoutMs = Number(source.timeoutMs || 12_000) + SOURCE_TIMEOUT_BUFFER_MS;
+  let timeoutId;
+  const timeout = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(`source_timeout:${timeoutMs}`)), timeoutMs);
+  });
+  try {
+    return await Promise.race([task(), timeout]);
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 function selectAdapter(source) {

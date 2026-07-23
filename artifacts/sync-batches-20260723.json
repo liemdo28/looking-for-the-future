@@ -1,0 +1,1470 @@
+{
+  "startedAt": "2026-07-23T03:19:07.258Z",
+  "registryVersion": "hcm_official_career_sources_v2",
+  "totalSources": 225,
+  "batchSize": 8,
+  "batches": [
+    {
+      "batch": 1,
+      "syncRunId": "sync_mrwxzs9v_yhgykw",
+      "status": "partial",
+      "durationMs": 23449,
+      "completed": 8,
+      "total": 8,
+      "failed": 5,
+      "discovered": 0,
+      "newJobs": 0,
+      "updated": 0,
+      "counts": {
+        "success": 3,
+        "failed": 5
+      },
+      "sources": [
+        {
+          "syncRunId": "sync_mrwxzs9v_yhgykw",
+          "sourceId": "src_3m_career",
+          "sourceName": "3M",
+          "status": "success",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:19:09.978Z",
+          "completedAt": "2026-07-23T03:19:10.611Z",
+          "responseCode": 0,
+          "durationMs": 633,
+          "errorType": "",
+          "errorMessage": "",
+          "seenJobIds": []
+        },
+        {
+          "syncRunId": "sync_mrwxzs9v_yhgykw",
+          "sourceId": "src_ab-inbev-vietnam_career",
+          "sourceName": "AB InBev Vietnam",
+          "status": "failed",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:19:12.059Z",
+          "completedAt": "2026-07-23T03:19:12.429Z",
+          "responseCode": 0,
+          "durationMs": 370,
+          "errorType": "network",
+          "errorMessage": "network:530"
+        },
+        {
+          "syncRunId": "sync_mrwxzs9v_yhgykw",
+          "sourceId": "src_abb_career",
+          "sourceName": "ABB",
+          "status": "failed",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:19:13.889Z",
+          "completedAt": "2026-07-23T03:19:15.003Z",
+          "responseCode": 0,
+          "durationMs": 1114,
+          "errorType": "auth_required",
+          "errorMessage": "auth_required:403"
+        },
+        {
+          "syncRunId": "sync_mrwxzs9v_yhgykw",
+          "sourceId": "src_abbott-vietnam_career",
+          "sourceName": "Abbott Vietnam",
+          "status": "success",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:19:16.460Z",
+          "completedAt": "2026-07-23T03:19:17.946Z",
+          "responseCode": 0,
+          "durationMs": 1486,
+          "errorType": "",
+          "errorMessage": "",
+          "seenJobIds": []
+        },
+        {
+          "syncRunId": "sync_mrwxzs9v_yhgykw",
+          "sourceId": "src_acb_career",
+          "sourceName": "ACB",
+          "status": "failed",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:19:19.384Z",
+          "completedAt": "2026-07-23T03:19:19.939Z",
+          "responseCode": 0,
+          "durationMs": 555,
+          "errorType": "network",
+          "errorMessage": "network:526"
+        },
+        {
+          "syncRunId": "sync_mrwxzs9v_yhgykw",
+          "sourceId": "src_accenture_career",
+          "sourceName": "Accenture",
+          "status": "failed",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:19:21.436Z",
+          "completedAt": "2026-07-23T03:19:22.093Z",
+          "responseCode": 0,
+          "durationMs": 657,
+          "errorType": "404",
+          "errorMessage": "removed:404"
+        },
+        {
+          "syncRunId": "sync_mrwxzs9v_yhgykw",
+          "sourceId": "src_accor_career",
+          "sourceName": "Accor",
+          "status": "success",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:19:23.539Z",
+          "completedAt": "2026-07-23T03:19:24.899Z",
+          "responseCode": 0,
+          "durationMs": 1360,
+          "errorType": "",
+          "errorMessage": "",
+          "seenJobIds": []
+        },
+        {
+          "syncRunId": "sync_mrwxzs9v_yhgykw",
+          "sourceId": "src_acecook-vietnam_career",
+          "sourceName": "Acecook Vietnam",
+          "status": "failed",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:19:26.329Z",
+          "completedAt": "2026-07-23T03:19:26.940Z",
+          "responseCode": 0,
+          "durationMs": 611,
+          "errorType": "auth_required",
+          "errorMessage": "auth_required:403"
+        }
+      ]
+    },
+    {
+      "batch": 2,
+      "syncRunId": "sync_mrwy0bj0_iewxrb",
+      "status": "partial",
+      "durationMs": 27861,
+      "completed": 8,
+      "total": 8,
+      "failed": 4,
+      "discovered": 0,
+      "newJobs": 0,
+      "updated": 0,
+      "counts": {
+        "failed": 4,
+        "success": 4
+      },
+      "sources": [
+        {
+          "syncRunId": "sync_mrwy0bj0_iewxrb",
+          "sourceId": "src_adidas_career",
+          "sourceName": "adidas",
+          "status": "failed",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:19:34.601Z",
+          "completedAt": "2026-07-23T03:19:35.052Z",
+          "responseCode": 0,
+          "durationMs": 451,
+          "errorType": "network",
+          "errorMessage": "network:520"
+        },
+        {
+          "syncRunId": "sync_mrwy0bj0_iewxrb",
+          "sourceId": "src_aeon-vietnam_career",
+          "sourceName": "AEON Vietnam",
+          "status": "failed",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:19:36.536Z",
+          "completedAt": "2026-07-23T03:19:36.905Z",
+          "responseCode": 0,
+          "durationMs": 369,
+          "errorType": "network",
+          "errorMessage": "network:530"
+        },
+        {
+          "syncRunId": "sync_mrwy0bj0_iewxrb",
+          "sourceId": "src_agoda_greenhouse",
+          "sourceName": "Agoda",
+          "status": "failed",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:19:38.311Z",
+          "completedAt": "2026-07-23T03:19:38.699Z",
+          "responseCode": 0,
+          "durationMs": 388,
+          "errorType": "auth_required",
+          "errorMessage": "auth_required:403"
+        },
+        {
+          "syncRunId": "sync_mrwy0bj0_iewxrb",
+          "sourceId": "src_aia-vietnam_career",
+          "sourceName": "AIA Vietnam",
+          "status": "failed",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:19:40.152Z",
+          "completedAt": "2026-07-23T03:19:40.530Z",
+          "responseCode": 0,
+          "durationMs": 378,
+          "errorType": "network",
+          "errorMessage": "network:530"
+        },
+        {
+          "syncRunId": "sync_mrwy0bj0_iewxrb",
+          "sourceId": "src_ajinomoto-vietnam_career",
+          "sourceName": "Ajinomoto Vietnam",
+          "status": "success",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:19:41.993Z",
+          "completedAt": "2026-07-23T03:19:43.544Z",
+          "responseCode": 0,
+          "durationMs": 1551,
+          "errorType": "",
+          "errorMessage": "",
+          "seenJobIds": []
+        },
+        {
+          "syncRunId": "sync_mrwy0bj0_iewxrb",
+          "sourceId": "src_akzonobel_career",
+          "sourceName": "AkzoNobel",
+          "status": "success",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:19:44.970Z",
+          "completedAt": "2026-07-23T03:19:47.531Z",
+          "responseCode": 0,
+          "durationMs": 2561,
+          "errorType": "",
+          "errorMessage": "",
+          "seenJobIds": []
+        },
+        {
+          "syncRunId": "sync_mrwy0bj0_iewxrb",
+          "sourceId": "src_amazon-aws_career",
+          "sourceName": "Amazon / AWS",
+          "status": "success",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:19:48.969Z",
+          "completedAt": "2026-07-23T03:19:51.165Z",
+          "responseCode": 0,
+          "durationMs": 2196,
+          "errorType": "",
+          "errorMessage": "",
+          "seenJobIds": []
+        },
+        {
+          "syncRunId": "sync_mrwy0bj0_iewxrb",
+          "sourceId": "src_apple_career",
+          "sourceName": "Apple",
+          "status": "success",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:19:52.592Z",
+          "completedAt": "2026-07-23T03:19:54.345Z",
+          "responseCode": 0,
+          "durationMs": 1753,
+          "errorType": "",
+          "errorMessage": "",
+          "seenJobIds": []
+        }
+      ]
+    },
+    {
+      "batch": 3,
+      "syncRunId": "sync_mrwy0y72_5p4lmm",
+      "status": "partial",
+      "durationMs": 32272,
+      "completed": 8,
+      "total": 8,
+      "failed": 4,
+      "discovered": 0,
+      "newJobs": 0,
+      "updated": 0,
+      "counts": {
+        "success": 4,
+        "failed": 4
+      },
+      "sources": [
+        {
+          "syncRunId": "sync_mrwy0y72_5p4lmm",
+          "sourceId": "src_astrazeneca-vietnam_career",
+          "sourceName": "AstraZeneca Vietnam",
+          "status": "success",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:20:04.245Z",
+          "completedAt": "2026-07-23T03:20:04.699Z",
+          "responseCode": 0,
+          "durationMs": 454,
+          "errorType": "",
+          "errorMessage": "",
+          "seenJobIds": []
+        },
+        {
+          "syncRunId": "sync_mrwy0y72_5p4lmm",
+          "sourceId": "src_avery-dennison_career",
+          "sourceName": "Avery Dennison",
+          "status": "failed",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:20:06.173Z",
+          "completedAt": "2026-07-23T03:20:11.436Z",
+          "responseCode": 0,
+          "durationMs": 5263,
+          "errorType": "404",
+          "errorMessage": "removed:404"
+        },
+        {
+          "syncRunId": "sync_mrwy0y72_5p4lmm",
+          "sourceId": "src_bain-company_career",
+          "sourceName": "Bain & Company",
+          "status": "success",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:20:13.057Z",
+          "completedAt": "2026-07-23T03:20:13.855Z",
+          "responseCode": 0,
+          "durationMs": 798,
+          "errorType": "",
+          "errorMessage": "",
+          "seenJobIds": []
+        },
+        {
+          "syncRunId": "sync_mrwy0y72_5p4lmm",
+          "sourceId": "src_base-vn_career",
+          "sourceName": "Base.vn",
+          "status": "failed",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:20:15.493Z",
+          "completedAt": "2026-07-23T03:20:15.985Z",
+          "responseCode": 0,
+          "durationMs": 492,
+          "errorType": "404",
+          "errorMessage": "removed:404"
+        },
+        {
+          "syncRunId": "sync_mrwy0y72_5p4lmm",
+          "sourceId": "src_basf_career",
+          "sourceName": "BASF",
+          "status": "failed",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:20:17.733Z",
+          "completedAt": "2026-07-23T03:20:22.195Z",
+          "responseCode": 0,
+          "durationMs": 4462,
+          "errorType": "network",
+          "errorMessage": "response_too_large"
+        },
+        {
+          "syncRunId": "sync_mrwy0y72_5p4lmm",
+          "sourceId": "src_bayer-vietnam_career",
+          "sourceName": "Bayer Vietnam",
+          "status": "success",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:20:23.784Z",
+          "completedAt": "2026-07-23T03:20:25.695Z",
+          "responseCode": 0,
+          "durationMs": 1911,
+          "errorType": "",
+          "errorMessage": "",
+          "seenJobIds": []
+        },
+        {
+          "syncRunId": "sync_mrwy0y72_5p4lmm",
+          "sourceId": "src_be-group_career",
+          "sourceName": "Be Group",
+          "status": "failed",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:20:27.326Z",
+          "completedAt": "2026-07-23T03:20:28.160Z",
+          "responseCode": 0,
+          "durationMs": 834,
+          "errorType": "404",
+          "errorMessage": "removed:404"
+        },
+        {
+          "syncRunId": "sync_mrwy0y72_5p4lmm",
+          "sourceId": "src_bidv_career",
+          "sourceName": "BIDV",
+          "status": "success",
+          "jobsFetched": 0,
+          "newJobs": 0,
+          "updatedJobs": 0,
+          "duplicates": 0,
+          "startedAt": "2026-07-23T03:20:29.846Z",
+          "completedAt": "2026-07-23T03:20:30.743Z",
+          "responseCode": 0,
+          "durationMs": 897,
+          "errorType": "",
+          "errorMessage": "",
+          "seenJobIds": []
+        }
+      ]
+    },
+    {
+      "batch": 4,
+      "status": "script_error",
+      "durationMs": 91,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_boehringer-ingelheim_career",
+          "sourceName": "Boehringer Ingelheim"
+        },
+        {
+          "sourceId": "src_bosch-group-bgsw_career",
+          "sourceName": "Bosch Group / BGSW"
+        },
+        {
+          "sourceId": "src_boston-consulting-group_career",
+          "sourceName": "Boston Consulting Group"
+        },
+        {
+          "sourceId": "src_british-american-tobacco-vietnam_career",
+          "sourceName": "British American Tobacco Vietnam"
+        },
+        {
+          "sourceId": "src_bureau-veritas-vietnam_career",
+          "sourceName": "Bureau Veritas Vietnam"
+        },
+        {
+          "sourceId": "src_bytedance_career",
+          "sourceName": "ByteDance"
+        },
+        {
+          "sourceId": "src_cadence_career",
+          "sourceName": "Cadence"
+        },
+        {
+          "sourceId": "src_capgemini_career",
+          "sourceName": "Capgemini"
+        }
+      ]
+    },
+    {
+      "batch": 5,
+      "status": "script_error",
+      "durationMs": 220,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_capitaland_career",
+          "sourceName": "CapitaLand"
+        },
+        {
+          "sourceId": "src_cargill-vietnam_career",
+          "sourceName": "Cargill Vietnam"
+        },
+        {
+          "sourceId": "src_cbre-vietnam_career",
+          "sourceName": "CBRE Vietnam"
+        },
+        {
+          "sourceId": "src_central-retail-vietnam_career",
+          "sourceName": "Central Retail Vietnam"
+        },
+        {
+          "sourceId": "src_ceva-logistics_career",
+          "sourceName": "CEVA Logistics"
+        },
+        {
+          "sourceId": "src_circle-k-vietnam_career",
+          "sourceName": "Circle K Vietnam"
+        },
+        {
+          "sourceId": "src_citi_career",
+          "sourceName": "Citi"
+        },
+        {
+          "sourceId": "src_cma-cgm_career",
+          "sourceName": "CMA CGM"
+        }
+      ]
+    },
+    {
+      "batch": 6,
+      "status": "script_error",
+      "durationMs": 85,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_cmc-global_career",
+          "sourceName": "CMC Global"
+        },
+        {
+          "sourceId": "src_coca-cola-beverages-vietnam_career",
+          "sourceName": "Coca-Cola Beverages Vietnam"
+        },
+        {
+          "sourceId": "src_coca-cola-vietnam_career",
+          "sourceName": "Coca-Cola Vietnam"
+        },
+        {
+          "sourceId": "src_colgate-palmolive_career",
+          "sourceName": "Colgate-Palmolive"
+        },
+        {
+          "sourceId": "src_cushman-wakefield_career",
+          "sourceName": "Cushman & Wakefield"
+        },
+        {
+          "sourceId": "src_daikin-vietnam_career",
+          "sourceName": "Daikin Vietnam"
+        },
+        {
+          "sourceId": "src_db-schenker_career",
+          "sourceName": "DB Schenker"
+        },
+        {
+          "sourceId": "src_decathlon-vietnam_career",
+          "sourceName": "Decathlon Vietnam"
+        }
+      ]
+    },
+    {
+      "batch": 7,
+      "status": "script_error",
+      "durationMs": 106,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_dell-technologies_career",
+          "sourceName": "Dell Technologies"
+        },
+        {
+          "sourceId": "src_deloitte-vietnam_career",
+          "sourceName": "Deloitte Vietnam"
+        },
+        {
+          "sourceId": "src_dhl-group_career",
+          "sourceName": "DHL Group"
+        },
+        {
+          "sourceId": "src_dksh_career",
+          "sourceName": "DKSH"
+        },
+        {
+          "sourceId": "src_dxc-technology_career",
+          "sourceName": "DXC Technology"
+        },
+        {
+          "sourceId": "src_endava_career",
+          "sourceName": "Endava"
+        },
+        {
+          "sourceId": "src_epam_career",
+          "sourceName": "EPAM"
+        },
+        {
+          "sourceId": "src_eurofins_career",
+          "sourceName": "Eurofins"
+        }
+      ]
+    },
+    {
+      "batch": 8,
+      "status": "script_error",
+      "durationMs": 82,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_expeditors_career",
+          "sourceName": "Expeditors"
+        },
+        {
+          "sourceId": "src_ey-vietnam_career",
+          "sourceName": "EY Vietnam"
+        },
+        {
+          "sourceId": "src_fedex_career",
+          "sourceName": "FedEx"
+        },
+        {
+          "sourceId": "src_fpt-software_career",
+          "sourceName": "FPT Software"
+        },
+        {
+          "sourceId": "src_fpt-telecom_career",
+          "sourceName": "FPT Telecom"
+        },
+        {
+          "sourceId": "src_frieslandcampina-vietnam_career",
+          "sourceName": "FrieslandCampina Vietnam"
+        },
+        {
+          "sourceId": "src_fwd-vietnam_career",
+          "sourceName": "FWD Vietnam"
+        },
+        {
+          "sourceId": "src_ge-vernova_career",
+          "sourceName": "GE Vernova"
+        }
+      ]
+    },
+    {
+      "batch": 9,
+      "status": "script_error",
+      "durationMs": 102,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_google_career",
+          "sourceName": "Google"
+        },
+        {
+          "sourceId": "src_grab_career",
+          "sourceName": "Grab"
+        },
+        {
+          "sourceId": "src_gsk-vietnam_career",
+          "sourceName": "GSK Vietnam"
+        },
+        {
+          "sourceId": "src_guardian-vietnam_career",
+          "sourceName": "Guardian Vietnam"
+        },
+        {
+          "sourceId": "src_h-m-vietnam_career",
+          "sourceName": "H&M Vietnam"
+        },
+        {
+          "sourceId": "src_haravan_career",
+          "sourceName": "Haravan"
+        },
+        {
+          "sourceId": "src_hdbank_career",
+          "sourceName": "HDBank"
+        },
+        {
+          "sourceId": "src_heineken-vietnam_career",
+          "sourceName": "HEINEKEN Vietnam"
+        }
+      ]
+    },
+    {
+      "batch": 10,
+      "status": "script_error",
+      "durationMs": 87,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_henkel_career",
+          "sourceName": "Henkel"
+        },
+        {
+          "sourceId": "src_hilton_career",
+          "sourceName": "Hilton"
+        },
+        {
+          "sourceId": "src_honeywell_career",
+          "sourceName": "Honeywell"
+        },
+        {
+          "sourceId": "src_hsbc-vietnam_career",
+          "sourceName": "HSBC Vietnam"
+        },
+        {
+          "sourceId": "src_hyatt_career",
+          "sourceName": "Hyatt"
+        },
+        {
+          "sourceId": "src_ibm_career",
+          "sourceName": "IBM"
+        },
+        {
+          "sourceId": "src_ihg-hotels-resorts_career",
+          "sourceName": "IHG Hotels & Resorts"
+        },
+        {
+          "sourceId": "src_infineon-technologies_career",
+          "sourceName": "Infineon Technologies"
+        }
+      ]
+    },
+    {
+      "batch": 11,
+      "status": "script_error",
+      "durationMs": 112,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_intel_career",
+          "sourceName": "Intel"
+        },
+        {
+          "sourceId": "src_jabil_career",
+          "sourceName": "Jabil"
+        },
+        {
+          "sourceId": "src_jll-vietnam_career",
+          "sourceName": "JLL Vietnam"
+        },
+        {
+          "sourceId": "src_johnson-johnson_career",
+          "sourceName": "Johnson & Johnson"
+        },
+        {
+          "sourceId": "src_jti-vietnam_career",
+          "sourceName": "JTI Vietnam"
+        },
+        {
+          "sourceId": "src_keppel_career",
+          "sourceName": "Keppel"
+        },
+        {
+          "sourceId": "src_kimberly-clark_career",
+          "sourceName": "Kimberly-Clark"
+        },
+        {
+          "sourceId": "src_kiotviet_career",
+          "sourceName": "KiotViet"
+        }
+      ]
+    },
+    {
+      "batch": 12,
+      "status": "script_error",
+      "durationMs": 83,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_kms-technology_career",
+          "sourceName": "KMS Technology"
+        },
+        {
+          "sourceId": "src_kpmg-vietnam_career",
+          "sourceName": "KPMG Vietnam"
+        },
+        {
+          "sourceId": "src_kuehne-nagel_career",
+          "sourceName": "Kuehne+Nagel"
+        },
+        {
+          "sourceId": "src_l-oreal-vietnam_career",
+          "sourceName": "L'Oreal Vietnam"
+        },
+        {
+          "sourceId": "src_lalamove_greenhouse",
+          "sourceName": "Lalamove"
+        },
+        {
+          "sourceId": "src_lazada_career",
+          "sourceName": "Lazada"
+        },
+        {
+          "sourceId": "src_lego-group_career",
+          "sourceName": "LEGO Group"
+        },
+        {
+          "sourceId": "src_maersk_career",
+          "sourceName": "Maersk"
+        }
+      ]
+    },
+    {
+      "batch": 13,
+      "status": "script_error",
+      "durationMs": 98,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_manulife-vietnam_career",
+          "sourceName": "Manulife Vietnam"
+        },
+        {
+          "sourceId": "src_marriott-international_career",
+          "sourceName": "Marriott International"
+        },
+        {
+          "sourceId": "src_marvell_career",
+          "sourceName": "Marvell"
+        },
+        {
+          "sourceId": "src_masan-group_career",
+          "sourceName": "Masan Group"
+        },
+        {
+          "sourceId": "src_mattel_career",
+          "sourceName": "Mattel"
+        },
+        {
+          "sourceId": "src_mb-bank_career",
+          "sourceName": "MB Bank"
+        },
+        {
+          "sourceId": "src_mckinsey-company_career",
+          "sourceName": "McKinsey & Company"
+        },
+        {
+          "sourceId": "src_microchip-technology_career",
+          "sourceName": "Microchip Technology"
+        }
+      ]
+    },
+    {
+      "batch": 14,
+      "status": "script_error",
+      "durationMs": 84,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_microsoft_career",
+          "sourceName": "Microsoft"
+        },
+        {
+          "sourceId": "src_misa_career",
+          "sourceName": "MISA"
+        },
+        {
+          "sourceId": "src_mm-mega-market-vietnam_career",
+          "sourceName": "MM Mega Market Vietnam"
+        },
+        {
+          "sourceId": "src_momo_career",
+          "sourceName": "MoMo"
+        },
+        {
+          "sourceId": "src_mondelez-kinh-do_career",
+          "sourceName": "Mondelez Kinh Do"
+        },
+        {
+          "sourceId": "src_msd-vietnam_career",
+          "sourceName": "MSD Vietnam"
+        },
+        {
+          "sourceId": "src_nashtech_career",
+          "sourceName": "NashTech"
+        },
+        {
+          "sourceId": "src_nestle-vietnam_career",
+          "sourceName": "Nestle Vietnam"
+        }
+      ]
+    },
+    {
+      "batch": 15,
+      "status": "script_error",
+      "durationMs": 105,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_netcompany_career",
+          "sourceName": "Netcompany"
+        },
+        {
+          "sourceId": "src_nike_career",
+          "sourceName": "Nike"
+        },
+        {
+          "sourceId": "src_novartis-vietnam_career",
+          "sourceName": "Novartis Vietnam"
+        },
+        {
+          "sourceId": "src_nvidia_career",
+          "sourceName": "NVIDIA"
+        },
+        {
+          "sourceId": "src_ocb_career",
+          "sourceName": "OCB"
+        },
+        {
+          "sourceId": "src_oracle_career",
+          "sourceName": "Oracle"
+        },
+        {
+          "sourceId": "src_panasonic-vietnam_career",
+          "sourceName": "Panasonic Vietnam"
+        },
+        {
+          "sourceId": "src_pepsico-foods-vietnam_career",
+          "sourceName": "PepsiCo Foods Vietnam"
+        }
+      ]
+    },
+    {
+      "batch": 16,
+      "status": "script_error",
+      "durationMs": 80,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_pfizer-vietnam_career",
+          "sourceName": "Pfizer Vietnam"
+        },
+        {
+          "sourceId": "src_philip-morris-international_career",
+          "sourceName": "Philip Morris International"
+        },
+        {
+          "sourceId": "src_procter-gamble_career",
+          "sourceName": "Procter & Gamble"
+        },
+        {
+          "sourceId": "src_prudential-vietnam_career",
+          "sourceName": "Prudential Vietnam"
+        },
+        {
+          "sourceId": "src_puma_career",
+          "sourceName": "PUMA"
+        },
+        {
+          "sourceId": "src_pwc-vietnam_career",
+          "sourceName": "PwC Vietnam"
+        },
+        {
+          "sourceId": "src_qualcomm_career",
+          "sourceName": "Qualcomm"
+        },
+        {
+          "sourceId": "src_reckitt_career",
+          "sourceName": "Reckitt"
+        }
+      ]
+    },
+    {
+      "batch": 17,
+      "status": "script_error",
+      "durationMs": 104,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_renesas-electronics_career",
+          "sourceName": "Renesas Electronics"
+        },
+        {
+          "sourceId": "src_roche-vietnam_career",
+          "sourceName": "Roche Vietnam"
+        },
+        {
+          "sourceId": "src_sacombank_career",
+          "sourceName": "Sacombank"
+        },
+        {
+          "sourceId": "src_samsung-electronics_career",
+          "sourceName": "Samsung Electronics"
+        },
+        {
+          "sourceId": "src_sanofi-vietnam_career",
+          "sourceName": "Sanofi Vietnam"
+        },
+        {
+          "sourceId": "src_sap_career",
+          "sourceName": "SAP"
+        },
+        {
+          "sourceId": "src_savills-vietnam_career",
+          "sourceName": "Savills Vietnam"
+        },
+        {
+          "sourceId": "src_schneider-electric_career",
+          "sourceName": "Schneider Electric"
+        }
+      ]
+    },
+    {
+      "batch": 18,
+      "status": "script_error",
+      "durationMs": 85,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_sea-group_career",
+          "sourceName": "Sea Group"
+        },
+        {
+          "sourceId": "src_sgs-vietnam_career",
+          "sourceName": "SGS Vietnam"
+        },
+        {
+          "sourceId": "src_shinhan-bank-vietnam_career",
+          "sourceName": "Shinhan Bank Vietnam"
+        },
+        {
+          "sourceId": "src_shopee_career",
+          "sourceName": "Shopee"
+        },
+        {
+          "sourceId": "src_siemens_career",
+          "sourceName": "Siemens"
+        },
+        {
+          "sourceId": "src_sky-mavis_career",
+          "sourceName": "Sky Mavis"
+        },
+        {
+          "sourceId": "src_standard-chartered_career",
+          "sourceName": "Standard Chartered"
+        },
+        {
+          "sourceId": "src_suntory-pepsico-vietnam_career",
+          "sourceName": "Suntory PepsiCo Vietnam"
+        }
+      ]
+    },
+    {
+      "batch": 19,
+      "status": "script_error",
+      "durationMs": 97,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_syngenta_career",
+          "sourceName": "Syngenta"
+        },
+        {
+          "sourceId": "src_synopsys_career",
+          "sourceName": "Synopsys"
+        },
+        {
+          "sourceId": "src_techcombank_career",
+          "sourceName": "Techcombank"
+        },
+        {
+          "sourceId": "src_tiktok_career",
+          "sourceName": "TikTok"
+        },
+        {
+          "sourceId": "src_tma-solutions_career",
+          "sourceName": "TMA Solutions"
+        },
+        {
+          "sourceId": "src_totalenergies-vietnam_career",
+          "sourceName": "TotalEnergies Vietnam"
+        },
+        {
+          "sourceId": "src_tpbank_career",
+          "sourceName": "TPBank"
+        },
+        {
+          "sourceId": "src_traveloka_career",
+          "sourceName": "Traveloka"
+        }
+      ]
+    },
+    {
+      "batch": 20,
+      "status": "script_error",
+      "durationMs": 86,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_trusting-social_greenhouse",
+          "sourceName": "Trusting Social"
+        },
+        {
+          "sourceId": "src_unilever-vietnam_lever",
+          "sourceName": "Unilever Vietnam"
+        },
+        {
+          "sourceId": "src_uniqlo-vietnam_career",
+          "sourceName": "UNIQLO Vietnam"
+        },
+        {
+          "sourceId": "src_uob-vietnam_career",
+          "sourceName": "UOB Vietnam"
+        },
+        {
+          "sourceId": "src_ups_career",
+          "sourceName": "UPS"
+        },
+        {
+          "sourceId": "src_vietcombank_career",
+          "sourceName": "Vietcombank"
+        },
+        {
+          "sourceId": "src_vietinbank_career",
+          "sourceName": "VietinBank"
+        },
+        {
+          "sourceId": "src_vietjet-air_career",
+          "sourceName": "VietJet Air"
+        }
+      ]
+    },
+    {
+      "batch": 21,
+      "status": "script_error",
+      "durationMs": 93,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_vietnam-airlines_career",
+          "sourceName": "Vietnam Airlines"
+        },
+        {
+          "sourceId": "src_viettel_career",
+          "sourceName": "Viettel"
+        },
+        {
+          "sourceId": "src_vinamilk_career",
+          "sourceName": "Vinamilk"
+        },
+        {
+          "sourceId": "src_vng_career",
+          "sourceName": "VNG"
+        },
+        {
+          "sourceId": "src_vnpay_career",
+          "sourceName": "VNPay"
+        },
+        {
+          "sourceId": "src_vnpt_career",
+          "sourceName": "VNPT"
+        },
+        {
+          "sourceId": "src_vpbank_career",
+          "sourceName": "VPBank"
+        },
+        {
+          "sourceId": "src_zalo_career",
+          "sourceName": "Zalo"
+        }
+      ]
+    },
+    {
+      "batch": 22,
+      "status": "script_error",
+      "durationMs": 81,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_zalopay_career",
+          "sourceName": "ZaloPay"
+        },
+        {
+          "sourceId": "src_zuellig-pharma_career",
+          "sourceName": "Zuellig Pharma"
+        },
+        {
+          "sourceId": "src_adm_career",
+          "sourceName": "ADM"
+        },
+        {
+          "sourceId": "src_amd_career",
+          "sourceName": "AMD"
+        },
+        {
+          "sourceId": "src_booking-com_career",
+          "sourceName": "Booking.com"
+        },
+        {
+          "sourceId": "src_broadcom_career",
+          "sourceName": "Broadcom"
+        },
+        {
+          "sourceId": "src_canon-vietnam_career",
+          "sourceName": "Canon Vietnam"
+        },
+        {
+          "sourceId": "src_carlsberg-vietnam_career",
+          "sourceName": "Carlsberg Vietnam"
+        }
+      ]
+    },
+    {
+      "batch": 23,
+      "status": "script_error",
+      "durationMs": 108,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_chubb-life-vietnam_career",
+          "sourceName": "Chubb Life Vietnam"
+        },
+        {
+          "sourceId": "src_cimb-vietnam_career",
+          "sourceName": "CIMB Vietnam"
+        },
+        {
+          "sourceId": "src_cisco_career",
+          "sourceName": "Cisco"
+        },
+        {
+          "sourceId": "src_cj-logistics_career",
+          "sourceName": "CJ Logistics"
+        },
+        {
+          "sourceId": "src_c-c-c-c_career",
+          "sourceName": "Cốc Cốc"
+        },
+        {
+          "sourceId": "src_danone_career",
+          "sourceName": "Danone"
+        },
+        {
+          "sourceId": "src_deutsche-bank_career",
+          "sourceName": "Deutsche Bank"
+        },
+        {
+          "sourceId": "src_dow_career",
+          "sourceName": "Dow"
+        }
+      ]
+    },
+    {
+      "batch": 24,
+      "status": "script_error",
+      "durationMs": 83,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_emerson_career",
+          "sourceName": "Emerson"
+        },
+        {
+          "sourceId": "src_emirates_career",
+          "sourceName": "Emirates"
+        },
+        {
+          "sourceId": "src_ferrero_career",
+          "sourceName": "Ferrero"
+        },
+        {
+          "sourceId": "src_frasers-property_career",
+          "sourceName": "Frasers Property"
+        },
+        {
+          "sourceId": "src_gamuda-land_career",
+          "sourceName": "Gamuda Land"
+        },
+        {
+          "sourceId": "src_generali-vietnam_career",
+          "sourceName": "Generali Vietnam"
+        },
+        {
+          "sourceId": "src_hitachi-energy_career",
+          "sourceName": "Hitachi Energy"
+        },
+        {
+          "sourceId": "src_hp-inc_career",
+          "sourceName": "HP Inc."
+        }
+      ]
+    },
+    {
+      "batch": 25,
+      "status": "script_error",
+      "durationMs": 92,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_hpe_career",
+          "sourceName": "HPE"
+        },
+        {
+          "sourceId": "src_intertek-vietnam_career",
+          "sourceName": "Intertek Vietnam"
+        },
+        {
+          "sourceId": "src_jas-worldwide_career",
+          "sourceName": "JAS Worldwide"
+        },
+        {
+          "sourceId": "src_jpmorgan-chase_career",
+          "sourceName": "JPMorgan Chase"
+        },
+        {
+          "sourceId": "src_kearney_career",
+          "sourceName": "Kearney"
+        },
+        {
+          "sourceId": "src_lg-electronics_career",
+          "sourceName": "LG Electronics"
+        },
+        {
+          "sourceId": "src_lvmh_career",
+          "sourceName": "LVMH"
+        },
+        {
+          "sourceId": "src_mapletree_career",
+          "sourceName": "Mapletree"
+        }
+      ]
+    },
+    {
+      "batch": 26,
+      "status": "script_error",
+      "durationMs": 83,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_mars_career",
+          "sourceName": "Mars"
+        },
+        {
+          "sourceId": "src_melia-hotels_career",
+          "sourceName": "Melia Hotels"
+        },
+        {
+          "sourceId": "src_meta_career",
+          "sourceName": "Meta"
+        },
+        {
+          "sourceId": "src_mitsubishi-electric_career",
+          "sourceName": "Mitsubishi Electric"
+        },
+        {
+          "sourceId": "src_mobifone_career",
+          "sourceName": "MobiFone"
+        },
+        {
+          "sourceId": "src_msc_career",
+          "sourceName": "MSC"
+        },
+        {
+          "sourceId": "src_ncs-group_career",
+          "sourceName": "NCS Group"
+        },
+        {
+          "sourceId": "src_nippon-express_career",
+          "sourceName": "Nippon Express"
+        }
+      ]
+    },
+    {
+      "batch": 27,
+      "status": "script_error",
+      "durationMs": 96,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_ntt-data_career",
+          "sourceName": "NTT DATA"
+        },
+        {
+          "sourceId": "src_nxp-semiconductors_career",
+          "sourceName": "NXP Semiconductors"
+        },
+        {
+          "sourceId": "src_olam-agri-ofi_career",
+          "sourceName": "Olam Agri / ofi"
+        },
+        {
+          "sourceId": "src_petrovietnam_career",
+          "sourceName": "PetroVietnam"
+        },
+        {
+          "sourceId": "src_qatar-airways_career",
+          "sourceName": "Qatar Airways"
+        },
+        {
+          "sourceId": "src_richemont_career",
+          "sourceName": "Richemont"
+        },
+        {
+          "sourceId": "src_rockwell-automation_career",
+          "sourceName": "Rockwell Automation"
+        },
+        {
+          "sourceId": "src_shell-vietnam_career",
+          "sourceName": "Shell Vietnam"
+        }
+      ]
+    },
+    {
+      "batch": 28,
+      "status": "script_error",
+      "durationMs": 83,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_sony-electronics-vietnam_career",
+          "sourceName": "Sony Electronics Vietnam"
+        },
+        {
+          "sourceId": "src_takeda_career",
+          "sourceName": "Takeda"
+        },
+        {
+          "sourceId": "src_th-group_career",
+          "sourceName": "TH Group"
+        },
+        {
+          "sourceId": "src_thoughtworks_greenhouse",
+          "sourceName": "Thoughtworks"
+        },
+        {
+          "sourceId": "src_vietnam-singapore-industrial-park-vsip_career",
+          "sourceName": "Vietnam Singapore Industrial Park (VSIP)"
+        },
+        {
+          "sourceId": "src_vmware-by-broadcom_career",
+          "sourceName": "VMware by Broadcom"
+        },
+        {
+          "sourceId": "src_watsons-vietnam_career",
+          "sourceName": "Watsons Vietnam"
+        },
+        {
+          "sourceId": "src_woori-bank-vietnam_career",
+          "sourceName": "Woori Bank Vietnam"
+        }
+      ]
+    },
+    {
+      "batch": 29,
+      "status": "script_error",
+      "durationMs": 100,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON",
+      "sources": [
+        {
+          "sourceId": "src_yokogawa_career",
+          "sourceName": "Yokogawa"
+        }
+      ]
+    }
+  ],
+  "completedAt": "2026-07-23T03:20:37.907Z"
+}

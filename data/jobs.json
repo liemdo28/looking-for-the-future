@@ -148,24 +148,25 @@
     "rank": 7,
     "score": 86,
     "title": "Sales Operations",
-    "company": "SK CONNECT",
-    "location": "Hồ Chí Minh",
-    "workMode": "Full-time / xem JD",
-    "openStatus": "TopCV crawled yesterday; lương 15-25 triệu",
+    "company": "CÔNG TY TNHH MTV SK CONNECT",
+    "location": "Phường Hòa Hưng, Hồ Chí Minh",
+    "workMode": "Toàn thời gian",
+    "openStatus": "TopCV crawled today; lương 15-25 triệu; location Hồ Chí Minh; cần mở link để ứng tuyển",
     "source": "TopCV",
     "url": "https://www.topcv.vn/viec-lam/sales-operations/2194718.html",
-    "summary": "Sales operations tại HCMC, phù hợp trực tiếp với CV.",
+    "summary": "Sales Operations tại HCMC, match trực tiếp với Sales Ops, reporting và CRM/process support.",
     "match": [
-      "Có tín hiệu liên quan Sales Operations, Commercial Operations, Business Operations, CRM, KPI/reporting hoặc stakeholder coordination.",
-      "Được tìm lại trong source pool ngày 22/07/2026 và có source/link để người dùng mở kiểm tra."
+      "Title và job family trùng Sales Operations.",
+      "TopCV search result ngày 23/07/2026 còn hiển thị vị trí, lương và địa điểm Hồ Chí Minh."
     ],
     "risks": [
-      "Cần kiểm tra lại trạng thái ngay trước khi nộp vì job board có thể thay đổi nhanh.",
-      "Có thể cần bổ sung SQL/Power BI/FMCG/industry knowledge tùy JD chi tiết."
+      "Cần mở JD để xác nhận yêu cầu chi tiết và tình trạng apply ngay trước khi nộp.",
+      "Có thể có yêu cầu sales execution ngoài operations."
     ],
-    "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations, CRM data quality, KPI/reporting automation, contract/billing/payment follow-up và phối hợp Sales/Finance/Legal.",
+    "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations, CRM data quality, KPI/reporting automation và phối hợp Sales/Finance/Legal.",
     "isNew": true,
-    "verifiedAt": "2026-07-22"
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T10:20:00+07:00"
   },
   {
     "id": "datbike-sales-ops",
@@ -268,24 +269,25 @@
     "rank": 12,
     "score": 80,
     "title": "Sales Operations Executive",
-    "company": "VAS Nghi Sơn Group",
-    "location": "Hồ Chí Minh",
-    "workMode": "Full-time / xem JD",
-    "openStatus": "TopCV listing crawled last week",
+    "company": "CÔNG TY CỔ PHẦN TẬP ĐOÀN VAS NGHI SƠN",
+    "location": "Phường Tân Định, Hồ Chí Minh",
+    "workMode": "Toàn thời gian",
+    "openStatus": "TopCV crawled today; Hồ Chí Minh; vị trí Sales Operations Executive còn hiển thị",
     "source": "TopCV",
     "url": "https://www.topcv.vn/viec-lam/sales-operations-executive/2089017.html",
-    "summary": "Sales operations executive, phù hợp sales process và admin.",
+    "summary": "Sales Operations Executive, phù hợp trực tiếp với sales support, process, admin và reporting.",
     "match": [
-      "Có tín hiệu liên quan Sales Operations, Commercial Operations, Business Operations, CRM, KPI/reporting hoặc stakeholder coordination.",
-      "Được tìm lại trong source pool ngày 22/07/2026 và có source/link để người dùng mở kiểm tra."
+      "Title trùng Sales Operations Executive.",
+      "TopCV ngày 23/07/2026 còn hiển thị vị trí tại Hồ Chí Minh."
     ],
     "risks": [
-      "Đây là kết quả từ trang listing/search; cần mở link để xác nhận chi tiết trước khi nộp.",
-      "Có thể cần bổ sung SQL/Power BI/FMCG/industry knowledge tùy JD chi tiết."
+      "Cần mở JD để xác nhận mức độ reporting/CRM so với sales admin.",
+      "Có thể yêu cầu ngành vật liệu/xây dựng."
     ],
-    "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations, CRM data quality, KPI/reporting automation, contract/billing/payment follow-up và phối hợp Sales/Finance/Legal.",
+    "applicationAngle": "Đặt trọng tâm vào business support cho Sales Division, contract/invoice/payment follow-up và KPI reporting.",
     "isNew": true,
-    "verifiedAt": "2026-07-22"
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T10:20:00+07:00"
   },
   {
     "id": "pmax-revops-manager",
@@ -342,22 +344,23 @@
     "title": "Chuyên viên thúc đẩy kinh doanh (Sales Operations / Stimulation)",
     "company": "Gia Sư Eteacher",
     "location": "Hồ Chí Minh",
-    "workMode": "Full-time / xem JD",
-    "openStatus": "Hạn nộp 15/08/2026; Ứng tuyển ngay",
+    "workMode": "Full-time",
+    "openStatus": "JobsGO crawled today in search result; 10-15 triệu; Hồ Chí Minh; 6 ngày trước",
     "source": "JobsGO",
-    "url": "https://jobsgo.vn/viec-lam/chuyen-vien-thuc-day-kinh-doanh-sales-operations-stimulation-28008493507.html",
-    "summary": "Sales operations/stimulation, có yếu tố KPI và hỗ trợ sales execution.",
+    "url": "https://jobsgo.vn/viec-lam-trade-marketing-executive.html",
+    "summary": "Sales Operations/Stimulation thiên thúc đẩy kinh doanh, match operations/KPI nhưng cần xem scope sales execution.",
     "match": [
-      "Có tín hiệu liên quan Sales Operations, Commercial Operations, Business Operations, CRM, KPI/reporting hoặc stakeholder coordination.",
-      "Được tìm lại trong source pool ngày 22/07/2026 và có source/link để người dùng mở kiểm tra."
+      "JobsGO search result ngày 23/07/2026 còn hiển thị role Sales Operations / Stimulation tại Hồ Chí Minh.",
+      "Có khả năng liên quan KPI, sales execution và stakeholder coordination."
     ],
     "risks": [
-      "Cần kiểm tra lại trạng thái ngay trước khi nộp vì job board có thể thay đổi nhanh.",
-      "Có thể cần bổ sung SQL/Power BI/FMCG/industry knowledge tùy JD chi tiết."
+      "Link là listing/search result, cần mở exact JD.",
+      "Role có thể thiên trade/sales stimulation hơn CRM/reporting."
     ],
-    "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations, CRM data quality, KPI/reporting automation, contract/billing/payment follow-up và phối hợp Sales/Finance/Legal.",
+    "applicationAngle": "Nhấn mạnh kinh nghiệm performance review, KPI tracking, sales support và process improvement.",
     "isNew": true,
-    "verifiedAt": "2026-07-22"
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T10:20:00+07:00"
   },
   {
     "id": "linkedin-netnam-sales-admin-internal-control",
@@ -894,22 +897,23 @@
     "title": "Sales Operations Manager - FMCG",
     "company": "NABATI Việt Nam",
     "location": "Hồ Chí Minh",
-    "workMode": "Full-time / xem JD",
-    "openStatus": "TopCV listing crawled last week",
+    "workMode": "Toàn thời gian",
+    "openStatus": "TopCV crawled today; listing New; Hồ Chí Minh; cần mở link để ứng tuyển",
     "source": "TopCV",
     "url": "https://www.topcv.vn/brand/nabativietnam/tuyen-dung/sales-operations-manager-fmcg-j1588043.html",
-    "summary": "Sales ops manager trong FMCG; match domain nhưng seniority cao hơn.",
+    "summary": "Sales Ops Manager FMCG, fit về domain Sales Operations nhưng có gap về seniority/FMCG leadership.",
     "match": [
-      "Có tín hiệu liên quan Sales Operations, Commercial Operations, Business Operations, CRM, KPI/reporting hoặc stakeholder coordination.",
-      "Được tìm lại trong source pool ngày 22/07/2026 và có source/link để người dùng mở kiểm tra."
+      "Title trùng Sales Operations Manager và TopCV còn hiển thị New.",
+      "Hồ Chí Minh, toàn thời gian, phù hợp địa điểm."
     ],
     "risks": [
-      "Đây là kết quả từ trang listing/search; cần mở link để xác nhận chi tiết trước khi nộp.",
-      "Có thể cần bổ sung SQL/Power BI/FMCG/industry knowledge tùy JD chi tiết."
+      "Yêu cầu 5 năm chuyên môn và FMCG có thể cần kiểm tra kỹ.",
+      "Manager scope có thể vượt khỏi sales support/reporting."
     ],
-    "applicationAngle": "Chỉ nên nộp nếu JD chi tiết xác nhận có phần operations/reporting/process; cover letter cần nối kinh nghiệm support/reporting sang scope của role.",
+    "applicationAngle": "Nhấn mạnh reporting automation, sales performance review, CRM data quality và phối hợp commercial stakeholders.",
     "isNew": true,
-    "verifiedAt": "2026-07-22"
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T10:20:00+07:00"
   },
   {
     "id": "linkedin-itl-sales-support-executive",
@@ -1008,8 +1012,33 @@
     "verifiedAt": "2026-07-22"
   },
   {
+    "id": "topcv-agari-gtm-sales-ops-chinese",
+    "score": 70,
+    "title": "GTM Sales Operations - Thành Thạo Tiếng Trung",
+    "company": "CÔNG TY TNHH AGARI",
+    "location": "Hồ Chí Minh",
+    "workMode": "Toàn thời gian / xem JD",
+    "openStatus": "TopCV search result crawled today; đăng hôm nay; hiển thị Ứng tuyển; lương 20-30 triệu",
+    "source": "TopCV",
+    "url": "https://www.topcv.vn/tim-viec-lam-sales-admin-tai-ho-chi-minh-kl2",
+    "summary": "GTM Sales Operations có match tốt về Sales Ops/GTM process nhưng rủi ro lớn ở yêu cầu tiếng Trung.",
+    "match": [
+      "GTM Sales Operations liên quan sales process, sales support và commercial execution.",
+      "Source TopCV ngày 23/07/2026 hiển thị đăng hôm nay và có nút ứng tuyển trong search result."
+    ],
+    "risks": [
+      "Yêu cầu thành thạo tiếng Trung có thể là gap loại trừ nếu bắt buộc.",
+      "Link hiện là search/listing, cần mở exact JD trước khi nộp."
+    ],
+    "applicationAngle": "Chỉ nộp nếu tiếng Trung không phải yêu cầu bắt buộc; nhấn mạnh Sales Operations, reporting, CRM và cross-functional support.",
+    "isNew": true,
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T10:20:00+07:00",
+    "rank": 43
+  },
+  {
     "id": "linkedin-abinbev-revenue-management",
-    "rank": 43,
+    "rank": 44,
     "score": 70,
     "title": "Revenue Management Specialist",
     "company": "AB InBev Southeast Asia",
@@ -1033,7 +1062,7 @@
   },
   {
     "id": "linkedin-energizer-sales-analyst",
-    "rank": 44,
+    "rank": 45,
     "score": 70,
     "title": "Sales Analyst",
     "company": "Energizer Holdings",
@@ -1057,7 +1086,7 @@
   },
   {
     "id": "linkedin-primefuture-sales-ops-manager",
-    "rank": 45,
+    "rank": 46,
     "score": 70,
     "title": "Sales Operations Manager",
     "company": "PRIME FUTURE EDUTECH PTE. LTD.",
@@ -1081,31 +1110,32 @@
   },
   {
     "id": "careerviet-saigonpaper-sales-ops-manager",
-    "rank": 46,
+    "rank": 47,
     "score": 70,
     "title": "Sales Operations Manager (Industrial Paper & Tissue Paper Export)",
     "company": "Saigon Paper Corporation",
     "location": "Hồ Chí Minh",
-    "workMode": "Full-time / xem JD",
-    "openStatus": "CareerViet hạn nộp 29/07/2026 trong snippet",
+    "workMode": "Nhân viên chính thức / xem JD",
+    "openStatus": "CareerViet crawled yesterday; hạn nộp 29/07/2026; có Ứng tuyển ngay",
     "source": "CareerViet",
-    "url": "https://careerviet.vn/viec-lam/sales-operations-k-vi.html",
-    "summary": "Sales operations manager export; match domain nhưng leadership/sales scope cao.",
+    "url": "https://careerviet.vn/viec-lam-tuong-tu/sales-operation-specialist-tai-ho-chi-minh-kl8-vi.html",
+    "summary": "Sales Operations Manager ngành giấy/export, match domain nhưng seniority và leadership có thể cao hơn hồ sơ.",
     "match": [
-      "Có tín hiệu liên quan Sales Operations, Commercial Operations, Business Operations, CRM, KPI/reporting hoặc stakeholder coordination.",
-      "Được tìm lại trong source pool ngày 22/07/2026 và có source/link để người dùng mở kiểm tra."
+      "CareerViet hiển thị Sales Operations Manager tại Hồ Chí Minh, hạn nộp 29/07/2026.",
+      "Có liên quan Sales Operations, process và commercial coordination."
     ],
     "risks": [
-      "Cần kiểm tra lại trạng thái ngay trước khi nộp vì job board có thể thay đổi nhanh.",
-      "Có thể cần bổ sung SQL/Power BI/FMCG/industry knowledge tùy JD chi tiết."
+      "Manager/export scope có thể yêu cầu leadership hoặc industry knowledge sâu.",
+      "Link là similar/listing page; cần mở exact JD để xác nhận."
     ],
-    "applicationAngle": "Chỉ nên nộp nếu JD chi tiết xác nhận có phần operations/reporting/process; cover letter cần nối kinh nghiệm support/reporting sang scope của role.",
+    "applicationAngle": "Định vị kinh nghiệm Senior Business Support như commercial operations backbone cho sales division.",
     "isNew": true,
-    "verifiedAt": "2026-07-22"
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T10:20:00+07:00"
   },
   {
     "id": "linkedin-urbox-senior-bi-specialist",
-    "rank": 47,
+    "rank": 48,
     "score": 70,
     "title": "Senior Business Intelligence Specialist",
     "company": "UrBox",
@@ -1129,7 +1159,7 @@
   },
   {
     "id": "linkedin-pandora-specialist-data-analytics",
-    "rank": 48,
+    "rank": 49,
     "score": 70,
     "title": "Specialist, Data Analytics",
     "company": "Pandora",
@@ -1153,7 +1183,7 @@
   },
   {
     "id": "linkedin-marou-business-application-exec",
-    "rank": 49,
+    "rank": 50,
     "score": 69,
     "title": "Business Application Executive",
     "company": "Marou - Faiseurs de Chocolat",
@@ -1177,7 +1207,7 @@
   },
   {
     "id": "linkedin-shopee-bi-fulfillment-services",
-    "rank": 50,
+    "rank": 51,
     "score": 69,
     "title": "Business Intelligence Analyst (Fulfillment Services)",
     "company": "Shopee",
@@ -1201,7 +1231,7 @@
   },
   {
     "id": "linkedin-bienhoa-business-capability-analyst",
-    "rank": 51,
+    "rank": 52,
     "score": 69,
     "title": "Chuyên viên Phân tích năng lực kinh doanh",
     "company": "Bien Hoa Consumer",
@@ -1225,7 +1255,7 @@
   },
   {
     "id": "linkedin-yara-sales-support-specialist",
-    "rank": 52,
+    "rank": 53,
     "score": 69,
     "title": "Sales Support Specialist",
     "company": "Yara International",
@@ -1249,7 +1279,7 @@
   },
   {
     "id": "linkedin-savills-crm-data-manager",
-    "rank": 53,
+    "rank": 54,
     "score": 68,
     "title": "CRM & Data Manager",
     "company": "Savills Vietnam",
@@ -1273,7 +1303,7 @@
   },
   {
     "id": "jobsgo-pvd-marine-sales-ops-exec",
-    "rank": 54,
+    "rank": 55,
     "score": 68,
     "title": "Marine Sales & Operations Executive",
     "company": "PVD Training",
@@ -1297,7 +1327,7 @@
   },
   {
     "id": "linkedin-abbott-mt-customer-service-sales-admin",
-    "rank": 55,
+    "rank": 56,
     "score": 68,
     "title": "MT Customer Service Sales Admin",
     "company": "Abbott",
@@ -1321,7 +1351,7 @@
   },
   {
     "id": "linkedin-fedex-ops-excellence-specialist",
-    "rank": 56,
+    "rank": 57,
     "score": 68,
     "title": "Operations Excellence Specialist",
     "company": "FedEx",
@@ -1345,7 +1375,7 @@
   },
   {
     "id": "linkedin-nkg-bi-data-analyst",
-    "rank": 57,
+    "rank": 58,
     "score": 67,
     "title": "BI Data Analyst",
     "company": "Neumann Kaffee Gruppe (NKG)",
@@ -1369,7 +1399,7 @@
   },
   {
     "id": "linkedin-toa-data-analyst",
-    "rank": 58,
+    "rank": 59,
     "score": 66,
     "title": "Data Analyst",
     "company": "TOA Paint Vietnam Co., Ltd",
@@ -1393,7 +1423,7 @@
   },
   {
     "id": "linkedin-highlands-data-analyst",
-    "rank": 59,
+    "rank": 60,
     "score": 66,
     "title": "Data Analyst",
     "company": "Highlands Coffee",
@@ -1417,7 +1447,7 @@
   },
   {
     "id": "linkedin-intrepid-operations-executive",
-    "rank": 60,
+    "rank": 61,
     "score": 66,
     "title": "Operation - Executive",
     "company": "Intrepid Asia",
@@ -1441,7 +1471,7 @@
   },
   {
     "id": "linkedin-shopee-network-strategy-solution",
-    "rank": 61,
+    "rank": 62,
     "score": 65,
     "title": "Network Strategy & Solution Analyst, Associate - Operations, Shopee",
     "company": "Shopee",
@@ -1465,7 +1495,7 @@
   },
   {
     "id": "linkedin-loreal-assistant-crm-manager",
-    "rank": 62,
+    "rank": 63,
     "score": 64,
     "title": "Assistant CRM Manager",
     "company": "L'Oréal",
@@ -1489,7 +1519,7 @@
   },
   {
     "id": "shopee-bi-operations",
-    "rank": 63,
+    "rank": 64,
     "score": 64,
     "title": "Business Intelligence Analyst (Operations)",
     "company": "Shopee",
@@ -1513,7 +1543,7 @@
   },
   {
     "id": "linkedin-masan-campaign-operation-analyst",
-    "rank": 64,
+    "rank": 65,
     "score": 64,
     "title": "Campaign Operation Analyst (Data & Tracking Focus)",
     "company": "Masan Group",
@@ -1537,7 +1567,7 @@
   },
   {
     "id": "linkedin-lottemart-external-channel-ops",
-    "rank": 65,
+    "rank": 66,
     "score": 64,
     "title": "External Channel Operation Specialist",
     "company": "LOTTE Mart Vietnam",
@@ -1561,7 +1591,7 @@
   },
   {
     "id": "careerbuilder-green-laundry-sales-deputy-manager",
-    "rank": 66,
+    "rank": 67,
     "score": 64,
     "title": "Sales Deputy Manager (Customer & Sales Operations)",
     "company": "Giặt Ủi Xanh",
@@ -1585,7 +1615,7 @@
   },
   {
     "id": "linkedin-abbott-senior-ba-rapid",
-    "rank": 67,
+    "rank": 68,
     "score": 64,
     "title": "Senior Business Analyst - Rapid Diagnostics",
     "company": "Abbott",
@@ -1609,7 +1639,7 @@
   },
   {
     "id": "linkedin-momo-senior-financial-reporting",
-    "rank": 68,
+    "rank": 69,
     "score": 63,
     "title": "Senior - Financial Reporting Specialist",
     "company": "MoMo (M_Service)",
@@ -1633,7 +1663,7 @@
   },
   {
     "id": "linkedin-zalopay-partnership-exec",
-    "rank": 69,
+    "rank": 70,
     "score": 62,
     "title": "Associate Strategy & Partnership Executive (Cross-Border Payment)",
     "company": "Zalopay",
@@ -1657,7 +1687,7 @@
   },
   {
     "id": "linkedin-kfc-finance-analyst-powerbi",
-    "rank": 70,
+    "rank": 71,
     "score": 62,
     "title": "Finance Analyst (Strong Power BI)",
     "company": "KFC Vietnam",
@@ -1681,7 +1711,7 @@
   },
   {
     "id": "linkedin-nab-business-analyst-commercial-finance",
-    "rank": 71,
+    "rank": 72,
     "score": 62,
     "title": "Senior Business Analyst - Commercial Finance",
     "company": "NAB Innovation Centre Vietnam",
@@ -1705,7 +1735,7 @@
   },
   {
     "id": "linkedin-pnj-bi-retail-planning",
-    "rank": 72,
+    "rank": 73,
     "score": 62,
     "title": "Senior Business Intelligence Analyst (Retail planning & policy)",
     "company": "PNJ Group",
@@ -1729,7 +1759,7 @@
   },
   {
     "id": "linkedin-renesas-staff-business-planning",
-    "rank": 73,
+    "rank": 74,
     "score": 62,
     "title": "Staff Business Planning Data Analyst",
     "company": "Renesas Electronics",
@@ -1753,7 +1783,7 @@
   },
   {
     "id": "linkedin-roche-tender-analyst",
-    "rank": 74,
+    "rank": 75,
     "score": 62,
     "title": "Tender Analyst",
     "company": "Roche",
@@ -1777,7 +1807,7 @@
   },
   {
     "id": "linkedin-be-group-senior-ba-marketplace",
-    "rank": 75,
+    "rank": 76,
     "score": 61,
     "title": "Senior Business Analyst (Marketplace)",
     "company": "BE GROUP",
@@ -1801,7 +1831,7 @@
   },
   {
     "id": "linkedin-publicis-senior-data-pm",
-    "rank": 76,
+    "rank": 77,
     "score": 61,
     "title": "Senior Data Analyst & Project Management",
     "company": "Publicis Groupe Vietnam",
@@ -1825,7 +1855,7 @@
   },
   {
     "id": "linkedin-trustonic-data-analyst",
-    "rank": 77,
+    "rank": 78,
     "score": 60,
     "title": "Data Analyst",
     "company": "Trustonic",
@@ -1849,7 +1879,7 @@
   },
   {
     "id": "linkedin-shopback-regional-crm-manager",
-    "rank": 78,
+    "rank": 79,
     "score": 60,
     "title": "Regional CRM Manager",
     "company": "ShopBack",
@@ -1873,7 +1903,7 @@
   },
   {
     "id": "linkedin-dentsu-senior-data-analyst",
-    "rank": 79,
+    "rank": 80,
     "score": 60,
     "title": "Senior Data Analyst",
     "company": "dentsu",
@@ -1897,7 +1927,7 @@
   },
   {
     "id": "jobsgo-reeracoen-service-sales-staff",
-    "rank": 80,
+    "rank": 81,
     "score": 59,
     "title": "Service Sales Staff - 28599",
     "company": "Reeracoen Vietnam",
@@ -1921,7 +1951,7 @@
   },
   {
     "id": "adecco-area-sales-manager",
-    "rank": 81,
+    "rank": 82,
     "score": 58,
     "title": "Area Sales Manager",
     "company": "Adecco client - global logistics company",
@@ -1944,7 +1974,7 @@
   },
   {
     "id": "robertwalters-commercial-manager-food",
-    "rank": 82,
+    "rank": 83,
     "score": 58,
     "title": "Commercial Manager - Food Ingredients",
     "company": "Robert Walters client",
@@ -1968,7 +1998,7 @@
   },
   {
     "id": "linkedin-intel-npi-foundry-operational-analyst",
-    "rank": 83,
+    "rank": 84,
     "score": 58,
     "title": "NPI/Foundry Operational Analyst",
     "company": "Intel",
@@ -1992,7 +2022,7 @@
   },
   {
     "id": "linkedin-homecredit-product-proposition",
-    "rank": 84,
+    "rank": 85,
     "score": 57,
     "title": "Senior Product Proposition Specialist",
     "company": "Home Credit Vietnam",
@@ -2016,7 +2046,7 @@
   },
   {
     "id": "linkedin-tiktok-creator-assortment-ops",
-    "rank": 85,
+    "rank": 86,
     "score": 57,
     "title": "TikTok Shop - Creator Assortment Operations Specialist",
     "company": "TikTok",
@@ -2040,7 +2070,7 @@
   },
   {
     "id": "linkedin-tiktok-shop-strategist",
-    "rank": 86,
+    "rank": 87,
     "score": 57,
     "title": "TikTok Shop - Strategist - Vietnam",
     "company": "TikTok",
@@ -2064,7 +2094,7 @@
   },
   {
     "id": "linkedin-be-group-mapops",
-    "rank": 87,
+    "rank": 88,
     "score": 56,
     "title": "Map Operations (MapOps)",
     "company": "BE GROUP",
@@ -2088,7 +2118,7 @@
   },
   {
     "id": "linkedin-amazon-account-manager-mass-seller",
-    "rank": 88,
+    "rank": 89,
     "score": 55,
     "title": "Account Manager (Mass seller management)",
     "company": "Amazon",
@@ -2112,7 +2142,7 @@
   },
   {
     "id": "jobsgo-genfive-international-sales-exec",
-    "rank": 89,
+    "rank": 90,
     "score": 55,
     "title": "International Sales Executive",
     "company": "Genfive",
@@ -2135,8 +2165,33 @@
     "verifiedAt": "2026-07-22"
   },
   {
+    "id": "jobsgo-qui-phuc-international-sales-exec",
+    "score": 55,
+    "title": "International Sales Executive (Up To 20M)",
+    "company": "Công ty TNHH SX-TM-DV Qui Phúc",
+    "location": "Hồ Chí Minh",
+    "workMode": "Full-time",
+    "openStatus": "JobsGO published 6 days ago; hạn nộp 16/08/2026; còn 25 ngày; có ỨNG TUYỂN NGAY",
+    "source": "JobsGO",
+    "url": "https://jobsgo.vn/viec-lam/international-sales-executive-up-to-20m-28039032678.html",
+    "summary": "International Sales Executive có phần Sales Operations & Coordination nhưng thiên sales hơn operations.",
+    "match": [
+      "JD snippet có Sales Operations & Coordination.",
+      "Hồ Chí Minh, hạn nộp còn hiệu lực và có apply button."
+    ],
+    "risks": [
+      "Pure sales/export target có thể không phù hợp nếu scope hunting cao.",
+      "Score thấp vì không phải Sales Operations chính danh."
+    ],
+    "applicationAngle": "Chỉ nộp nếu JD chi tiết có reporting/process/customer coordination; tránh định vị như sales hunter.",
+    "isNew": true,
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T10:20:00+07:00",
+    "rank": 91
+  },
+  {
     "id": "linkedin-bayer-regional-field-force-manager",
-    "rank": 90,
+    "rank": 92,
     "score": 55,
     "title": "Regional Field Force Manager",
     "company": "Bayer",
@@ -2160,7 +2215,7 @@
   },
   {
     "id": "michaelpage-senior-product-commercial-ops",
-    "rank": 91,
+    "rank": 93,
     "score": 55,
     "title": "Senior Product Manager - Social Commerce",
     "company": "Michael Page client",
@@ -2184,7 +2239,7 @@
   },
   {
     "id": "linkedin-google-account-manager-apps",
-    "rank": 92,
+    "rank": 94,
     "score": 54,
     "title": "Account Manager, Gaming and Apps, Large Customer Sales",
     "company": "Google",
@@ -2208,7 +2263,7 @@
   },
   {
     "id": "sanofi-national-sales-lead",
-    "rank": 93,
+    "rank": 95,
     "score": 54,
     "title": "National Sales Lead",
     "company": "Sanofi",
@@ -2231,7 +2286,7 @@
   },
   {
     "id": "robertwalters-national-sales-manager-otc",
-    "rank": 94,
+    "rank": 96,
     "score": 54,
     "title": "National Sales Manager - OTC",
     "company": "Robert Walters client",
@@ -2255,7 +2310,7 @@
   },
   {
     "id": "talent-alohaconsulting-sales-manager",
-    "rank": 95,
+    "rank": 97,
     "score": 53,
     "title": "Sales Manager",
     "company": "Aloha Consulting Group",
@@ -2279,7 +2334,7 @@
   },
   {
     "id": "manpower-director-sales-marketing",
-    "rank": 96,
+    "rank": 98,
     "score": 52,
     "title": "Director, Sales & Marketing",
     "company": "Manpower client",
@@ -2303,7 +2358,7 @@
   },
   {
     "id": "talent-matchatalent-regional-sales-manager",
-    "rank": 97,
+    "rank": 99,
     "score": 52,
     "title": "Regional Sales Manager - Vietnam",
     "company": "MatchaTalent",
@@ -2327,58 +2382,10 @@
   },
   {
     "id": "linkedin-apple-channel-marketplace-lead",
-    "rank": 98,
+    "rank": 100,
     "score": 52,
     "title": "Sales - Carrier Channel & Market Place Lead (Vietnam)",
     "company": "Apple",
-    "location": "Ho Chi Minh City / Vietnam",
-    "workMode": "Full-time / xem JD",
-    "openStatus": "Source listing active; cần recheck JD",
-    "source": "LinkedIn / Talent.com / Company Career",
-    "url": "https://www.linkedin.com/jobs/search/?keywords=Business%20Intelligence%20Operations&location=Ho%20Chi%20Minh%20City%2C%20Vietnam",
-    "summary": "Match một phần qua operations, reporting, CRM, business analysis hoặc sales coordination.",
-    "match": [
-      "Có tín hiệu liên quan Sales Operations, Commercial Operations, Business Operations, CRM, KPI/reporting hoặc stakeholder coordination.",
-      "Được tìm lại trong source pool ngày 22/07/2026 và có source/link để người dùng mở kiểm tra."
-    ],
-    "risks": [
-      "Đây là kết quả từ trang listing/search; cần mở link để xác nhận chi tiết trước khi nộp.",
-      "Match thấp hơn vì role thiên sales leadership, data/BI kỹ thuật, hoặc operations không trực tiếp sales ops."
-    ],
-    "applicationAngle": "Chỉ nên nộp nếu JD chi tiết xác nhận có phần operations/reporting/process; cover letter cần nối kinh nghiệm support/reporting sang scope của role.",
-    "isNew": true,
-    "verifiedAt": "2026-07-22"
-  },
-  {
-    "id": "linkedin-unilever-brand-manager-ops",
-    "rank": 99,
-    "score": 51,
-    "title": "Brand Manager - Upro HomeCare",
-    "company": "Unilever",
-    "location": "Ho Chi Minh City / Vietnam",
-    "workMode": "Full-time / xem JD",
-    "openStatus": "Source listing active; cần recheck JD",
-    "source": "LinkedIn / Talent.com / Company Career",
-    "url": "https://www.linkedin.com/jobs/search/?keywords=Business%20Intelligence%20Operations&location=Ho%20Chi%20Minh%20City%2C%20Vietnam",
-    "summary": "Match một phần qua operations, reporting, CRM, business analysis hoặc sales coordination.",
-    "match": [
-      "Có tín hiệu liên quan Sales Operations, Commercial Operations, Business Operations, CRM, KPI/reporting hoặc stakeholder coordination.",
-      "Được tìm lại trong source pool ngày 22/07/2026 và có source/link để người dùng mở kiểm tra."
-    ],
-    "risks": [
-      "Đây là kết quả từ trang listing/search; cần mở link để xác nhận chi tiết trước khi nộp.",
-      "Match thấp hơn vì role thiên sales leadership, data/BI kỹ thuật, hoặc operations không trực tiếp sales ops."
-    ],
-    "applicationAngle": "Chỉ nên nộp nếu JD chi tiết xác nhận có phần operations/reporting/process; cover letter cần nối kinh nghiệm support/reporting sang scope của role.",
-    "isNew": true,
-    "verifiedAt": "2026-07-22"
-  },
-  {
-    "id": "linkedin-astrazeneca-key-account-central",
-    "rank": 100,
-    "score": 51,
-    "title": "Key Account Manager/Associate Manager/Executive - CENTRAL",
-    "company": "AstraZeneca",
     "location": "Ho Chi Minh City / Vietnam",
     "workMode": "Full-time / xem JD",
     "openStatus": "Source listing active; cần recheck JD",
