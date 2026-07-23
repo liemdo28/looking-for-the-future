@@ -55,7 +55,7 @@
     "company": "OPSWAT",
     "location": "Ho Chi Minh City",
     "workMode": "Full-time / xem JD",
-    "openStatus": "Talent.com hiển thị Ứng tuyển",
+    "openStatus": "No longer accepting applications - LinkedIn verified 2026-07-23",
     "source": "Talent.com",
     "url": "https://vn.talent.com/view?id=608380641873047481",
     "summary": "Associate sales operations trong môi trường tech.",
@@ -65,11 +65,15 @@
     ],
     "risks": [
       "Cần kiểm tra lại trạng thái ngay trước khi nộp vì job board có thể thay đổi nhanh.",
-      "Có thể cần bổ sung SQL/Power BI/FMCG/industry knowledge tùy JD chi tiết."
+      "Có thể cần bổ sung SQL/Power BI/FMCG/industry knowledge tùy JD chi tiết.",
+      "Đã kiểm tra lại ngày 23/07/2026: nguồn hiển thị hết hạn hoặc không còn nhận hồ sơ."
     ],
     "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations, CRM data quality, KPI/reporting automation, contract/billing/payment follow-up và phối hợp Sales/Finance/Legal.",
     "isNew": true,
-    "verifiedAt": "2026-07-22"
+    "verifiedAt": "2026-07-22",
+    "lifecycleStatus": "closed",
+    "closedVerifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T11:45:00+07:00"
   },
   {
     "id": "linkedin-base-senior-sales-ops",
@@ -101,47 +105,55 @@
     "score": 88,
     "title": "Sales Reporting Specialist",
     "company": "AB InBev Southeast Asia",
-    "location": "Ho Chi Minh, Vietnam",
+    "location": "Ho Chi Minh",
     "workMode": "Full-time",
-    "openStatus": "Apply Now",
+    "openStatus": "Apply Now visible on Monster/Foundit - verified 2026-07-23",
     "source": "Monster/Foundit",
     "url": "https://www.monster.com.vn/job/sales-reporting-specialist-ab-inbev-southeast-asia-ho-chi-minh-59324446",
-    "summary": "Commercial reporting, data automation, Power BI, Power Query, stakeholder support.",
+    "summary": "Commercial reporting, data automation, Power Query/Power BI và stakeholder support.",
     "match": [
-      "Vai trò là single source of truth cho commercial reporting và business analysis.",
-      "Yêu cầu Power BI, Power Query, Microsoft Office, analytical/data skills rất gần với CV.",
-      "Stakeholder support và customer reporting demand phù hợp với kinh nghiệm management reporting."
+      "Monster/Foundit đang hiển thị nút Apply Now tại thời điểm kiểm tra.",
+      "Match với CV qua Sales Operations, Sales Support, Business Operations, reporting, CRM/process hoặc stakeholder coordination."
     ],
     "risks": [
-      "Yêu cầu FMCG sales metrics; CV chưa có FMCG chính thức.",
-      "Power BI trong CV ở mức basic, cần chuẩn bị portfolio/dashboard sample."
+      "Cần kiểm tra lại ngay trước khi nộp vì Monster/Foundit có thể đổi trạng thái nhanh.",
+      "Có thể cần bổ sung Power BI/SQL/FMCG/industry knowledge tùy JD chi tiết."
     ],
-    "applicationAngle": "Định vị là commercial reporting specialist đã tự động hóa báo cáo bằng Excel/Power Query, giảm manual work và lỗi dữ liệu.",
-    "isNew": false
+    "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations/Business Support, CRM data quality, KPI/reporting automation, contract/billing/payment follow-up và phối hợp Sales/Finance/Legal.",
+    "isNew": true,
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T11:45:00+07:00",
+    "linkQuality": "listing",
+    "lifecycleStatus": "active",
+    "sourceNote": "Imported from Monster/Foundit recheck list on 2026-07-23."
   },
   {
     "id": "heineken-sales-force-effectiveness",
     "rank": 6,
-    "score": 86,
+    "score": 0,
     "title": "Sales Force Effectiveness Analyst",
     "company": "HEINEKEN Vietnam",
-    "location": "Ho Chi Minh, Vietnam",
-    "workMode": "Full-time",
-    "openStatus": "Apply Now",
+    "location": "Ho Chi Minh",
+    "workMode": "Full-time / xem JD",
+    "openStatus": "No longer accepting applications - Monster verified 2026-07-23",
     "source": "Monster/Foundit",
     "url": "https://www.monster.com.vn/job/sales-force-effectiveness-analyst-heineken-vietnam-ho-chi-minh-59123211",
-    "summary": "Power BI dashboards, automated reporting, KPI metrics, sales team support, trend analysis.",
+    "summary": "Không apply được vì nguồn báo không còn nhận hồ sơ.",
     "match": [
-      "Trọng tâm dashboard, automated reporting, KPI, sales performance và hỗ trợ sales team.",
-      "Advanced Excel, Power Query, Power BI basic, training/support sales team đều khớp CV.",
-      "Yêu cầu 2-4 năm data/commercial analyst; ứng viên có 8+ năm operations/reporting."
+      "Đã đưa vào dashboard để theo dõi, nhưng match dưới nhóm ưu tiên cao hoặc cần kiểm tra thêm JD.",
+      "Cần xác minh kỹ trước khi nộp nếu scope thiên sales management/industry-specific."
     ],
     "risks": [
-      "Power BI advanced và SQL là yêu cầu cần bù.",
-      "FMCG/beverage market knowledge là lợi thế nhưng CV chưa có."
+      "Nguồn báo không còn nhận hồ sơ, không apply."
     ],
-    "applicationAngle": "Tập trung vào KPI tracking, performance review facilitation, dashboard/reporting automation và training sales users đọc data insights.",
-    "isNew": false
+    "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations/Business Support, CRM data quality, KPI/reporting automation, contract/billing/payment follow-up và phối hợp Sales/Finance/Legal.",
+    "isNew": true,
+    "lifecycleStatus": "closed",
+    "closedVerifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T11:45:00+07:00",
+    "verifiedAt": "2026-07-23",
+    "linkQuality": "listing",
+    "sourceNote": "Imported from Monster/Foundit recheck list on 2026-07-23."
   },
   {
     "id": "topcv-sk-connect-sales-operations",
@@ -151,7 +163,7 @@
     "company": "CÔNG TY TNHH MTV SK CONNECT",
     "location": "Phường Hòa Hưng, Hồ Chí Minh",
     "workMode": "Toàn thời gian",
-    "openStatus": "TopCV crawled today; lương 15-25 triệu; location Hồ Chí Minh; cần mở link để ứng tuyển",
+    "openStatus": "Hết hạn ứng tuyển - TopCV verified 2026-07-23",
     "source": "TopCV",
     "url": "https://www.topcv.vn/viec-lam/sales-operations/2194718.html",
     "summary": "Sales Operations tại HCMC, match trực tiếp với Sales Ops, reporting và CRM/process support.",
@@ -161,12 +173,15 @@
     ],
     "risks": [
       "Cần mở JD để xác nhận yêu cầu chi tiết và tình trạng apply ngay trước khi nộp.",
-      "Có thể có yêu cầu sales execution ngoài operations."
+      "Có thể có yêu cầu sales execution ngoài operations.",
+      "Đã kiểm tra lại ngày 23/07/2026: nguồn hiển thị hết hạn hoặc không còn nhận hồ sơ."
     ],
     "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations, CRM data quality, KPI/reporting automation và phối hợp Sales/Finance/Legal.",
     "isNew": true,
     "verifiedAt": "2026-07-23",
-    "refreshedAt": "2026-07-23T10:20:00+07:00"
+    "refreshedAt": "2026-07-23T11:45:00+07:00",
+    "lifecycleStatus": "closed",
+    "closedVerifiedAt": "2026-07-23"
   },
   {
     "id": "datbike-sales-ops",
@@ -272,7 +287,7 @@
     "company": "CÔNG TY CỔ PHẦN TẬP ĐOÀN VAS NGHI SƠN",
     "location": "Phường Tân Định, Hồ Chí Minh",
     "workMode": "Toàn thời gian",
-    "openStatus": "TopCV crawled today; Hồ Chí Minh; vị trí Sales Operations Executive còn hiển thị",
+    "openStatus": "Hết hạn ứng tuyển - TopCV verified 2026-07-23",
     "source": "TopCV",
     "url": "https://www.topcv.vn/viec-lam/sales-operations-executive/2089017.html",
     "summary": "Sales Operations Executive, phù hợp trực tiếp với sales support, process, admin và reporting.",
@@ -282,12 +297,15 @@
     ],
     "risks": [
       "Cần mở JD để xác nhận mức độ reporting/CRM so với sales admin.",
-      "Có thể yêu cầu ngành vật liệu/xây dựng."
+      "Có thể yêu cầu ngành vật liệu/xây dựng.",
+      "Đã kiểm tra lại ngày 23/07/2026: nguồn hiển thị hết hạn hoặc không còn nhận hồ sơ."
     ],
     "applicationAngle": "Đặt trọng tâm vào business support cho Sales Division, contract/invoice/payment follow-up và KPI reporting.",
     "isNew": true,
     "verifiedAt": "2026-07-23",
-    "refreshedAt": "2026-07-23T10:20:00+07:00"
+    "refreshedAt": "2026-07-23T11:45:00+07:00",
+    "lifecycleStatus": "closed",
+    "closedVerifiedAt": "2026-07-23"
   },
   {
     "id": "pmax-revops-manager",
@@ -2403,5 +2421,340 @@
     "applicationAngle": "Chỉ nên nộp nếu JD chi tiết xác nhận có phần operations/reporting/process; cover letter cần nối kinh nghiệm support/reporting sang scope của role.",
     "isNew": true,
     "verifiedAt": "2026-07-22"
+  },
+  {
+    "id": "monster-home-credit-sales-ops-transformation-manager",
+    "rank": 101,
+    "score": 86,
+    "title": "Sales Operations Transformation Manager",
+    "company": "Home Credit Vietnam",
+    "location": "Vietnam",
+    "workMode": "Full-time / xem JD",
+    "openStatus": "Apply Now visible on Monster/Foundit - verified 2026-07-23",
+    "source": "Monster/Foundit",
+    "url": "https://www.monster.com.vn/job/sales-operations-transformation-manager-home-credit-vietnam-vietnam-59206253",
+    "summary": "Role transformation/operations, phù hợp phần process, reporting và stakeholder coordination.",
+    "match": [
+      "Monster/Foundit đang hiển thị nút Apply Now tại thời điểm kiểm tra.",
+      "Match với CV qua Sales Operations, Sales Support, Business Operations, reporting, CRM/process hoặc stakeholder coordination."
+    ],
+    "risks": [
+      "Cần kiểm tra lại ngay trước khi nộp vì Monster/Foundit có thể đổi trạng thái nhanh.",
+      "Có thể cần bổ sung Power BI/SQL/FMCG/industry knowledge tùy JD chi tiết."
+    ],
+    "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations/Business Support, CRM data quality, KPI/reporting automation, contract/billing/payment follow-up và phối hợp Sales/Finance/Legal.",
+    "isNew": true,
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T11:45:00+07:00",
+    "linkQuality": "listing",
+    "lifecycleStatus": "active",
+    "sourceNote": "Imported from Monster/Foundit recheck list on 2026-07-23."
+  },
+  {
+    "id": "monster-palexy-sales-ops-executive",
+    "rank": 102,
+    "score": 86,
+    "title": "Sales Operations Executive",
+    "company": "Palexy",
+    "location": "Ho Chi Minh",
+    "workMode": "Full-time / xem JD",
+    "openStatus": "Apply Now visible on Monster/Foundit - verified 2026-07-23",
+    "source": "Monster/Foundit",
+    "url": "https://www.monster.com.vn/job/sales-operations-executive-palexy-ho-chi-minh-59024064",
+    "summary": "Sales Operations Executive, match trực tiếp với sales ops, CRM/process support và reporting.",
+    "match": [
+      "Monster/Foundit đang hiển thị nút Apply Now tại thời điểm kiểm tra.",
+      "Match với CV qua Sales Operations, Sales Support, Business Operations, reporting, CRM/process hoặc stakeholder coordination."
+    ],
+    "risks": [
+      "Cần kiểm tra lại ngay trước khi nộp vì Monster/Foundit có thể đổi trạng thái nhanh.",
+      "Có thể cần bổ sung Power BI/SQL/FMCG/industry knowledge tùy JD chi tiết."
+    ],
+    "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations/Business Support, CRM data quality, KPI/reporting automation, contract/billing/payment follow-up và phối hợp Sales/Finance/Legal.",
+    "isNew": true,
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T11:45:00+07:00",
+    "linkQuality": "listing",
+    "lifecycleStatus": "active",
+    "sourceNote": "Imported from Monster/Foundit recheck list on 2026-07-23."
+  },
+  {
+    "id": "monster-pvd-marine-sales-operations-executive",
+    "rank": 103,
+    "score": 72,
+    "title": "Marine Sales & Operations Executive",
+    "company": "PVD Training",
+    "location": "Vietnam",
+    "workMode": "Full-time / xem JD",
+    "openStatus": "Apply Now visible on Monster/Foundit - verified 2026-07-23",
+    "source": "Monster/Foundit",
+    "url": "https://www.monster.com.vn/job/marine-sales-operations-executive-pvd-training-vietnam-58466667",
+    "summary": "Operations + sales support trong ngành marine/training; match vừa phải vì industry khác CV.",
+    "match": [
+      "Đã đưa vào dashboard để theo dõi, nhưng match dưới nhóm ưu tiên cao hoặc cần kiểm tra thêm JD.",
+      "Cần xác minh kỹ trước khi nộp nếu scope thiên sales management/industry-specific."
+    ],
+    "risks": [
+      "Cần kiểm tra lại ngay trước khi nộp vì Monster/Foundit có thể đổi trạng thái nhanh.",
+      "Match dưới 80%, chỉ apply nếu user vẫn muốn mở rộng phạm vi."
+    ],
+    "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations/Business Support, CRM data quality, KPI/reporting automation, contract/billing/payment follow-up và phối hợp Sales/Finance/Legal.",
+    "isNew": true,
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T11:45:00+07:00",
+    "linkQuality": "listing",
+    "lifecycleStatus": "active",
+    "sourceNote": "Imported from Monster/Foundit recheck list on 2026-07-23."
+  },
+  {
+    "id": "monster-heineken-sales-operation-manager",
+    "rank": 104,
+    "score": 78,
+    "title": "Sales Operation Manager",
+    "company": "HEINEKEN Vietnam",
+    "location": "Ho Chi Minh",
+    "workMode": "Full-time / xem JD",
+    "openStatus": "Apply Now visible on Monster/Foundit - verified 2026-07-23",
+    "source": "Monster/Foundit",
+    "url": "https://www.monster.com.vn/job/sales-operation-manager-heineken-vietnam-ho-chi-minh-58464437",
+    "summary": "Sales operation manager tại FMCG; match tốt về operations/reporting nhưng có thể senior hơn scope CV.",
+    "match": [
+      "Đã đưa vào dashboard để theo dõi, nhưng match dưới nhóm ưu tiên cao hoặc cần kiểm tra thêm JD.",
+      "Cần xác minh kỹ trước khi nộp nếu scope thiên sales management/industry-specific."
+    ],
+    "risks": [
+      "Cần kiểm tra lại ngay trước khi nộp vì Monster/Foundit có thể đổi trạng thái nhanh.",
+      "Match dưới 80%, chỉ apply nếu user vẫn muốn mở rộng phạm vi."
+    ],
+    "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations/Business Support, CRM data quality, KPI/reporting automation, contract/billing/payment follow-up và phối hợp Sales/Finance/Legal.",
+    "isNew": true,
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T11:45:00+07:00",
+    "linkQuality": "listing",
+    "lifecycleStatus": "active",
+    "sourceNote": "Imported from Monster/Foundit recheck list on 2026-07-23."
+  },
+  {
+    "id": "monster-bioturing-sales-operations",
+    "rank": 105,
+    "score": 84,
+    "title": "Sales Operations",
+    "company": "BioTuring Careers",
+    "location": "Ho Chi Minh",
+    "workMode": "Full-time / xem JD",
+    "openStatus": "Apply Now visible on Monster/Foundit - verified 2026-07-23",
+    "source": "Monster/Foundit",
+    "url": "https://www.monster.com.vn/job/sales-operations-bioturing-careers-ho-chi-minh-54402846",
+    "summary": "Sales operations trong môi trường tech; phù hợp CRM, process, reporting và phối hợp sales.",
+    "match": [
+      "Monster/Foundit đang hiển thị nút Apply Now tại thời điểm kiểm tra.",
+      "Match với CV qua Sales Operations, Sales Support, Business Operations, reporting, CRM/process hoặc stakeholder coordination."
+    ],
+    "risks": [
+      "Cần kiểm tra lại ngay trước khi nộp vì Monster/Foundit có thể đổi trạng thái nhanh.",
+      "Có thể cần bổ sung Power BI/SQL/FMCG/industry knowledge tùy JD chi tiết."
+    ],
+    "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations/Business Support, CRM data quality, KPI/reporting automation, contract/billing/payment follow-up và phối hợp Sales/Finance/Legal.",
+    "isNew": true,
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T11:45:00+07:00",
+    "linkQuality": "listing",
+    "lifecycleStatus": "active",
+    "sourceNote": "Imported from Monster/Foundit recheck list on 2026-07-23."
+  },
+  {
+    "id": "monster-momos-business-operations-associate-vertical-ai-b2b",
+    "rank": 106,
+    "score": 76,
+    "title": "Business Operations Associate, Vertical AI/B2B Hybrid",
+    "company": "Momos",
+    "location": "Ho Chi Minh",
+    "workMode": "Hybrid / xem JD",
+    "openStatus": "Apply Now visible on Monster/Foundit - verified 2026-07-23",
+    "source": "Monster/Foundit",
+    "url": "https://www.monster.com.vn/job/business-operations-associate-vertical-ai-b2b-hybrid-momos-ho-chi-minh-59722867",
+    "summary": "Business operations thiên B2B/AI; match qua workflow, analytics và stakeholder coordination.",
+    "match": [
+      "Đã đưa vào dashboard để theo dõi, nhưng match dưới nhóm ưu tiên cao hoặc cần kiểm tra thêm JD.",
+      "Cần xác minh kỹ trước khi nộp nếu scope thiên sales management/industry-specific."
+    ],
+    "risks": [
+      "Cần kiểm tra lại ngay trước khi nộp vì Monster/Foundit có thể đổi trạng thái nhanh.",
+      "Match dưới 80%, chỉ apply nếu user vẫn muốn mở rộng phạm vi."
+    ],
+    "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations/Business Support, CRM data quality, KPI/reporting automation, contract/billing/payment follow-up và phối hợp Sales/Finance/Legal.",
+    "isNew": true,
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T11:45:00+07:00",
+    "linkQuality": "listing",
+    "lifecycleStatus": "active",
+    "sourceNote": "Imported from Monster/Foundit recheck list on 2026-07-23."
+  },
+  {
+    "id": "monster-bp-studios-castrol-commercial-ops-manager",
+    "rank": 107,
+    "score": 62,
+    "title": "Commercial Operations Manager",
+    "company": "BP Studios / Castrol",
+    "location": "Ho Chi Minh",
+    "workMode": "Full-time / xem JD",
+    "openStatus": "Apply Now visible on Monster/Foundit - verified 2026-07-23",
+    "source": "Monster/Foundit",
+    "url": "https://www.monster.com.vn/job/commercial-operations-manager-castrol-bp-studios-ho-chi-minh-55345422",
+    "summary": "Commercial operations liên quan revenue/process; match thấp hơn vì manager scope và yêu cầu senior/industry có thể cao.",
+    "match": [
+      "Đã đưa vào dashboard để theo dõi, nhưng match dưới nhóm ưu tiên cao hoặc cần kiểm tra thêm JD.",
+      "Cần xác minh kỹ trước khi nộp nếu scope thiên sales management/industry-specific."
+    ],
+    "risks": [
+      "Cần kiểm tra lại ngay trước khi nộp vì Monster/Foundit có thể đổi trạng thái nhanh.",
+      "Match dưới 80%, chỉ apply nếu user vẫn muốn mở rộng phạm vi."
+    ],
+    "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations/Business Support, CRM data quality, KPI/reporting automation, contract/billing/payment follow-up và phối hợp Sales/Finance/Legal.",
+    "isNew": true,
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T11:45:00+07:00",
+    "linkQuality": "listing",
+    "lifecycleStatus": "active",
+    "sourceNote": "Imported from Monster/Foundit recheck list on 2026-07-23."
+  },
+  {
+    "id": "monster-itl-sales-support-executive",
+    "rank": 108,
+    "score": 82,
+    "title": "Sales Support Executive",
+    "company": "ITL Corporation",
+    "location": "Ho Chi Minh",
+    "workMode": "Full-time / xem JD",
+    "openStatus": "Apply Now visible on Monster/Foundit - verified 2026-07-23",
+    "source": "Monster/Foundit",
+    "url": "https://www.monster.com.vn/job/sales-support-executive-itl-corporation-ho-chi-minh-59227826",
+    "summary": "Sales support role gần CV về sales coordination, admin operations và follow-up.",
+    "match": [
+      "Monster/Foundit đang hiển thị nút Apply Now tại thời điểm kiểm tra.",
+      "Match với CV qua Sales Operations, Sales Support, Business Operations, reporting, CRM/process hoặc stakeholder coordination."
+    ],
+    "risks": [
+      "Cần kiểm tra lại ngay trước khi nộp vì Monster/Foundit có thể đổi trạng thái nhanh.",
+      "Có thể cần bổ sung Power BI/SQL/FMCG/industry knowledge tùy JD chi tiết."
+    ],
+    "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations/Business Support, CRM data quality, KPI/reporting automation, contract/billing/payment follow-up và phối hợp Sales/Finance/Legal.",
+    "isNew": true,
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T11:45:00+07:00",
+    "linkQuality": "listing",
+    "lifecycleStatus": "active",
+    "sourceNote": "Imported from Monster/Foundit recheck list on 2026-07-23."
+  },
+  {
+    "id": "monster-hanwha-sales-support-task-force-senior-officer",
+    "rank": 109,
+    "score": 80,
+    "title": "Sales Support Task Force Senior Officer",
+    "company": "Hanwha Life Vietnam",
+    "location": "Ho Chi Minh",
+    "workMode": "Full-time / xem JD",
+    "openStatus": "Apply Now visible on Monster/Foundit - verified 2026-07-23",
+    "source": "Monster/Foundit",
+    "url": "https://www.monster.com.vn/job/sales-support-task-force-senior-officer-hanwha-life-vietnam-ho-chi-minh-59021819",
+    "summary": "Sales support senior officer; match tốt với business support, reporting và sales stakeholder work.",
+    "match": [
+      "Monster/Foundit đang hiển thị nút Apply Now tại thời điểm kiểm tra.",
+      "Match với CV qua Sales Operations, Sales Support, Business Operations, reporting, CRM/process hoặc stakeholder coordination."
+    ],
+    "risks": [
+      "Cần kiểm tra lại ngay trước khi nộp vì Monster/Foundit có thể đổi trạng thái nhanh.",
+      "Có thể cần bổ sung Power BI/SQL/FMCG/industry knowledge tùy JD chi tiết."
+    ],
+    "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations/Business Support, CRM data quality, KPI/reporting automation, contract/billing/payment follow-up và phối hợp Sales/Finance/Legal.",
+    "isNew": true,
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T11:45:00+07:00",
+    "linkQuality": "listing",
+    "lifecycleStatus": "active",
+    "sourceNote": "Imported from Monster/Foundit recheck list on 2026-07-23."
+  },
+  {
+    "id": "monster-manulife-agency-ops-senior-specialist-sales-support",
+    "rank": 110,
+    "score": 81,
+    "title": "Agency Operations Senior Specialist, Sales Support Activities",
+    "company": "Manulife",
+    "location": "Ho Chi Minh",
+    "workMode": "Full-time / xem JD",
+    "openStatus": "Apply Now visible on Monster/Foundit - verified 2026-07-23",
+    "source": "Monster/Foundit",
+    "url": "https://www.monster.com.vn/job/agency-operations-senior-specialist-sales-support-activities-manulife-ho-chi-minh-48778455",
+    "summary": "Agency operations and sales support, phù hợp experience business support và operations control.",
+    "match": [
+      "Monster/Foundit đang hiển thị nút Apply Now tại thời điểm kiểm tra.",
+      "Match với CV qua Sales Operations, Sales Support, Business Operations, reporting, CRM/process hoặc stakeholder coordination."
+    ],
+    "risks": [
+      "Cần kiểm tra lại ngay trước khi nộp vì Monster/Foundit có thể đổi trạng thái nhanh.",
+      "Có thể cần bổ sung Power BI/SQL/FMCG/industry knowledge tùy JD chi tiết."
+    ],
+    "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations/Business Support, CRM data quality, KPI/reporting automation, contract/billing/payment follow-up và phối hợp Sales/Finance/Legal.",
+    "isNew": true,
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T11:45:00+07:00",
+    "linkQuality": "listing",
+    "lifecycleStatus": "active",
+    "sourceNote": "Imported from Monster/Foundit recheck list on 2026-07-23."
+  },
+  {
+    "id": "monster-moneep-shopeepay-associate-sales-support",
+    "rank": 111,
+    "score": 80,
+    "title": "Associate, Sales Support",
+    "company": "MoneeP / ShopeePay",
+    "location": "Ho Chi Minh",
+    "workMode": "Full-time / xem JD",
+    "openStatus": "Apply Now visible on Monster/Foundit - verified 2026-07-23",
+    "source": "Monster/Foundit",
+    "url": "https://www.monster.com.vn/job/associate-sales-support-shopeepay-moneep-ho-chi-minh-55337068",
+    "summary": "Sales support tại payments/fintech, match với coordination, contract/payment follow-up và reporting.",
+    "match": [
+      "Monster/Foundit đang hiển thị nút Apply Now tại thời điểm kiểm tra.",
+      "Match với CV qua Sales Operations, Sales Support, Business Operations, reporting, CRM/process hoặc stakeholder coordination."
+    ],
+    "risks": [
+      "Cần kiểm tra lại ngay trước khi nộp vì Monster/Foundit có thể đổi trạng thái nhanh.",
+      "Có thể cần bổ sung Power BI/SQL/FMCG/industry knowledge tùy JD chi tiết."
+    ],
+    "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations/Business Support, CRM data quality, KPI/reporting automation, contract/billing/payment follow-up và phối hợp Sales/Finance/Legal.",
+    "isNew": true,
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T11:45:00+07:00",
+    "linkQuality": "listing",
+    "lifecycleStatus": "active",
+    "sourceNote": "Imported from Monster/Foundit recheck list on 2026-07-23."
+  },
+  {
+    "id": "monster-momos-business-operations-associate-b2b-saas-timeout",
+    "rank": 112,
+    "score": 74,
+    "title": "Business Operations Associate B2B SaaS Hybrid",
+    "company": "Momos",
+    "location": "Ho Chi Minh",
+    "workMode": "Hybrid / xem JD",
+    "openStatus": "Monster timeout during verification - cần mở tay",
+    "source": "Monster/Foundit",
+    "url": "https://www.monster.com.vn/job/business-operations-associate-b2b-saas-hybrid-momos-ho-chi-minh-58777029",
+    "summary": "Link Monster bị timeout khi kiểm tra; cần mở tay để xác minh trước khi apply.",
+    "match": [
+      "Đã đưa vào dashboard để theo dõi, nhưng match dưới nhóm ưu tiên cao hoặc cần kiểm tra thêm JD.",
+      "Cần xác minh kỹ trước khi nộp nếu scope thiên sales management/industry-specific."
+    ],
+    "risks": [
+      "Link bị timeout khi kiểm tra; cần mở tay trước khi apply."
+    ],
+    "applicationAngle": "Nhấn mạnh 8+ năm Sales/Commercial Operations/Business Support, CRM data quality, KPI/reporting automation, contract/billing/payment follow-up và phối hợp Sales/Finance/Legal.",
+    "isNew": true,
+    "verifiedAt": "2026-07-23",
+    "refreshedAt": "2026-07-23T11:45:00+07:00",
+    "linkQuality": "listing",
+    "lifecycleStatus": "needs_review",
+    "sourceNote": "Imported from Monster/Foundit recheck list on 2026-07-23."
   }
 ]
